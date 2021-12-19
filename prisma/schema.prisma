@@ -1,0 +1,15 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["filterJson"]
+}
+
+model User {
+  id    String  @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  email String  @unique
+  name  String?
+}

@@ -1,0 +1,17 @@
+{
+  "extends": ["eslint-config-airbnb-base-typescript-prettier"],
+  "rules": {
+    "prettier/prettier": "warn",
+    "no-console": "off",
+    "no-underscore-dangle": "off",
+    "no-restricted-syntax": "off",
+    "no-plusplus": "off",
+    "import/order": "off",
+    "@typescript-eslint/no-non-null-assertion": "off"
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {}
+    }
+  }
+}

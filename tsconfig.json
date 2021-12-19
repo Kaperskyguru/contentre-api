@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "useUnknownInCatchVariables": false,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "lib": ["esnext"],
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "paths": {
+      "@prisma-config/*": ["prisma/*"],
+      "@extensions": ["src/extensions"],
+      "@extensions/*": ["src/extensions/*"],
+      "@": ["src/"],
+      "@/*": ["src/*"],
+      "@helpers": ["src/helpers"],
+      "@helpers/*": ["src/helpers/*"],
+      "@modules": ["src/modules"],
+      "@modules/*": ["src/modules/*"],
+      "@types": ["src/types"],
+      "@modules-types": ["src/types/modules"]
+    }
+  },
+  "exclude": ["node_modules"]
+}

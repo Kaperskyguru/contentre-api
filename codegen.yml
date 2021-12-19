@@ -1,0 +1,11 @@
+overwrite: true
+schema: 'http://localhost:9001/graphql'
+generates:
+  src/types/modules/index.d.ts:
+    config:
+      enumsAsTypes: true
+    plugins:
+      - add:
+          content: '/* eslint-disable */'
+      - typescript
+      - typescript-resolvers
