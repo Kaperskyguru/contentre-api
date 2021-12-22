@@ -45,6 +45,7 @@ export type Mutation = {
   sendPasswordResetCode: Scalars['Boolean'];
   sendPhoneCode: Scalars['Boolean'];
   useEmailCode: User;
+  usePasswordResetCode: User;
   userSwitchedLanguage: Scalars['Boolean'];
   version: Scalars['String'];
 };
@@ -95,6 +96,12 @@ export type MutationSendPhoneCodeArgs = {
 
 export type MutationUseEmailCodeArgs = {
   code: Scalars['String'];
+};
+
+
+export type MutationUsePasswordResetCodeArgs = {
+  code: Scalars['String'];
+  email: Scalars['String'];
 };
 
 
@@ -252,6 +259,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   sendPasswordResetCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendPasswordResetCodeArgs, 'email'>>;
   sendPhoneCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendPhoneCodeArgs, 'phoneCode' | 'phoneNumber'>>;
   useEmailCode?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUseEmailCodeArgs, 'code'>>;
+  usePasswordResetCode?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUsePasswordResetCodeArgs, 'code' | 'email'>>;
   userSwitchedLanguage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUserSwitchedLanguageArgs, 'newLanguage'>>;
   version?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
