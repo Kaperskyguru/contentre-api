@@ -8,7 +8,7 @@ export default async (
   _parent: unknown,
   _args: unknown,
   { user, setCookies, sentryId, prisma }: Context & Required<Context>
-) => {
+): Promise<boolean> => {
   logMutation('logoutUser %o', user)
 
   // User already logged out, just finish the call.

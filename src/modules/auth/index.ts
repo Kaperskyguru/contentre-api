@@ -1,6 +1,8 @@
 import { Resolvers } from '@/types/modules'
 import { gql } from 'apollo-server-core'
+import changePassword from './mutations/change-password'
 import loginUser from './mutations/login-user'
+import logoutUser from './mutations/logout-user'
 
 const typeDefs = gql`
   input LoginUserInput {
@@ -20,12 +22,16 @@ const typeDefs = gql`
     loginUser(data: LoginUserInput!): User!
     sendPhoneCode(phoneCode: String!, phoneNumber: String!): Boolean!
     sendEmailCode(email: String!): Boolean!
+    changePassword(oldPassword: String!, newPassword: String!): User!
+    logoutUser: Boolean!
   }
 `
 
 const resolvers: Resolvers = {
   Mutation: {
-    loginUser
+    loginUser,
+    changePassword,
+    logoutUser
   }
 }
 export default { typeDefs, resolvers }
