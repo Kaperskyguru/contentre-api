@@ -7,11 +7,13 @@ import { GraphQLError } from 'graphql'
 import { lookup } from 'fast-geoip'
 import { app } from '@/routes'
 import { Context } from '@types'
+import '@helpers/clearIndentation'
 import { prisma } from '@/config'
 import {
   ApolloServerPluginLandingPageGraphQLPlayground,
   ApolloServerPluginLandingPageDisabled
 } from 'apollo-server-core'
+import { getUserByToken } from './helpers/getUser'
 
 async function startApolloServer() {
   const server = new ApolloServer({
@@ -114,7 +116,7 @@ async function startApolloServer() {
         setHeaders: [],
         sentryId,
         // Try to retrieve a user with the token if any
-        user: token ? token : null, //await getUserByToken(token) : null,
+        user: token ? await getUserByToken(token) : null,
         token,
         locale,
         prisma,

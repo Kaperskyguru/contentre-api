@@ -5,6 +5,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -18,14 +19,39 @@ export type Scalars = {
   Time: any;
 };
 
+export type LoginUserInput = {
+  email: Scalars['String'];
+  password?: InputMaybe<Scalars['String']>;
+  remember?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  loginUser: User;
+  sendPhoneCode: Scalars['Boolean'];
   version: Scalars['String'];
+};
+
+
+export type MutationLoginUserArgs = {
+  data: LoginUserInput;
+};
+
+
+export type MutationSendPhoneCodeArgs = {
+  phoneCode: Scalars['String'];
+  phoneNumber: Scalars['String'];
 };
 
 export type Query = {
   __typename?: 'Query';
   getVersion: Scalars['String'];
+};
+
+export type User = {
+  __typename?: 'User';
+  id?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 
@@ -98,21 +124,27 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
+  LoginUserInput: LoginUserInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Time: ResolverTypeWrapper<Scalars['Time']>;
+  User: ResolverTypeWrapper<User>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
+  ID: Scalars['ID'];
   JSON: Scalars['JSON'];
+  LoginUserInput: LoginUserInput;
   Mutation: {};
   Query: {};
   String: Scalars['String'];
   Time: Scalars['Time'];
+  User: User;
 };
 
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
@@ -120,6 +152,8 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  loginUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'data'>>;
+  sendPhoneCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendPhoneCodeArgs, 'phoneCode' | 'phoneNumber'>>;
   version?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
@@ -131,10 +165,17 @@ export interface TimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
   name: 'Time';
 }
 
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = any> = {
   JSON?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Time?: GraphQLScalarType;
+  User?: UserResolvers<ContextType>;
 };
 

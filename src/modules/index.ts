@@ -3,6 +3,7 @@ import { gql } from 'apollo-server-express'
 import { GraphQLScalarType } from 'graphql'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import GraphQLJSON from 'graphql-type-json'
+import auth from './auth'
 
 const typeDefs = gql`
   scalar Time
@@ -33,10 +34,10 @@ const resolvers = {
 
 const schema = makeExecutableSchema({
   typeDefs: [
-    typeDefs
+    typeDefs,
     //   accessRights.typeDefs,
     //   accounts.typeDefs,
-    //   auth.typeDefs,
+    auth.typeDefs
     //   consents.typeDefs,
     //   companies.typeDefs,
     //   categories.typeDefs,
@@ -51,10 +52,10 @@ const schema = makeExecutableSchema({
     //   invoices.typeDefs
   ],
   resolvers: [
-    resolvers
+    resolvers,
     //   accessRights.resolvers,
     //   accounts.resolvers,
-    //   auth.resolvers,
+    auth.resolvers
     //   consents.resolvers,
     //   companies.resolvers,
     //   categories.resolvers,
