@@ -4,6 +4,7 @@ import { GraphQLScalarType } from 'graphql'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import GraphQLJSON from 'graphql-type-json'
 import auth from './auth'
+import users from './users'
 
 const typeDefs = gql`
   scalar Time
@@ -37,14 +38,14 @@ const schema = makeExecutableSchema({
     typeDefs,
     //   accessRights.typeDefs,
     //   accounts.typeDefs,
-    auth.typeDefs
+    auth.typeDefs,
     //   consents.typeDefs,
     //   companies.typeDefs,
     //   categories.typeDefs,
     //   institutions.typeDefs,
     //   invites.typeDefs,
     //   notifications.typeDefs,
-    //   users.typeDefs,
+    users.typeDefs
     //   transactions.typeDefs,
     //   storage.typeDefs,
     //   admin.typeDefs,
@@ -55,14 +56,14 @@ const schema = makeExecutableSchema({
     resolvers,
     //   accessRights.resolvers,
     //   accounts.resolvers,
-    auth.resolvers
+    auth.resolvers,
     //   consents.resolvers,
     //   companies.resolvers,
     //   categories.resolvers,
     //   institutions.resolvers,
     //   invites.resolvers,
     //   notifications.resolvers,
-    //   users.resolvers,
+    users.resolvers
     //   transactions.resolvers,
     //   storage.resolvers,
     //   admin.resolvers,

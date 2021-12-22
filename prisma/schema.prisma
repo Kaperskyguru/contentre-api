@@ -11,7 +11,8 @@ generator client {
 model User {
   id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
   email              String               @unique
-  name               String?
+  name               String               @db.VarChar(100)
+  username           String?              @db.VarChar(60)
   password           String?              @db.VarChar(60)
   emailConfirmed     Boolean              @default(false)
   phoneCode          String?              @db.VarChar(5)

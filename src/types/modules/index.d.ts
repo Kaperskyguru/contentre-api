@@ -19,6 +19,13 @@ export type Scalars = {
   Time: any;
 };
 
+export type CreateUserInput = {
+  email: Scalars['String'];
+  name: Scalars['String'];
+  password: Scalars['String'];
+  username: Scalars['String'];
+};
+
 export type LoginUserInput = {
   email: Scalars['String'];
   password?: InputMaybe<Scalars['String']>;
@@ -27,9 +34,25 @@ export type LoginUserInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createUser: User;
+  deleteUser: Scalars['Boolean'];
+  forceUserToVerifyPhoneNumber: Scalars['Boolean'];
   loginUser: User;
+  sendEmailCode: Scalars['Boolean'];
   sendPhoneCode: Scalars['Boolean'];
+  userSwitchedLanguage: Scalars['Boolean'];
   version: Scalars['String'];
+};
+
+
+export type MutationCreateUserArgs = {
+  input: CreateUserInput;
+};
+
+
+export type MutationForceUserToVerifyPhoneNumberArgs = {
+  token: Scalars['String'];
+  userId: Scalars['String'];
 };
 
 
@@ -38,20 +61,55 @@ export type MutationLoginUserArgs = {
 };
 
 
+export type MutationSendEmailCodeArgs = {
+  email: Scalars['String'];
+};
+
+
 export type MutationSendPhoneCodeArgs = {
   phoneCode: Scalars['String'];
   phoneNumber: Scalars['String'];
 };
 
+
+export type MutationUserSwitchedLanguageArgs = {
+  newLanguage: Scalars['String'];
+};
+
 export type Query = {
   __typename?: 'Query';
+  findUser?: Maybe<User>;
+  getCurrentUser?: Maybe<User>;
   getVersion: Scalars['String'];
 };
 
+
+export type QueryFindUserArgs = {
+  uuid: Scalars['String'];
+};
+
+export type RegisterUserInput = {
+  email: Scalars['String'];
+  name: Scalars['String'];
+  password: Scalars['String'];
+  username?: InputMaybe<Scalars['String']>;
+};
+
+export type SignedUpThrough =
+  | 'AIRBANK'
+  | 'GOOGLE';
+
 export type User = {
   __typename?: 'User';
-  id?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
+  avatarURL?: Maybe<Scalars['String']>;
+  createdAt: Scalars['Time'];
+  email: Scalars['String'];
+  id: Scalars['ID'];
+  lastActivityAt: Scalars['Time'];
+  name: Scalars['String'];
+  phoneCode?: Maybe<Scalars['String']>;
+  phoneNumber?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['Time'];
 };
 
 
@@ -124,11 +182,14 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  CreateUserInput: CreateUserInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   LoginUserInput: LoginUserInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
+  RegisterUserInput: RegisterUserInput;
+  SignedUpThrough: SignedUpThrough;
   String: ResolverTypeWrapper<Scalars['String']>;
   Time: ResolverTypeWrapper<Scalars['Time']>;
   User: ResolverTypeWrapper<User>;
@@ -137,11 +198,13 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
+  CreateUserInput: CreateUserInput;
   ID: Scalars['ID'];
   JSON: Scalars['JSON'];
   LoginUserInput: LoginUserInput;
   Mutation: {};
   Query: {};
+  RegisterUserInput: RegisterUserInput;
   String: Scalars['String'];
   Time: Scalars['Time'];
   User: User;
@@ -152,12 +215,19 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'input'>>;
+  deleteUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  forceUserToVerifyPhoneNumber?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationForceUserToVerifyPhoneNumberArgs, 'token' | 'userId'>>;
   loginUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'data'>>;
+  sendEmailCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendEmailCodeArgs, 'email'>>;
   sendPhoneCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendPhoneCodeArgs, 'phoneCode' | 'phoneNumber'>>;
+  userSwitchedLanguage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUserSwitchedLanguageArgs, 'newLanguage'>>;
   version?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  findUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryFindUserArgs, 'uuid'>>;
+  getCurrentUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   getVersion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
@@ -166,8 +236,15 @@ export interface TimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  avatarURL?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  lastActivityAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  phoneCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  phoneNumber?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
