@@ -5,6 +5,7 @@ import { logError, logMutation } from '@/helpers/logger'
 import { hashPassword } from '@/helpers/passwords'
 import { Context } from '@/types'
 import { MutationResetPasswordArgs } from '@/types/modules'
+import sendEmail from '@extensions/mail-service/send-email'
 import { ApolloError } from 'apollo-server-core'
 import sendPhoneCode from './send-phone-code'
 
@@ -33,14 +34,14 @@ export default async (
       !environment.mailgun && ['LOCAL', 'DEVELOP'].includes(environment.context)
 
     if (!isDevelop) {
-      //   await sendEmail({
-      //     to: user.email,
-      //     subject: 'Password changed',
-      //     template: 'password_changed',
-      //     variables: {
-      //       FIRST_NAME: user.name as string
-      //     }
-      //   })
+      await sendEmail({
+        to: user.email,
+        subject: 'Password changed',
+        template: 'password_changed',
+        variables: {
+          FIRST_NAME: user.name as string
+        }
+      })
     }
 
     // If the user still needs to confirm the phone after authentication.

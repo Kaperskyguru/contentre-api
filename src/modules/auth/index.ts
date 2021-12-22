@@ -26,6 +26,7 @@ const typeDefs = gql`
     changePassword(oldPassword: String!, newPassword: String!): User!
     logoutUser: Boolean!
     resetPassword(newPassword: String!): User!
+    sendPasswordResetCode(email: String!): Boolean!
   }
 `
 

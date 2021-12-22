@@ -4,6 +4,7 @@ import { logError, logMutation } from '@/helpers/logger'
 import { comparePassword, hashPassword } from '@/helpers/passwords'
 import { Context } from '@/types'
 import { MutationChangePasswordArgs, User } from '@/types/modules'
+import sendEmail from '@extensions/mail-service/send-email'
 import { ApolloError } from 'apollo-server-errors'
 
 export default async (
@@ -34,14 +35,14 @@ export default async (
         password: await hashPassword(newPassword)
       }
     })
-    // await sendEmail({
-    //   to: user.email,
-    //   subject: 'Password changed',
-    //   template: 'password_changed',
-    //   variables: {
-    //     FIRST_NAME: user.name as string
-    //   }
-    // })
+    await sendEmail({
+      to: user.email,
+      subject: 'Password changed',
+      template: 'password_changed',
+      variables: {
+        FIRST_NAME: user.name as string
+      }
+    })
 
     return getUser(updatedUser)
   } catch (e) {
