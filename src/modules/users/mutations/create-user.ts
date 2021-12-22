@@ -1,4 +1,5 @@
 import { hashPassword } from '@/helpers/passwords'
+import sendEmailCode from '@/modules/auth/mutations/send-email.code'
 import { useErrorParser } from '@helpers'
 import { getUser } from '@helpers/getUser'
 import { logError, logMutation } from '@helpers/logger'
@@ -11,14 +12,9 @@ import { ApolloError } from 'apollo-server-errors'
 export default async (
   _parent: unknown,
   { input }: MutationCreateUserArgs,
-  {
-    setCookies,
-    sentryId,
-    prisma,
-    ipAddress,
-    requestURL
-  }: Context & Required<Context>
+  context: Context & Required<Context>
 ): Promise<User> => {
+  const { setCookies, sentryId, prisma, ipAddress, requestURL } = context
   logMutation('createUser %o', { input, ipAddress, requestURL })
 
   // Will be filled by the user creation process below.
@@ -44,6 +40,10 @@ export default async (
     })
 
     setJWT(user, setCookies)
+
+    if (!user.emailConfirmed) {
+      sendEmailCode(_parent, { email: input.email }, context)
+    }
 
     return getUser(user)
   } catch (e) {

@@ -3,6 +3,7 @@ import { environment } from '@/helpers/environment'
 import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
 import { MutationSendPhoneCodeArgs } from '@/types/modules'
+import sendSms from '@extensions/phone-service/send-sms'
 import { ApolloError } from 'apollo-server-errors'
 
 export default async (
@@ -62,11 +63,11 @@ export default async (
 
     // If not in development mode, send the real SMS.
     if (!isDevelop) {
-      //   await sendSMS({
-      //     to: `+${phoneCode}${phoneNumber}`,
-      //     sms: getSmsLocale(locale!, refreshCode),
-      //     code: phoneCode
-      //   })
+      await sendSms({
+        to: `+${phoneCode}${phoneNumber}`,
+        // sms: getSmsLocale(locale!, refreshCode),
+        code: phoneCode
+      })
     }
 
     return !!intent
