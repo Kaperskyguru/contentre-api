@@ -1,6 +1,7 @@
 import { Resolvers } from '@/types/modules'
 import { gql } from 'apollo-server-core'
 import createClient from './mutations/create-client'
+import updateClient from './mutations/update-client'
 
 const typeDefs = gql`
   type Client {
@@ -14,8 +15,14 @@ const typeDefs = gql`
     website: String
   }
 
+  input UpdateClientInput {
+    name: String
+    website: String
+  }
+
   extend type Mutation {
     createClient(input: CreateClientInput!): Client!
+    updateClient(id: ID!, input: UpdateClientInput!): Client!
   }
 `
 const resolvers: Resolvers = {
@@ -25,9 +32,9 @@ const resolvers: Resolvers = {
   },
 
   Mutation: {
-    createClient
+    createClient,
     // deleteUser,
-    // updateUser,
+    updateClient
     // forceUserToVerifyPhoneNumber,
     // userSwitchedLanguage
   }
