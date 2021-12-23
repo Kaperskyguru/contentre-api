@@ -75,56 +75,6 @@ export interface YapilyError {
   tracingId: string
 }
 
-export interface YapilyUser {
-  applicationUserId: string
-  applicationUuid: string
-  institutionConsents?: { institutionId: string }[]
-  referenceId: string
-  uuid: string
-}
-
-export interface AccountName {
-  name: string
-}
-
-export enum YapilyCreditLineType {
-  AVAILABLE,
-  CREDIT,
-  EMERGENCY,
-  PRE_AGREED,
-  TEMPORARY,
-  OTHER,
-  UNKNOWN
-}
-
-export interface YapilyCreditLine {
-  creditLineAmount: YapilyAmount
-  type: YapilyCreditLineType
-}
-
-export interface YapilyAccountBalance {
-  balanceAmount: YapilyAmount
-  creditLineIncluded: boolean
-  creditLines?: YapilyCreditLine[]
-  dateTime?: string
-  type: YapilyAccountBalanceType
-}
-
-export interface YapilyAccount {
-  accountBalances?: YapilyAccountBalance[]
-  accountIdentifications?: YapilyAccountIdentification[]
-  accountNames?: AccountName[]
-  accountType?: AccountType
-  balance: number
-  currency: Currency
-  description?: string
-  details?: string
-  id: string
-  nickname?: string
-  type?: string
-  usageType: UsageType
-}
-
 interface Country {
   countryCode2: string
   displayName: string
@@ -133,37 +83,6 @@ interface Country {
 interface Media {
   source?: string
   type?: string
-}
-
-export interface YapilyInstitution {
-  countries?: Country[]
-  credentialsType: CredentialsType
-  environmentType: EnvironmentType
-  features: string[]
-  fullName: string
-  id: string
-  media?: Media[]
-  name: string
-}
-
-export interface YapilyConsent {
-  applicationUserId: string
-  authorizedAt: string
-  consentToken: string
-  createdAt: string
-  expiresAt: string
-  featureScope: InstitutionFeature[]
-  authorisationUrl: string
-  qrCodeUrl: string
-  id: string
-  institutionId: string
-  referenceId: string
-  state: string
-  status: ConsentStatus
-  timeToExpire: string
-  transactionFrom: string
-  transactionTo: string
-  userUuid: string
 }
 
 export type ConsentStatus =

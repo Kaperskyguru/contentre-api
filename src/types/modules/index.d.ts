@@ -26,6 +26,10 @@ export type Client = {
   website?: Maybe<Scalars['String']>;
 };
 
+export type ClientFiltersInput = {
+  terms?: InputMaybe<Scalars['String']>;
+};
+
 export type CreateClientInput = {
   name: Scalars['String'];
   website?: InputMaybe<Scalars['String']>;
@@ -49,6 +53,7 @@ export type Mutation = {
   changePassword: User;
   createClient: Client;
   createUser: User;
+  deleteClient: Scalars['Boolean'];
   deleteUser: Scalars['Boolean'];
   forceUserToVerifyPhoneNumber: Scalars['Boolean'];
   loginUser: User;
@@ -79,6 +84,11 @@ export type MutationCreateClientArgs = {
 
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
+};
+
+
+export type MutationDeleteClientArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -143,6 +153,8 @@ export type MutationUserSwitchedLanguageArgs = {
 export type Query = {
   __typename?: 'Query';
   findUser?: Maybe<User>;
+  getClient: Client;
+  getClients: Array<Client>;
   getCurrentUser?: Maybe<User>;
   getVersion: Scalars['String'];
 };
@@ -150,6 +162,18 @@ export type Query = {
 
 export type QueryFindUserArgs = {
   uuid: Scalars['String'];
+};
+
+
+export type QueryGetClientArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryGetClientsArgs = {
+  filters?: InputMaybe<ClientFiltersInput>;
+  size?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
 };
 
 export type RegisterUserInput = {
@@ -254,9 +278,11 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Client: ResolverTypeWrapper<Client>;
+  ClientFiltersInput: ClientFiltersInput;
   CreateClientInput: CreateClientInput;
   CreateUserInput: CreateUserInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   LoginUserInput: LoginUserInput;
   Mutation: ResolverTypeWrapper<{}>;
@@ -273,9 +299,11 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   Client: Client;
+  ClientFiltersInput: ClientFiltersInput;
   CreateClientInput: CreateClientInput;
   CreateUserInput: CreateUserInput;
   ID: Scalars['ID'];
+  Int: Scalars['Int'];
   JSON: Scalars['JSON'];
   LoginUserInput: LoginUserInput;
   Mutation: {};
@@ -302,6 +330,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   changePassword?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'oldPassword'>>;
   createClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationCreateClientArgs, 'input'>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'input'>>;
+  deleteClient?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteClientArgs, 'id'>>;
   deleteUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   forceUserToVerifyPhoneNumber?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationForceUserToVerifyPhoneNumberArgs, 'token' | 'userId'>>;
   loginUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'data'>>;
@@ -320,6 +349,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   findUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryFindUserArgs, 'uuid'>>;
+  getClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<QueryGetClientArgs, 'id'>>;
+  getClients?: Resolver<Array<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<QueryGetClientsArgs, never>>;
   getCurrentUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   getVersion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };

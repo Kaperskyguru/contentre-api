@@ -2,6 +2,8 @@ import { Resolvers } from '@/types/modules'
 import { gql } from 'apollo-server-core'
 import createClient from './mutations/create-client'
 import updateClient from './mutations/update-client'
+import getClient from './queries/get-client'
+import getClients from './queries/get-clients'
 
 const typeDefs = gql`
   type Client {
@@ -15,28 +17,35 @@ const typeDefs = gql`
     website: String
   }
 
+  input ClientFiltersInput {
+    terms: String
+  }
+
   input UpdateClientInput {
     name: String
     website: String
   }
 
+  extend type Query {
+    getClients(size: Int, skip: Int, filters: ClientFiltersInput): [Client!]!
+    getClient(id: ID!): Client!
+  }
+
   extend type Mutation {
     createClient(input: CreateClientInput!): Client!
     updateClient(id: ID!, input: UpdateClientInput!): Client!
+    deleteClient(id: ID!): Boolean!
   }
 `
 const resolvers: Resolvers = {
   Query: {
-    // findUser,
-    //   getCurrentUser
+    getClients,
+    getClient
   },
 
   Mutation: {
     createClient,
-    // deleteUser,
     updateClient
-    // forceUserToVerifyPhoneNumber,
-    // userSwitchedLanguage
   }
 }
 export default { typeDefs, resolvers }
