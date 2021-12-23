@@ -40,3 +40,9 @@ enum VerificationIntentType {
   EMAIL
   PHONE
 }
+
+model Client {
+  id      String  @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name    String  @db.VarChar(60)
+  website String? @db.VarChar(2048)
+}
