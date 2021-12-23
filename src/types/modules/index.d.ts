@@ -46,6 +46,7 @@ export type Mutation = {
   sendPhoneCode: Scalars['Boolean'];
   useEmailCode: User;
   usePasswordResetCode: User;
+  usePhoneCode: User;
   userSwitchedLanguage: Scalars['Boolean'];
   version: Scalars['String'];
 };
@@ -105,6 +106,11 @@ export type MutationUsePasswordResetCodeArgs = {
 };
 
 
+export type MutationUsePhoneCodeArgs = {
+  code: Scalars['String'];
+};
+
+
 export type MutationUserSwitchedLanguageArgs = {
   newLanguage: Scalars['String'];
 };
@@ -137,10 +143,12 @@ export type User = {
   avatarURL?: Maybe<Scalars['String']>;
   createdAt: Scalars['Time'];
   email: Scalars['String'];
+  emailConfirmed: Scalars['Boolean'];
   id: Scalars['ID'];
   lastActivityAt: Scalars['Time'];
   name: Scalars['String'];
   phoneCode?: Maybe<Scalars['String']>;
+  phoneConfirmed: Scalars['Boolean'];
   phoneNumber?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Time'];
 };
@@ -260,6 +268,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   sendPhoneCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendPhoneCodeArgs, 'phoneCode' | 'phoneNumber'>>;
   useEmailCode?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUseEmailCodeArgs, 'code'>>;
   usePasswordResetCode?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUsePasswordResetCodeArgs, 'code' | 'email'>>;
+  usePhoneCode?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUsePhoneCodeArgs, 'code'>>;
   userSwitchedLanguage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUserSwitchedLanguageArgs, 'newLanguage'>>;
   version?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
@@ -278,10 +287,12 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   avatarURL?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  emailConfirmed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   lastActivityAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   phoneCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  phoneConfirmed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   phoneNumber?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
