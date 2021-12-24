@@ -24,6 +24,7 @@ model User {
   lastActivityAt     DateTime             @default(now()) @db.Timestamp(6)
   VerificationIntent VerificationIntent[] @relation("UserVerificationIntent")
   Client             Client[]             @relation("UserClient")
+  Content            Content[]            @relation("UserContent")
 }
 
 model VerificationIntent {
@@ -43,12 +44,61 @@ enum VerificationIntentType {
 }
 
 model Client {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  name        String   @db.VarChar(60)
-  website     String?  @db.VarChar(2048)
-  userId      String   @db.Char(36)
-  user        User     @relation("UserClient", fields: [userId], references: [id])
-  authorsLink String?  @db.VarChar(2048)
-  createdAt   DateTime @default(now()) @db.Timestamp(6)
-  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp(6)
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name        String    @db.VarChar(60)
+  website     String?   @db.VarChar(2048)
+  userId      String    @db.Char(36)
+  user        User      @relation("UserClient", fields: [userId], references: [id])
+  authorsLink String?   @db.VarChar(2048)
+  createdAt   DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamp(6)
+  Content     Content[] @relation("ClientContent")
+}
+
+model Content {
+  id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  title         String         @db.VarChar(60)
+  clientId      String         @db.Char(36)
+  client        Client         @relation("ClientContent", fields: [clientId], references: [id])
+  userId        String         @db.Char(36)
+  user          User           @relation("UserContent", fields: [userId], references: [id])
+  visibility    VisibilityType @default(PUBLISHED)
+  lastUpdated   DateTime       @default(now()) @db.Timestamp(6)
+  link          String?        @db.VarChar(2048)
+  type          ContentType    @default(TEXT)
+  excerpt       String         @db.VarChar(2048)
+  content       String?        @db.VarChar(2048)
+  featuredImage String?        @db.VarChar(2048)
+  createdAt     DateTime       @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime       @default(now()) @updatedAt @db.Timestamp(6)
+  topic         Topic[]        @relation("ContentTopic")
+  tag           Tag[]          @relation("ContentTag")
+
+  @@index([clientId, userId])
+}
+
+enum VisibilityType {
+  PUBLISHED
+  DRAFT
+  DELETED
+}
+
+enum ContentType {
+  TEXT
+  AUDIO
+  VIDEO
+}
+
+model Tag {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name      String   @db.VarChar(120)
+  Content   Content? @relation("ContentTag", fields: [contentId], references: [id])
+  contentId String?  @db.Char(36)
+}
+
+model Topic {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name      String   @db.VarChar(120)
+  Content   Content? @relation("ContentTopic", fields: [contentId], references: [id])
+  contentId String?  @db.Char(36)
 }

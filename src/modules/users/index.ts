@@ -5,11 +5,6 @@ import userAvatarURL from './fields/user-avatar-url'
 import getCurrentUser from './queries/get-current-user'
 
 const typeDefs = gql`
-  enum SignedUpThrough {
-    AIRBANK
-    GOOGLE
-  }
-
   type User {
     id: ID!
     email: String!
