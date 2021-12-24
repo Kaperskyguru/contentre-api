@@ -10,11 +10,15 @@ const typeDefs = gql`
     id: String
     name: String!
     website: String
+    authorsLink: String
+    updatedAt: Time!
+    createdAt: Time!
   }
 
   input CreateClientInput {
     name: String!
     website: String
+    authorsLink: String
   }
 
   input ClientFiltersInput {
@@ -24,6 +28,7 @@ const typeDefs = gql`
   input UpdateClientInput {
     name: String
     website: String
+    authorsLink: String
   }
 
   extend type Query {

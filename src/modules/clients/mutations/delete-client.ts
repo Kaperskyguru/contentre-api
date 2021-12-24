@@ -20,6 +20,19 @@ export default async (
       throw new ApolloError('Invalid input', '422')
     }
 
+    const client = await prisma.client.findUnique({
+      where: { id }
+    })
+
+    if (!client) {
+      throw new ApolloError('client not found', '404')
+    }
+
+    // Check if the user is authorized to delete the client.
+    if (client.userId !== user.id) {
+      throw new Error('unauthorized')
+    }
+
     const result = await prisma.$transaction([
       prisma.client.delete({
         where: { id }

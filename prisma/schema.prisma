@@ -23,6 +23,7 @@ model User {
   updatedAt          DateTime             @default(now()) @updatedAt @db.Timestamp(6)
   lastActivityAt     DateTime             @default(now()) @db.Timestamp(6)
   VerificationIntent VerificationIntent[] @relation("UserVerificationIntent")
+  Client             Client[]             @relation("UserClient")
 }
 
 model VerificationIntent {
@@ -42,7 +43,12 @@ enum VerificationIntentType {
 }
 
 model Client {
-  id      String  @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  name    String  @db.VarChar(60)
-  website String? @db.VarChar(2048)
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name        String   @db.VarChar(60)
+  website     String?  @db.VarChar(2048)
+  userId      String   @db.Char(36)
+  user        User     @relation("UserClient", fields: [userId], references: [id])
+  authorsLink String?  @db.VarChar(2048)
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp(6)
 }

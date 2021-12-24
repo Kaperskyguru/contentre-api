@@ -21,6 +21,7 @@ export type Scalars = {
 
 export type Client = {
   __typename?: 'Client';
+  authorsLink?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   website?: Maybe<Scalars['String']>;
@@ -31,6 +32,7 @@ export type ClientFiltersInput = {
 };
 
 export type CreateClientInput = {
+  authorsLink?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   website?: InputMaybe<Scalars['String']>;
 };
@@ -188,6 +190,7 @@ export type SignedUpThrough =
   | 'GOOGLE';
 
 export type UpdateClientInput = {
+  authorsLink?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   website?: InputMaybe<Scalars['String']>;
 };
@@ -316,6 +319,7 @@ export type ResolversParentTypes = {
 };
 
 export type ClientResolvers<ContextType = any, ParentType extends ResolversParentTypes['Client'] = ResolversParentTypes['Client']> = {
+  authorsLink?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

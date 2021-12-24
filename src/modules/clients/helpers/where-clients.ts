@@ -9,6 +9,10 @@ export const whereClients = (
 } => {
   return {
     AND: [
+      {
+        userId: user.id
+      },
+
       filters?.terms
         ? {
             OR: [

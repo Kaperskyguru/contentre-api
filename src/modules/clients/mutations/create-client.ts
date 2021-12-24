@@ -18,7 +18,7 @@ export default async (
   })
 
   try {
-    const { name, website } = input
+    const { name, website, authorsLink } = input
 
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
@@ -26,7 +26,7 @@ export default async (
 
     // Checking if client already exists
     const client = await prisma.client.findFirst({
-      where: { name }
+      where: { name, userId: user.id }
     })
 
     if (client) throw new Error('duplicated')
@@ -35,7 +35,9 @@ export default async (
     return await prisma.client.create({
       data: {
         name,
-        website
+        website,
+        authorsLink,
+        user: { connect: { id: user.id } }
       }
     })
   } catch (e) {

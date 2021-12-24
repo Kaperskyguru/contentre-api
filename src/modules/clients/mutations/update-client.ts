@@ -16,11 +16,24 @@ export default async (
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
     // Extract fields from the mutation input.
-    const { name, website } = input
+    const { name, website, authorsLink } = input
 
     // Check for required arguments not provided.
     if (!id || !name) {
       throw new ApolloError('Invalid input', '422')
+    }
+
+    const client = await prisma.client.findUnique({
+      where: { id }
+    })
+
+    if (!client) {
+      throw new ApolloError('client not found', '404')
+    }
+
+    // Check if the transaction to delete is not from the current company.
+    if (client.userId !== user.id) {
+      throw new Error('unauthorized')
     }
 
     // Finally update the category.
@@ -28,7 +41,8 @@ export default async (
       where: { id },
       data: {
         name,
-        website
+        website,
+        authorsLink
       }
     })
   } catch (e) {
