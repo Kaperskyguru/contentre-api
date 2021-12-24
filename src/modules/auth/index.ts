@@ -5,12 +5,19 @@ import loginUser from './mutations/login-user'
 import logoutUser from './mutations/logout-user'
 import resetPassword from './mutations/reset-password'
 import useEmailCode from './mutations/use-email-code'
+import usePasswordResetCode from './mutations/use-password-reset-code'
+import usePhoneCode from './mutations/use-phone-code'
 
 const typeDefs = gql`
   input LoginUserInput {
     email: String!
     password: String
     remember: Boolean
+  }
+
+  extend type User {
+    emailConfirmed: Boolean!
+    phoneConfirmed: Boolean!
   }
 
   input RegisterUserInput {
@@ -29,6 +36,8 @@ const typeDefs = gql`
     resetPassword(newPassword: String!): User!
     sendPasswordResetCode(email: String!): Boolean!
     useEmailCode(code: String!): User!
+    usePasswordResetCode(code: String!, email: String!): User!
+    usePhoneCode(code: String!): User!
   }
 `
 
@@ -38,7 +47,9 @@ const resolvers: Resolvers = {
     changePassword,
     logoutUser,
     resetPassword,
-    useEmailCode
+    useEmailCode,
+    usePasswordResetCode,
+    usePhoneCode
   }
 }
 export default { typeDefs, resolvers }
