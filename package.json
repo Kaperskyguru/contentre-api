@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "graphql.js",
   "scripts": {
-    "start": "rollup -c -w && node dist/graphql.js",
+    "start": "rollup -c -w && node --max-old-space-size=8192 dist/graphql.js",
     "build": "rollup -c --environment NODE_ENV:production",
-    "dev": "rollup -c --environment NODE_ENV:DEVELOP",
+    "dev": "rollup -c --environment NODE_ENV:development",
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore .",
     "review": "rm -rf node_modules/.cache && yarn && yarn prisma:update && yarn start",
     "graphql:codegen": "graphql-codegen --config codegen.yml",
