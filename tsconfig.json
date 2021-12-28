@@ -25,5 +25,6 @@
       "@modules-types": ["src/types/modules"]
     }
   },
+  "include": ["src", "node_modules/@types/puppeteer/index.d.ts"],
   "exclude": ["node_modules"]
 }
