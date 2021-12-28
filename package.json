@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "graphql.js",
   "scripts": {
-    "start": "rollup -c -w && node --max-old-space-size=8192 dist/graphql.js",
+    "start": "rollup --max-old-space-size=8192 -c -w && node dist/graphql.js",
     "build": "rollup -c --environment NODE_ENV:production",
     "dev": "rollup -c --environment NODE_ENV:development",
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore .",
