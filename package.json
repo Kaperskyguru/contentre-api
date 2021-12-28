@@ -5,6 +5,7 @@
   "scripts": {
     "start": "rollup -c -w && node dist/graphql.js",
     "build": "rollup -c --environment NODE_ENV:production",
+    "dev": "rollup -c --environment NODE_ENV:DEVELOP",
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore .",
     "review": "rm -rf node_modules/.cache && yarn && yarn prisma:update && yarn start",
     "graphql:codegen": "graphql-codegen --config codegen.yml",
