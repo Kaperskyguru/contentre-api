@@ -36,7 +36,6 @@ class PostScrapper {
 
   static async resolve() {
     await this.init()
-    // console.log('Grabbing List of Job URLS ...')
     const jobURLs = await page.evaluate(() => {
       const cards = document.querySelectorAll('.search-card')
       cardArr = Array.from(cards)
