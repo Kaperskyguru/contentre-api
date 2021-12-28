@@ -1,7 +1,7 @@
 import { hashPassword } from '@/helpers/passwords'
 import sendEmailCode from '@/modules/auth/mutations/send-email.code'
 import { useErrorParser } from '@helpers'
-import { getUser } from '@helpers/getUser'
+import { getUser, getUserByToken } from '@helpers/getUser'
 import { logError, logMutation } from '@helpers/logger'
 import { setJWT } from '@helpers/setJWT'
 import { MutationCreateUserArgs, User } from '@modules-types'
@@ -23,8 +23,13 @@ export default async (
   try {
     // Checking if user already exists, but did not finish the onboarding process
     user = await prisma.user.findUnique({ where: { email: input.email } })
-    if (user) {
-      setJWT(user, setCookies)
+    let token: string
+
+    if (user && !user.emailConfirmed) {
+      token = setJWT(user, setCookies)
+
+      context.user = token ? await getUserByToken(token) : null
+      sendEmailCode(_parent, { email: input.email }, context)
       return user
     }
     user = null
@@ -39,9 +44,10 @@ export default async (
       }
     })
 
-    setJWT(user, setCookies)
+    token = setJWT(user, setCookies)
 
     if (!user.emailConfirmed) {
+      context.user = token ? await getUserByToken(token) : null
       sendEmailCode(_parent, { email: input.email }, context)
     }
 

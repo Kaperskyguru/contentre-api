@@ -16,7 +16,7 @@ import {
   User
 } from './modules'
 
-export type ContextUser = User & PrismaUser
+export type ContextUser = User | PrismaUser
 
 export interface Context {
   token?: string

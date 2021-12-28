@@ -22,8 +22,10 @@ export type Scalars = {
 export type Client = {
   __typename?: 'Client';
   authorsLink?: Maybe<Scalars['String']>;
+  createdAt: Scalars['Time'];
   id?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  updatedAt: Scalars['Time'];
   website?: Maybe<Scalars['String']>;
 };
 
@@ -320,8 +322,10 @@ export type ResolversParentTypes = {
 
 export type ClientResolvers<ContextType = any, ParentType extends ResolversParentTypes['Client'] = ResolversParentTypes['Client']> = {
   authorsLink?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
