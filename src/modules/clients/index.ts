@@ -28,7 +28,7 @@ const typeDefs = gql`
   input UpdateClientInput {
     name: String
     website: String
-    authorsLink: String
+    authorsLink: String!
   }
 
   extend type Query {
