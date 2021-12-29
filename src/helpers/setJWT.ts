@@ -3,7 +3,7 @@ import { environment } from '@helpers/environment'
 import { User as DBUser } from '@prisma/client'
 import jwt from 'jsonwebtoken'
 
-export function setJWT(user: DBUser, setCookies: Cookie[]): void {
+export function setJWT(user: DBUser, setCookies: Cookie[]): string {
   const token = jwt.sign(
     { userEmail: user.email, userId: user.id },
     environment.auth.tokenSecret,
@@ -22,6 +22,8 @@ export function setJWT(user: DBUser, setCookies: Cookie[]): void {
       secure: true
     }
   })
+
+  return token
 }
 
 export default setJWT

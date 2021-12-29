@@ -22,8 +22,10 @@ export type Scalars = {
 export type Client = {
   __typename?: 'Client';
   authorsLink?: Maybe<Scalars['String']>;
+  createdAt: Scalars['Time'];
   id?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  updatedAt: Scalars['Time'];
   website?: Maybe<Scalars['String']>;
 };
 
@@ -208,6 +210,7 @@ export type User = {
   phoneConfirmed: Scalars['Boolean'];
   phoneNumber?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Time'];
+  username?: Maybe<Scalars['String']>;
 };
 
 
@@ -320,8 +323,10 @@ export type ResolversParentTypes = {
 
 export type ClientResolvers<ContextType = any, ParentType extends ResolversParentTypes['Client'] = ResolversParentTypes['Client']> = {
   authorsLink?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -375,6 +380,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   phoneConfirmed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   phoneNumber?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  username?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

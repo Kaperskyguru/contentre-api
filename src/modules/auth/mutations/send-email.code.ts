@@ -1,4 +1,4 @@
-// import sendEmail from '@extensions/mail-service/send-email'
+import sendEmail from '@extensions/mail-service/send-email'
 import { useErrorParser } from '@helpers'
 import { environment } from '@helpers/environment'
 import { logError, logMutation } from '@helpers/logger'
@@ -27,9 +27,9 @@ export default async (
   if (!ipAddress?.address) throw new ApolloError('Forbidden.', '403')
 
   try {
-    // Check if no Mailgun configuration in develop context.
+    // Check if no Mail configuration in develop context.
     const isDevelop =
-      !environment.mailgun && ['LOCAL', 'DEVELOP'].includes(environment.context)
+      !environment.mail && ['LOCAL', 'DEVELOP'].includes(environment.context)
 
     // Try to find email verification intents of the current user.
     const intentsCount = await prisma.$queryRaw`
@@ -38,8 +38,7 @@ export default async (
       WHERE "type" = 'EMAIL'
         AND "createdAt" >= (NOW() AT TIME ZONE 'UTC' - INTERVAL '1' HOUR)
         AND "expiresAt" > (NOW() AT TIME ZONE 'UTC')
-        AND ("userId" = ${user.id}
-
+        AND ("userId" = ${user.id})
     `.then((data: any) => data[0].count as number)
 
     // If at least 3 intents was already created and still not expired.
@@ -66,16 +65,17 @@ export default async (
 
     // If not in development mode, send the real email.
     if (!isDevelop) {
-      //   await sendEmail({
-      //     to: email,
-      //     subject: 'Confirm your email',
-      //     template: 'email_verification_by_link',
-      //     variables: {
-      //       GREETING: user.name || '',
-      //       VERIFICATION_CODE: refreshCode,
-      //       BASE_URL: requestOrigin
-      //     }
-      //   })
+      await sendEmail({
+        to: user.email,
+        template: 'forgot-password',
+        subject: `${process.env.APP_NAME} Password Reset`,
+        variables: {
+          token: refreshCode,
+          email: user.email,
+          to_name: user.name,
+          BASE_URL: requestOrigin
+        }
+      })
     }
 
     return !!intent
