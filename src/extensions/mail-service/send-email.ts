@@ -4,7 +4,7 @@ import { User } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
 import nodemailer from 'nodemailer'
 import URL from 'url-parse'
-import forgotPassword from './email-templates/forgot-password'
+import forgotPassword from '@extensions/mail-service/email-templates/forgot-password'
 interface GenerateEmailLink {
   email: string
   token: string
