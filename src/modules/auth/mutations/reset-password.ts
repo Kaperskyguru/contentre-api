@@ -31,7 +31,7 @@ export default async (
 
     // Check if no Mailgun configuration in develop context.
     const isDevelop =
-      !environment.mailgun && ['LOCAL', 'DEVELOP'].includes(environment.context)
+      !environment.mail && ['LOCAL', 'DEVELOP'].includes(environment.context)
 
     if (!isDevelop) {
       await sendEmail({
