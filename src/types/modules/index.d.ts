@@ -210,6 +210,7 @@ export type User = {
   phoneConfirmed: Scalars['Boolean'];
   phoneNumber?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Time'];
+  username?: Maybe<Scalars['String']>;
 };
 
 
@@ -379,6 +380,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   phoneConfirmed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   phoneNumber?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  username?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

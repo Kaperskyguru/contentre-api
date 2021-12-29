@@ -21,16 +21,15 @@ export default async (
   let user: DBUser | null = null
 
   try {
-    // Checking if user already exists, but did not finish the onboarding process
+    // Checking if user already exists, but did not verify email
     user = await prisma.user.findUnique({ where: { email: input.email } })
     let token: string
 
     if (user && !user.emailConfirmed) {
       token = setJWT(user, setCookies)
-
       context.user = token ? await getUserByToken(token) : null
       sendEmailCode(_parent, { email: input.email }, context)
-      return user
+      throw new ApolloError('verify email')
     }
     user = null
 
@@ -45,22 +44,12 @@ export default async (
     })
 
     token = setJWT(user, setCookies)
-
-    if (!user.emailConfirmed) {
-      context.user = token ? await getUserByToken(token) : null
-      sendEmailCode(_parent, { email: input.email }, context)
-    }
+    context.user = token ? await getUserByToken(token) : null
+    sendEmailCode(_parent, { email: input.email }, context)
 
     return getUser(user)
   } catch (e) {
     logError('createUser %o', { input, ipAddress, requestURL, error: e })
-
-    // If an error occurred and our DB user was already created, delete it.
-    if (user) {
-      await prisma.user.delete({
-        where: { email: user.email }
-      })
-    }
 
     const message = useErrorParser(e)
 
@@ -69,6 +58,12 @@ export default async (
       message === 'Request failed with status code 409'
     )
       throw new ApolloError('That email address is already registered.', '400')
+
+    if (message.includes('verify email'))
+      throw new ApolloError(
+        'Please check your inbox to verify your email',
+        '400'
+      )
 
     throw new ApolloError(message, e.code ?? '500', { sentryId })
   }

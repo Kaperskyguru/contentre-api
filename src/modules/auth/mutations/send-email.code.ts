@@ -66,17 +66,15 @@ export default async (
     // If not in development mode, send the real email.
     if (!isDevelop) {
       await sendEmail({
-        // to: email,
-        // subject: 'Confirm your email',
-        // template: 'email_verification_by_link',
-        // variables: {
-        //   GREETING: user.name || '',
-        //   VERIFICATION_CODE: refreshCode,
-        //   BASE_URL: requestOrigin
-        // }
-
-        user,
-        token: refreshCode
+        to: user.email,
+        template: 'forgot-password',
+        subject: `${process.env.APP_NAME} Password Reset`,
+        variables: {
+          token: refreshCode,
+          email: user.email,
+          to_name: user.name,
+          BASE_URL: requestOrigin
+        }
       })
     }
 

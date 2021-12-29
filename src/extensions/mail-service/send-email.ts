@@ -5,15 +5,17 @@ import { ApolloError } from 'apollo-server-core'
 import nodemailer from 'nodemailer'
 import URL from 'url-parse'
 import forgotPassword from './email-templates/forgot-password'
-
 interface GenerateEmailLink {
-  email: String
-  token: String
+  email: string
+  token: string
+  BASE_URL: string
 }
 
 interface SendEmail {
-  user: User
-  token: String
+  to: string
+  template: string
+  subject: string
+  variables?: any
 }
 
 interface MailOptions {
@@ -23,13 +25,29 @@ interface MailOptions {
   html: any
 }
 
-const generateEmailLink = ({ email, token }: GenerateEmailLink) => {
-  const url =
-    process.env.FRONTEND_URL + '/reset/?token=' + token + '&email=' + email
+interface SelectTemplate {
+  template: string
+  variables?: any
+}
+
+const generateEmailLink = ({ email, token, BASE_URL }: GenerateEmailLink) => {
+  const url = BASE_URL + '/reset/?token=' + token
   return URL(url).href
 }
 
-export default async ({ user, token }: SendEmail) => {
+const selectTemplate = ({ template, variables }: SelectTemplate) => {
+  switch (template) {
+    case 'forgot-password':
+      variables.link = generateEmailLink({
+        email: variables.email,
+        token: variables.token,
+        BASE_URL: variables.BASE_URL
+      })
+      return forgotPassword(variables)
+  }
+}
+
+export default async ({ to, subject, template, variables }: SendEmail) => {
   new Promise((resolve, reject) => {
     const transporter = nodemailer.createTransport({
       host: environment.mail?.host || 'smtp.mailtrap.io',
@@ -40,17 +58,12 @@ export default async ({ user, token }: SendEmail) => {
       }
     })
 
-    const message = {
-      to_name: user.name,
-      link: generateEmailLink({ email: user.email, token })
-    }
-
     // create message
     var mailOptions: MailOptions = {
       from: `"${process.env.APP_NAME}" <no-reply@contentre.io>`,
-      to: user.email,
-      subject: `${process.env.APP_NAME} Password Reset`,
-      html: forgotPassword(message)
+      to,
+      subject,
+      html: selectTemplate({ template, variables })
     }
 
     transporter.sendMail(mailOptions, (error, info) => {
