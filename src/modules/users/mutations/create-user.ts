@@ -23,12 +23,9 @@ export default async (
   try {
     // Checking if user already exists, but did not verify email
     user = await prisma.user.findUnique({ where: { email: input.email } })
-    let token: string
 
     if (user && !user.emailConfirmed) {
-      token = setJWT(user, setCookies)
-      context.user = token ? await getUserByToken(token) : null
-      sendEmailCode(_parent, { email: input.email }, context)
+      setJWT(user, setCookies)
       throw new ApolloError('verify email')
     }
     user = null
@@ -43,9 +40,7 @@ export default async (
       }
     })
 
-    token = setJWT(user, setCookies)
-    context.user = token ? await getUserByToken(token) : null
-    sendEmailCode(_parent, { email: input.email }, context)
+    setJWT(user, setCookies)
 
     return getUser(user)
   } catch (e) {
