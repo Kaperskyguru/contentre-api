@@ -27,8 +27,8 @@ export default async (
     if (!user) throw new Error('authentication failed')
 
     if (!user.emailConfirmed) {
-      sendEmailCode(_parent, { email }, context)
-      throw new Error('confirm email')
+      // sendEmailCode(_parent, { email }, context)
+      // throw new Error('confirm email')
     }
 
     if (password) {
@@ -61,7 +61,7 @@ export default async (
       }
     })
 
-    await prisma.$executeRaw`UPDATE "User" SET "lastActivityAt" = CURRENT_TIMESTAMP WHERE "email" = '${email}'`
+    await prisma.$executeRaw`UPDATE "User" SET "lastActivityAt" = CURRENT_TIMESTAMP WHERE "email" = ${email}`
 
     const updatedUser = await prisma.user.findUnique({
       where: { email }
@@ -75,14 +75,14 @@ export default async (
       updatedUser.phoneNumber
     ) {
       // Call the mutation to send the phone verification code.
-      sendPhoneCode(
-        _parent,
-        {
-          phoneCode: updatedUser.phoneCode,
-          phoneNumber: updatedUser.phoneNumber
-        },
-        { ...context, user: updatedUser }
-      )
+      // sendPhoneCode(
+      //   _parent,
+      //   {
+      //     phoneCode: updatedUser.phoneCode,
+      //     phoneNumber: updatedUser.phoneNumber
+      //   },
+      //   { ...context, user: updatedUser }
+      // )
     }
 
     //   await clearLoginAttempts(email, context)

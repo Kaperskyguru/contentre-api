@@ -22,8 +22,10 @@ export type Scalars = {
 export type Client = {
   __typename?: 'Client';
   authorsLink?: Maybe<Scalars['String']>;
+  createdAt: Scalars['Time'];
   id?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  updatedAt: Scalars['Time'];
   website?: Maybe<Scalars['String']>;
 };
 
@@ -31,10 +33,42 @@ export type ClientFiltersInput = {
   terms?: InputMaybe<Scalars['String']>;
 };
 
+export type Content = {
+  __typename?: 'Content';
+  client?: Maybe<Client>;
+  content?: Maybe<Scalars['String']>;
+  createdAt: Scalars['Time'];
+  excerpt: Scalars['String'];
+  featuredImage?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  lastUpdated?: Maybe<Scalars['Time']>;
+  tags?: Maybe<Array<Scalars['String']>>;
+  title: Scalars['String'];
+  topics?: Maybe<Array<Scalars['String']>>;
+  type?: Maybe<ContentType>;
+  updatedAt: Scalars['Time'];
+  url: Scalars['String'];
+  visibility: VisibilityType;
+};
+
+export type ContentFiltersInput = {
+  terms?: InputMaybe<Scalars['String']>;
+};
+
+export type ContentType =
+  | 'AUDIO'
+  | 'TEXT'
+  | 'VIDEO';
+
 export type CreateClientInput = {
   authorsLink?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   website?: InputMaybe<Scalars['String']>;
+};
+
+export type CreateContentInput = {
+  clientId: Scalars['ID'];
+  url?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateUserInput = {
@@ -54,6 +88,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   changePassword: User;
   createClient: Client;
+  createContent?: Maybe<Content>;
   createUser: User;
   deleteClient: Scalars['Boolean'];
   deleteUser: Scalars['Boolean'];
@@ -81,6 +116,11 @@ export type MutationChangePasswordArgs = {
 
 export type MutationCreateClientArgs = {
   input: CreateClientInput;
+};
+
+
+export type MutationCreateContentArgs = {
+  input: CreateContentInput;
 };
 
 
@@ -157,6 +197,8 @@ export type Query = {
   findUser?: Maybe<User>;
   getClient: Client;
   getClients: Array<Client>;
+  getContent: Content;
+  getContents: Array<Content>;
   getCurrentUser?: Maybe<User>;
   getVersion: Scalars['String'];
 };
@@ -178,16 +220,24 @@ export type QueryGetClientsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
 };
 
+
+export type QueryGetContentArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryGetContentsArgs = {
+  filters?: InputMaybe<ContentFiltersInput>;
+  size?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+};
+
 export type RegisterUserInput = {
   email: Scalars['String'];
   name: Scalars['String'];
   password: Scalars['String'];
   username?: InputMaybe<Scalars['String']>;
 };
-
-export type SignedUpThrough =
-  | 'AIRBANK'
-  | 'GOOGLE';
 
 export type UpdateClientInput = {
   authorsLink?: InputMaybe<Scalars['String']>;
@@ -209,6 +259,11 @@ export type User = {
   phoneNumber?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Time'];
 };
+
+export type VisibilityType =
+  | 'DELETED'
+  | 'DRAFT'
+  | 'PUBLISHED';
 
 
 
@@ -282,7 +337,11 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Client: ResolverTypeWrapper<Client>;
   ClientFiltersInput: ClientFiltersInput;
+  Content: ResolverTypeWrapper<Content>;
+  ContentFiltersInput: ContentFiltersInput;
+  ContentType: ContentType;
   CreateClientInput: CreateClientInput;
+  CreateContentInput: CreateContentInput;
   CreateUserInput: CreateUserInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -291,11 +350,11 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   RegisterUserInput: RegisterUserInput;
-  SignedUpThrough: SignedUpThrough;
   String: ResolverTypeWrapper<Scalars['String']>;
   Time: ResolverTypeWrapper<Scalars['Time']>;
   UpdateClientInput: UpdateClientInput;
   User: ResolverTypeWrapper<User>;
+  VisibilityType: VisibilityType;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -303,7 +362,10 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   Client: Client;
   ClientFiltersInput: ClientFiltersInput;
+  Content: Content;
+  ContentFiltersInput: ContentFiltersInput;
   CreateClientInput: CreateClientInput;
+  CreateContentInput: CreateContentInput;
   CreateUserInput: CreateUserInput;
   ID: Scalars['ID'];
   Int: Scalars['Int'];
@@ -320,9 +382,29 @@ export type ResolversParentTypes = {
 
 export type ClientResolvers<ContextType = any, ParentType extends ResolversParentTypes['Client'] = ResolversParentTypes['Client']> = {
   authorsLink?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ContentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Content'] = ResolversParentTypes['Content']> = {
+  client?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType>;
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  excerpt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  featuredImage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  lastUpdated?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>;
+  tags?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  topics?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  type?: Resolver<Maybe<ResolversTypes['ContentType']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  visibility?: Resolver<ResolversTypes['VisibilityType'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -333,6 +415,7 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   changePassword?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'oldPassword'>>;
   createClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationCreateClientArgs, 'input'>>;
+  createContent?: Resolver<Maybe<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<MutationCreateContentArgs, 'input'>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'input'>>;
   deleteClient?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteClientArgs, 'id'>>;
   deleteUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -355,6 +438,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   findUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryFindUserArgs, 'uuid'>>;
   getClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<QueryGetClientArgs, 'id'>>;
   getClients?: Resolver<Array<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<QueryGetClientsArgs, never>>;
+  getContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<QueryGetContentArgs, 'id'>>;
+  getContents?: Resolver<Array<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<QueryGetContentsArgs, never>>;
   getCurrentUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   getVersion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
@@ -380,6 +465,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 
 export type Resolvers<ContextType = any> = {
   Client?: ClientResolvers<ContextType>;
+  Content?: ContentResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;

@@ -1,6 +1,6 @@
 import { Resolvers } from '@/types/modules'
 import { gql } from 'apollo-server-core'
-// import createUser from './mutations/create-user'
+import createContent from './mutations/create-content'
 // import userAvatarURL from './fields/user-avatar-url'
 // import getCurrentUser from './queries/get-current-user'
 
@@ -8,11 +8,11 @@ const typeDefs = gql`
   type Content {
     id: ID!
     title: String!
-    client: [Client!]!
-    visibility: Boolean!
+    client: Client
+    visibility: VisibilityType!
     lastUpdated: Time
-    link: String!
-    tags: [Tags!]
+    url: String!
+    tags: [String!]
     topics: [String!]
     type: ContentType
     excerpt: String!
@@ -22,13 +22,37 @@ const typeDefs = gql`
     updatedAt: Time!
   }
 
+  enum VisibilityType {
+    PUBLISHED
+    DRAFT
+    DELETED
+  }
+
   enum ContentType {
     TEXT
     AUDIO
     VIDEO
   }
-`
 
+  input CreateContentInput {
+    url: String
+    clientId: ID!
+  }
+
+  input ContentFiltersInput {
+    terms: String
+  }
+
+  extend type Query {
+    getContents(size: Int, skip: Int, filters: ContentFiltersInput): [Content!]!
+    getContent(id: ID!): Content!
+  }
+
+  extend type Mutation {
+    createContent(input: CreateContentInput!): Content
+  }
+`
+// [Tags!]
 const resolvers: Resolvers = {
   Query: {
     // findUser,
@@ -36,7 +60,7 @@ const resolvers: Resolvers = {
   },
 
   Mutation: {
-    // createUser
+    createContent
     // deleteUser,
     // updateUser,
     // forceUserToVerifyPhoneNumber,
