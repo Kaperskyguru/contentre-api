@@ -2,6 +2,7 @@ import { Resolvers } from '@/types/modules'
 import { gql } from 'apollo-server-core'
 import createContent from './mutations/create-content'
 import deleteContent from './mutations/delete-content'
+import updateContent from './mutations/update-content'
 // import userAvatarURL from './fields/user-avatar-url'
 // import getCurrentUser from './queries/get-current-user'
 
@@ -40,6 +41,11 @@ const typeDefs = gql`
     clientId: ID!
   }
 
+  input UpdateContentInput {
+    title: String
+    clientId: ID
+  }
+
   input ContentFiltersInput {
     terms: String
   }
@@ -52,6 +58,7 @@ const typeDefs = gql`
   extend type Mutation {
     createContent(input: CreateContentInput!): Content
     deleteContent(id: ID!): Boolean!
+    updateContent(id: ID!, input: UpdateContentInput!): Content!
   }
 `
 // [Tags!]
@@ -63,8 +70,8 @@ const resolvers: Resolvers = {
 
   Mutation: {
     createContent,
-    deleteContent
-    // updateUser,
+    deleteContent,
+    updateContent
     // forceUserToVerifyPhoneNumber,
     // userSwitchedLanguage
   }
