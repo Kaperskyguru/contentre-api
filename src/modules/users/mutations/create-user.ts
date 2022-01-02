@@ -1,7 +1,6 @@
 import { hashPassword } from '@/helpers/passwords'
-import sendEmailCode from '@/modules/auth/mutations/send-email.code'
 import { useErrorParser } from '@helpers'
-import { getUser, getUserByToken } from '@helpers/getUser'
+import { getUser } from '@helpers/getUser'
 import { logError, logMutation } from '@helpers/logger'
 import { setJWT } from '@helpers/setJWT'
 import { MutationCreateUserArgs, User } from '@modules-types'

@@ -26,11 +26,6 @@ export default async (
 
     if (!user) throw new Error('authentication failed')
 
-    if (!user.emailConfirmed) {
-      sendEmailCode(_parent, { email }, context)
-      throw new Error('confirm email')
-    }
-
     if (password) {
       const passwordMatch = await comparePassword({
         password,
