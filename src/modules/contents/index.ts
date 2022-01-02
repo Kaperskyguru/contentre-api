@@ -3,8 +3,8 @@ import { gql } from 'apollo-server-core'
 import createContent from './mutations/create-content'
 import deleteContent from './mutations/delete-content'
 import updateContent from './mutations/update-content'
-// import userAvatarURL from './fields/user-avatar-url'
-// import getCurrentUser from './queries/get-current-user'
+import getContent from './queries/get-content'
+import getContents from './queries/get-contents'
 
 const typeDefs = gql`
   type Content {
@@ -16,7 +16,7 @@ const typeDefs = gql`
     url: String!
     tags: [String!]
     topics: [String!]
-    type: ContentType
+    type: ContentType!
     excerpt: String!
     content: String
     featuredImage: String
@@ -64,16 +64,14 @@ const typeDefs = gql`
 // [Tags!]
 const resolvers: Resolvers = {
   Query: {
-    // findUser,
-    // getCurrentUser
+    getContents,
+    getContent
   },
 
   Mutation: {
     createContent,
     deleteContent,
     updateContent
-    // forceUserToVerifyPhoneNumber,
-    // userSwitchedLanguage
   }
 }
 
