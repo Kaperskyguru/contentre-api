@@ -4,6 +4,7 @@ import { ApolloError } from 'apollo-server-errors'
 import urlMetadata from 'url-metadata'
 interface Metadata {
   title: string
+  url: string
   excerpt: string
   tags?: string[]
 }
@@ -21,6 +22,7 @@ export default async (url: string): Promise<Metadata> => {
     const rawMetadata = await urlMetadata(url)
 
     const metadata = {
+      url: rawMetadata['og:url'] ?? rawMetadata.url,
       title: rawMetadata.title,
       excerpt: rawMetadata.description,
       tags: generateTags(rawMetadata)

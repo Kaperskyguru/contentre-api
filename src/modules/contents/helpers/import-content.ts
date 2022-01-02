@@ -15,6 +15,11 @@ export const ImportContent = async (
 
   if (!user) throw new ApolloError('You must be logged in.', '401')
 
+  //preparing URL
+  if (url.trim().charAt(url.length - 1) === '/') {
+    url = url.trim().substring(0, url.length - 1)
+  }
+
   // Checking if content already exists
   const content = await prisma.content.findFirst({
     where: { url, userId: user.id }
