@@ -91,6 +91,7 @@ export type Mutation = {
   createContent?: Maybe<Content>;
   createUser: User;
   deleteClient: Scalars['Boolean'];
+  deleteContent: Scalars['Boolean'];
   deleteUser: Scalars['Boolean'];
   forceUserToVerifyPhoneNumber: Scalars['Boolean'];
   loginUser: User;
@@ -130,6 +131,11 @@ export type MutationCreateUserArgs = {
 
 
 export type MutationDeleteClientArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteContentArgs = {
   id: Scalars['ID'];
 };
 
@@ -419,6 +425,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createContent?: Resolver<Maybe<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<MutationCreateContentArgs, 'input'>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'input'>>;
   deleteClient?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteClientArgs, 'id'>>;
+  deleteContent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteContentArgs, 'id'>>;
   deleteUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   forceUserToVerifyPhoneNumber?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationForceUserToVerifyPhoneNumberArgs, 'token' | 'userId'>>;
   loginUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'data'>>;
