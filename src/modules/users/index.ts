@@ -9,6 +9,7 @@ const typeDefs = gql`
     id: ID!
     email: String!
     name: String!
+    username: String
     phoneCode: String
     phoneNumber: String
     avatarURL: String
