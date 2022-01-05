@@ -155,16 +155,11 @@ export type MutationUsePhoneCodeArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  findUser?: Maybe<User>;
   getClient: Client;
   getClients: Array<Client>;
   getCurrentUser?: Maybe<User>;
+  getUser: User;
   getVersion: Scalars['String'];
-};
-
-
-export type QueryFindUserArgs = {
-  uuid: Scalars['String'];
 };
 
 
@@ -179,6 +174,11 @@ export type QueryGetClientsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
 };
 
+
+export type QueryGetUserArgs = {
+  uuid: Scalars['String'];
+};
+
 export type RegisterUserInput = {
   email: Scalars['String'];
   name: Scalars['String'];
@@ -187,7 +187,7 @@ export type RegisterUserInput = {
 };
 
 export type SignedUpThrough =
-  | 'AIRBANK'
+  | 'CONTENTRE'
   | 'GOOGLE';
 
 export type UpdateClientInput = {
@@ -368,10 +368,10 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  findUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryFindUserArgs, 'uuid'>>;
   getClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<QueryGetClientArgs, 'id'>>;
   getClients?: Resolver<Array<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<QueryGetClientsArgs, never>>;
   getCurrentUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  getUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryGetUserArgs, 'uuid'>>;
   getVersion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 

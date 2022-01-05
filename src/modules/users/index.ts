@@ -5,10 +5,11 @@ import userAvatarURL from './fields/user-avatar-url'
 import getCurrentUser from './queries/get-current-user'
 import updateUser from './mutations/update-user'
 import deleteUser from './mutations/deleteUser'
+import getUser from './queries/getUser'
 
 const typeDefs = gql`
   enum SignedUpThrough {
-    AIRBANK
+    CONTENTRE
     GOOGLE
   }
 
@@ -44,7 +45,7 @@ const typeDefs = gql`
   }
 
   extend type Query {
-    findUser(uuid: String!): User
+    getUser(uuid: String!): User!
     getCurrentUser: User
   }
 
@@ -59,7 +60,7 @@ const typeDefs = gql`
 
 const resolvers: Resolvers = {
   Query: {
-    // findUser,
+    getUser,
     getCurrentUser
   },
 
