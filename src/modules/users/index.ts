@@ -3,10 +3,13 @@ import { gql } from 'apollo-server-core'
 import createUser from './mutations/create-user'
 import userAvatarURL from './fields/user-avatar-url'
 import getCurrentUser from './queries/get-current-user'
+import updateUser from './mutations/update-user'
+import deleteUser from './mutations/deleteUser'
+import getUser from './queries/getUser'
 
 const typeDefs = gql`
   enum SignedUpThrough {
-    AIRBANK
+    CONTENTRE
     GOOGLE
   }
 
@@ -21,6 +24,7 @@ const typeDefs = gql`
     createdAt: Time!
     updatedAt: Time!
     lastActivityAt: Time!
+    clients: [Client!]
   }
 
   input CreateUserInput {
@@ -30,16 +34,26 @@ const typeDefs = gql`
     username: String!
   }
 
+  input UpdateUserInput {
+    name: String
+    jobTitle: String
+    homeAddress: String
+    phoneNumber: String
+    bio: String
+    portfolio: String
+    email: String
+    avatarURL: String
+  }
+
   extend type Query {
-    findUser(uuid: String!): User
+    getUser(uuid: String!): User!
     getCurrentUser: User
   }
 
   extend type Mutation {
     createUser(input: CreateUserInput!): User!
-    deleteUser: Boolean!
-    forceUserToVerifyPhoneNumber(token: String!, userId: String!): Boolean!
-    userSwitchedLanguage(newLanguage: String!): Boolean!
+    deleteUser(feedback: String, oldPassword: String!): Boolean!
+    updateUser(input: UpdateUserInput!): User!
   }
 `
 // isPasswordSet: Boolean
@@ -47,16 +61,14 @@ const typeDefs = gql`
 
 const resolvers: Resolvers = {
   Query: {
-    // findUser,
+    getUser,
     getCurrentUser
   },
 
   Mutation: {
-    createUser
-    // deleteUser,
-    // updateUser,
-    // forceUserToVerifyPhoneNumber,
-    // userSwitchedLanguage
+    createUser,
+    deleteUser,
+    updateUser
   },
 
   User: {
