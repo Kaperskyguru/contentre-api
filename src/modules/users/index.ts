@@ -4,7 +4,7 @@ import createUser from './mutations/create-user'
 import userAvatarURL from './fields/user-avatar-url'
 import getCurrentUser from './queries/get-current-user'
 import updateUser from './mutations/update-user'
-import deleteUser from './mutations/deleteUser'
+import deleteUser from './mutations/delete-user'
 import getUser from './queries/getUser'
 
 const typeDefs = gql`
