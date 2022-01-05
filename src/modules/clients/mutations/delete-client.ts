@@ -9,7 +9,7 @@ export default async (
   { id }: MutationDeleteClientArgs,
   { user, sentryId, prisma }: Context & Required<Context>
 ): Promise<boolean> => {
-  logMutation('deleteCategory %o', user)
+  logMutation('deleteClient %o', user)
 
   try {
     // User must be logged in before performing the operation.
@@ -33,17 +33,11 @@ export default async (
       throw new Error('unauthorized')
     }
 
-    const result = await prisma.$transaction([
-      prisma.client.delete({
-        where: { id }
-      })
-    ])
-
-    const clientDelete = result[result.length - 2]
-
-    return !!clientDelete
+    return !!(await prisma.client.delete({
+      where: { id }
+    }))
   } catch (e) {
-    logError('deleteCategory %o', e)
+    logError('deleteClient %o', e)
 
     const message = useErrorParser(e)
     throw new ApolloError(message, e.code ?? '500', { sentryId })

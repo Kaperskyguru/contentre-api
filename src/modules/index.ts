@@ -6,6 +6,7 @@ import GraphQLJSON from 'graphql-type-json'
 import auth from './auth'
 import users from './users'
 import clients from './clients'
+import contents from './contents'
 
 const typeDefs = gql`
   scalar Time
@@ -40,7 +41,7 @@ const schema = makeExecutableSchema({
     clients.typeDefs,
     //   accounts.typeDefs,
     auth.typeDefs,
-    //   consents.typeDefs,
+    contents.typeDefs,
     //   companies.typeDefs,
     //   categories.typeDefs,
     //   institutions.typeDefs,
@@ -58,7 +59,7 @@ const schema = makeExecutableSchema({
     clients.resolvers,
     //   accounts.resolvers,
     auth.resolvers,
-    //   consents.resolvers,
+    contents.resolvers,
     //   companies.resolvers,
     //   categories.resolvers,
     //   institutions.resolvers,

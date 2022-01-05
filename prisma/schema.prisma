@@ -9,25 +9,30 @@ generator client {
 }
 
 model User {
-  id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  email              String               @unique
-  name               String               @db.VarChar(100)
-  username           String?              @db.VarChar(60)
-  password           String               @db.VarChar(60)
-  emailConfirmed     Boolean              @default(false)
-  phoneCode          String?              @db.VarChar(5)
-  phoneNumber        String?              @db.VarChar(15)
-  phoneConfirmed     Boolean              @default(false)
-  avatarURL          String?              @db.VarChar(2048)
-  jobTitle           String?              @db.VarChar(225)
-  homeAddress        String?              @db.VarChar(225)
-  bio                String?              @db.VarChar(225)
-  portfolio          String?              @db.VarChar(225)
-  createdAt          DateTime             @default(now()) @db.Timestamp(6)
-  updatedAt          DateTime             @default(now()) @updatedAt @db.Timestamp(6)
-  lastActivityAt     DateTime             @default(now()) @db.Timestamp(6)
-  VerificationIntent VerificationIntent[] @relation("UserVerificationIntent")
-  Client             Client[]             @relation("UserClient")
+  id                  String               @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  email               String               @unique
+  name                String               @db.VarChar(100)
+  username            String?              @db.VarChar(60)
+  password            String?              @db.VarChar(60)
+  firstname           String?              @db.VarChar(35)
+  lastname            String?              @db.VarChar(35)
+  jobTitle            String?              @db.VarChar(60)
+  homeAddress         String?              @db.VarChar(2048)
+  bio                 String?              @db.VarChar(2048)
+  skype               String?              @db.VarChar(35)
+  portfolio           String?              @db.VarChar(2048)
+  emailConfirmed      Boolean              @default(false)
+  phoneCode           String?              @db.VarChar(5)
+  phoneNumber         String?              @db.VarChar(15)
+  phoneConfirmed      Boolean              @default(false)
+  avatarURL           String?              @db.VarChar(2048)
+  createdAt           DateTime             @default(now()) @db.Timestamp(6)
+  updatedAt           DateTime             @default(now()) @updatedAt @db.Timestamp(6)
+  lastActivityAt      DateTime             @default(now()) @db.Timestamp(6)
+  verificationIntents VerificationIntent[] @relation("UserVerificationIntent")
+  clients             Client[]             @relation("UserClient")
+  contents            Content[]            @relation("UserContent")
+  socials             Social[]             @relation("SocialUser")
 }
 
 model VerificationIntent {
@@ -47,12 +52,77 @@ enum VerificationIntentType {
 }
 
 model Client {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  name        String   @db.VarChar(60)
-  website     String?  @db.VarChar(2048)
-  userId      String   @db.Char(36)
-  user        User     @relation("UserClient", fields: [userId], references: [id])
-  authorsLink String?  @db.VarChar(2048)
-  createdAt   DateTime @default(now()) @db.Timestamp(6)
-  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp(6)
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name      String    @db.VarChar(60)
+  website   String?   @db.VarChar(2048)
+  userId    String    @db.Char(36)
+  user      User      @relation("UserClient", fields: [userId], references: [id])
+  profile   Profile?  @relation("ProfileClient", fields: [profileId], references: [id])
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @default(now()) @updatedAt @db.Timestamp(6)
+  contents  Content[] @relation("ClientContent")
+  profileId String?   @db.Char(36)
+}
+
+model Content {
+  id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  title         String         @db.VarChar(2048)
+  clientId      String         @db.Char(36)
+  client        Client         @relation("ClientContent", fields: [clientId], references: [id])
+  userId        String         @db.Char(36)
+  user          User           @relation("UserContent", fields: [userId], references: [id])
+  visibility    VisibilityType @default(PUBLISHED)
+  lastUpdated   DateTime       @default(now()) @db.Timestamp(6)
+  url           String         @db.VarChar(2048)
+  type          ContentType    @default(TEXT)
+  excerpt       String         @db.VarChar(2048)
+  content       String?        @db.Text
+  featuredImage String?        @db.VarChar(2048)
+  createdAt     DateTime       @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime       @default(now()) @updatedAt @db.Timestamp(6)
+  topics        Topic[]        @relation("ContentTopic")
+  tags          String[]
+
+  @@index([clientId, userId])
+}
+
+enum VisibilityType {
+  PUBLISHED
+  DRAFT
+  DELETED
+}
+
+enum ContentType {
+  TEXT
+  AUDIO
+  VIDEO
+}
+
+model Tag {
+  id   String @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name String @db.VarChar(120)
+}
+
+model Topic {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name      String   @db.VarChar(120)
+  content   Content? @relation("ContentTopic", fields: [contentId], references: [id])
+  contentId String?  @db.Char(36)
+}
+
+model Profile {
+  id      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name    String   @db.VarChar(120)
+  link    String   @db.VarChar(2048)
+  avatar  String?  @db.VarChar(2048)
+  clients Client[] @relation("ProfileClient")
+}
+
+model Social {
+  id     String  @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name   String  @db.VarChar(120)
+  link   String  @db.VarChar(2048)
+  icon   String? @db.VarChar(2048)
+  user   User    @relation("SocialUser", fields: [userId], references: [id])
+  userId String  @db.Char(36)
 }

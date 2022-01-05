@@ -4,6 +4,7 @@ import createClient from './mutations/create-client'
 import updateClient from './mutations/update-client'
 import getClient from './queries/get-client'
 import getClients from './queries/get-clients'
+import deleteClient from './mutations/delete-client'
 
 const typeDefs = gql`
   type Client {
@@ -50,7 +51,8 @@ const resolvers: Resolvers = {
 
   Mutation: {
     createClient,
-    updateClient
+    updateClient,
+    deleteClient
   }
 }
 export default { typeDefs, resolvers }
