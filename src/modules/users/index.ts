@@ -3,6 +3,7 @@ import { gql } from 'apollo-server-core'
 import createUser from './mutations/create-user'
 import userAvatarURL from './fields/user-avatar-url'
 import getCurrentUser from './queries/get-current-user'
+import updateUser from './mutations/update-user'
 
 const typeDefs = gql`
   enum SignedUpThrough {
@@ -30,6 +31,17 @@ const typeDefs = gql`
     username: String!
   }
 
+  input UpdateUserInput {
+    name: String
+    jobTitle: String
+    homeAddress: String
+    phoneNumber: String
+    bio: String
+    portfolio: String
+    email: String
+    avatarURL: String
+  }
+
   extend type Query {
     findUser(uuid: String!): User
     getCurrentUser: User
@@ -38,8 +50,7 @@ const typeDefs = gql`
   extend type Mutation {
     createUser(input: CreateUserInput!): User!
     deleteUser: Boolean!
-    forceUserToVerifyPhoneNumber(token: String!, userId: String!): Boolean!
-    userSwitchedLanguage(newLanguage: String!): Boolean!
+    updateUser(input: UpdateUserInput!): User!
   }
 `
 // isPasswordSet: Boolean
@@ -52,9 +63,9 @@ const resolvers: Resolvers = {
   },
 
   Mutation: {
-    createUser
+    createUser,
     // deleteUser,
-    // updateUser,
+    updateUser
     // forceUserToVerifyPhoneNumber,
     // userSwitchedLanguage
   },
