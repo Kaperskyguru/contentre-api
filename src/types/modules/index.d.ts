@@ -61,14 +61,19 @@ export type ContentType =
   | 'VIDEO';
 
 export type CreateClientInput = {
-  authorsLink?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
+  profile?: InputMaybe<CreateProfileInput>;
   website?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateContentInput = {
   clientId: Scalars['ID'];
   url?: InputMaybe<Scalars['String']>;
+};
+
+export type CreateProfileInput = {
+  profileAvatar?: InputMaybe<Scalars['String']>;
+  profileLink: Scalars['String'];
 };
 
 export type CreateUserInput = {
@@ -256,8 +261,8 @@ export type SignedUpThrough =
   | 'GOOGLE';
 
 export type UpdateClientInput = {
-  authorsLink: Scalars['String'];
   name?: InputMaybe<Scalars['String']>;
+  profileId?: InputMaybe<Scalars['String']>;
   website?: InputMaybe<Scalars['String']>;
 };
 
@@ -376,6 +381,7 @@ export type ResolversTypes = {
   ContentType: ContentType;
   CreateClientInput: CreateClientInput;
   CreateContentInput: CreateContentInput;
+  CreateProfileInput: CreateProfileInput;
   CreateUserInput: CreateUserInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -403,6 +409,7 @@ export type ResolversParentTypes = {
   ContentFiltersInput: ContentFiltersInput;
   CreateClientInput: CreateClientInput;
   CreateContentInput: CreateContentInput;
+  CreateProfileInput: CreateProfileInput;
   CreateUserInput: CreateUserInput;
   ID: Scalars['ID'];
   Int: Scalars['Int'];
