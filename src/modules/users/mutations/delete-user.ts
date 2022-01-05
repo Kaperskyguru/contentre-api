@@ -22,7 +22,7 @@ export default async (
 
     const passwordCheck = await comparePassword({
       password: oldPassword,
-      hashed: user.password
+      hashed: user.password!
     })
 
     if (!passwordCheck) throw new Error('no match')
