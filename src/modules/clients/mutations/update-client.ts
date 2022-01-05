@@ -16,7 +16,7 @@ export default async (
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
     // Extract fields from the mutation input.
-    const { name, website, authorsLink } = input
+    const { name, website, profileId } = input
 
     // Check for required arguments not provided.
     if (!id || !name) {
@@ -27,23 +27,22 @@ export default async (
       where: { id }
     })
 
-    if (!client) {
-      throw new ApolloError('client not found', '404')
-    }
+    if (!client) throw new ApolloError('client not found', '404')
 
     // Check if the transaction to delete is not from the current company.
     if (client.userId !== user.id) {
       throw new Error('unauthorized')
     }
 
+    const data: Record<string, unknown> = {}
+    if (name !== undefined) data.name = name
+    if (website !== undefined) data.website = website
+    if (profileId !== undefined) data.profileId = profileId
+
     // Finally update the category.
     return await prisma.client.update({
       where: { id },
-      data: {
-        name,
-        website,
-        authorsLink
-      }
+      data
     })
   } catch (e) {
     logError('updateClient %o', e)

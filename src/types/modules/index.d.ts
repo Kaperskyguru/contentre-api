@@ -256,8 +256,8 @@ export type SignedUpThrough =
   | 'GOOGLE';
 
 export type UpdateClientInput = {
-  authorsLink: Scalars['String'];
   name?: InputMaybe<Scalars['String']>;
+  profileId?: InputMaybe<Scalars['String']>;
   website?: InputMaybe<Scalars['String']>;
 };
 
