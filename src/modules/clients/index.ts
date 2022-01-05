@@ -16,10 +16,15 @@ const typeDefs = gql`
     createdAt: Time!
   }
 
+  input CreateProfileInput {
+    profileLink: String!
+    profileAvatar: String
+  }
+
   input CreateClientInput {
     name: String!
     website: String
-    authorsLink: String
+    profile: CreateProfileInput
   }
 
   input ClientFiltersInput {
