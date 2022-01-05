@@ -24,6 +24,7 @@ const typeDefs = gql`
     createdAt: Time!
     updatedAt: Time!
     lastActivityAt: Time!
+    clients: [Client!]
   }
 
   input CreateUserInput {
