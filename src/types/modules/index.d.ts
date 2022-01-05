@@ -93,7 +93,6 @@ export type Mutation = {
   deleteClient: Scalars['Boolean'];
   deleteContent: Scalars['Boolean'];
   deleteUser: Scalars['Boolean'];
-  forceUserToVerifyPhoneNumber: Scalars['Boolean'];
   loginUser: User;
   logoutUser: Scalars['Boolean'];
   resetPassword: User;
@@ -102,10 +101,10 @@ export type Mutation = {
   sendPhoneCode: Scalars['Boolean'];
   updateClient: Client;
   updateContent: Content;
+  updateUser: User;
   useEmailCode: User;
   usePasswordResetCode: User;
   usePhoneCode: User;
-  userSwitchedLanguage: Scalars['Boolean'];
   version: Scalars['String'];
 };
 
@@ -141,9 +140,9 @@ export type MutationDeleteContentArgs = {
 };
 
 
-export type MutationForceUserToVerifyPhoneNumberArgs = {
-  token: Scalars['String'];
-  userId: Scalars['String'];
+export type MutationDeleteUserArgs = {
+  feedback?: InputMaybe<Scalars['String']>;
+  oldPassword: Scalars['String'];
 };
 
 
@@ -185,6 +184,11 @@ export type MutationUpdateContentArgs = {
 };
 
 
+export type MutationUpdateUserArgs = {
+  input: UpdateUserInput;
+};
+
+
 export type MutationUseEmailCodeArgs = {
   code: Scalars['String'];
 };
@@ -200,25 +204,15 @@ export type MutationUsePhoneCodeArgs = {
   code: Scalars['String'];
 };
 
-
-export type MutationUserSwitchedLanguageArgs = {
-  newLanguage: Scalars['String'];
-};
-
 export type Query = {
   __typename?: 'Query';
-  findUser?: Maybe<User>;
   getClient: Client;
   getClients: Array<Client>;
   getContent: Content;
   getContents: Array<Content>;
   getCurrentUser?: Maybe<User>;
+  getUser: User;
   getVersion: Scalars['String'];
-};
-
-
-export type QueryFindUserArgs = {
-  uuid: Scalars['String'];
 };
 
 
@@ -245,12 +239,21 @@ export type QueryGetContentsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
 };
 
+
+export type QueryGetUserArgs = {
+  uuid: Scalars['String'];
+};
+
 export type RegisterUserInput = {
   email: Scalars['String'];
   name: Scalars['String'];
   password: Scalars['String'];
   username?: InputMaybe<Scalars['String']>;
 };
+
+export type SignedUpThrough =
+  | 'CONTENTRE'
+  | 'GOOGLE';
 
 export type UpdateClientInput = {
   authorsLink: Scalars['String'];
@@ -263,9 +266,21 @@ export type UpdateContentInput = {
   title?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateUserInput = {
+  avatarURL?: InputMaybe<Scalars['String']>;
+  bio?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']>;
+  homeAddress?: InputMaybe<Scalars['String']>;
+  jobTitle?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  phoneNumber?: InputMaybe<Scalars['String']>;
+  portfolio?: InputMaybe<Scalars['String']>;
+};
+
 export type User = {
   __typename?: 'User';
   avatarURL?: Maybe<Scalars['String']>;
+  clients?: Maybe<Array<Client>>;
   createdAt: Scalars['Time'];
   email: Scalars['String'];
   emailConfirmed: Scalars['Boolean'];
@@ -369,10 +384,12 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   RegisterUserInput: RegisterUserInput;
+  SignedUpThrough: SignedUpThrough;
   String: ResolverTypeWrapper<Scalars['String']>;
   Time: ResolverTypeWrapper<Scalars['Time']>;
   UpdateClientInput: UpdateClientInput;
   UpdateContentInput: UpdateContentInput;
+  UpdateUserInput: UpdateUserInput;
   User: ResolverTypeWrapper<User>;
   VisibilityType: VisibilityType;
 };
@@ -398,6 +415,7 @@ export type ResolversParentTypes = {
   Time: Scalars['Time'];
   UpdateClientInput: UpdateClientInput;
   UpdateContentInput: UpdateContentInput;
+  UpdateUserInput: UpdateUserInput;
   User: User;
 };
 
@@ -440,8 +458,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'input'>>;
   deleteClient?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteClientArgs, 'id'>>;
   deleteContent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteContentArgs, 'id'>>;
-  deleteUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  forceUserToVerifyPhoneNumber?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationForceUserToVerifyPhoneNumberArgs, 'token' | 'userId'>>;
+  deleteUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'oldPassword'>>;
   loginUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'data'>>;
   logoutUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   resetPassword?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'newPassword'>>;
@@ -450,20 +467,20 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   sendPhoneCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendPhoneCodeArgs, 'phoneCode' | 'phoneNumber'>>;
   updateClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationUpdateClientArgs, 'id' | 'input'>>;
   updateContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<MutationUpdateContentArgs, 'id' | 'input'>>;
+  updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'input'>>;
   useEmailCode?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUseEmailCodeArgs, 'code'>>;
   usePasswordResetCode?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUsePasswordResetCodeArgs, 'code' | 'email'>>;
   usePhoneCode?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUsePhoneCodeArgs, 'code'>>;
-  userSwitchedLanguage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUserSwitchedLanguageArgs, 'newLanguage'>>;
   version?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  findUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryFindUserArgs, 'uuid'>>;
   getClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<QueryGetClientArgs, 'id'>>;
   getClients?: Resolver<Array<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<QueryGetClientsArgs, never>>;
   getContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<QueryGetContentArgs, 'id'>>;
   getContents?: Resolver<Array<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<QueryGetContentsArgs, never>>;
   getCurrentUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  getUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryGetUserArgs, 'uuid'>>;
   getVersion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
@@ -473,6 +490,7 @@ export interface TimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   avatarURL?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  clients?: Resolver<Maybe<Array<ResolversTypes['Client']>>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   emailConfirmed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
