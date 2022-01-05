@@ -4,6 +4,7 @@ import createUser from './mutations/create-user'
 import userAvatarURL from './fields/user-avatar-url'
 import getCurrentUser from './queries/get-current-user'
 import updateUser from './mutations/update-user'
+import deleteUser from './mutations/deleteUser'
 
 const typeDefs = gql`
   enum SignedUpThrough {
@@ -49,7 +50,7 @@ const typeDefs = gql`
 
   extend type Mutation {
     createUser(input: CreateUserInput!): User!
-    deleteUser: Boolean!
+    deleteUser(feedback: String, oldPassword: String!): Boolean!
     updateUser(input: UpdateUserInput!): User!
   }
 `
@@ -64,10 +65,8 @@ const resolvers: Resolvers = {
 
   Mutation: {
     createUser,
-    // deleteUser,
+    deleteUser,
     updateUser
-    // forceUserToVerifyPhoneNumber,
-    // userSwitchedLanguage
   },
 
   User: {

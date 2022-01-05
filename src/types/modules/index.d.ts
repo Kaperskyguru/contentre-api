@@ -95,6 +95,12 @@ export type MutationDeleteClientArgs = {
 };
 
 
+export type MutationDeleteUserArgs = {
+  feedback?: InputMaybe<Scalars['String']>;
+  oldPassword: Scalars['String'];
+};
+
+
 export type MutationLoginUserArgs = {
   data: LoginUserInput;
 };
@@ -346,7 +352,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationCreateClientArgs, 'input'>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'input'>>;
   deleteClient?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteClientArgs, 'id'>>;
-  deleteUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  deleteUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'oldPassword'>>;
   loginUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'data'>>;
   logoutUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   resetPassword?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'newPassword'>>;
