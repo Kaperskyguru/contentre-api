@@ -1,6 +1,7 @@
+import { useErrorParser } from '@/helpers'
 import { environment } from '@/helpers/environment'
 import { getUser } from '@/helpers/getUser'
-import { logMutation } from '@/helpers/logger'
+import { logError, logMutation } from '@/helpers/logger'
 import { comparePassword } from '@/helpers/passwords'
 import { MutationLoginUserArgs, User } from '@/types/modules'
 import { Context } from '@types'
@@ -84,6 +85,28 @@ export default async (
 
     return getUser(updatedUser)
   } catch (error) {
+    logError('loginUser %o', { input: data, ipAddress, requestURL, error })
+
+    const message = useErrorParser(error)
+
+    if (message === 'user already registered with Google account')
+      throw new ApolloError(
+        'Already registered with Google account. Please try again by clicking in the "Sign in with Google" button',
+        '400'
+      )
+
+    if (message === 'authentication failed')
+      throw new ApolloError(
+        'Incorrect email address or password. Please try again, or reset your password.',
+        '400'
+      )
+
+    if (message === 'login attempt exceeded') {
+      throw new ApolloError(
+        `Authentication failed. Please try again in some minutes`,
+        '400'
+      )
+    }
     throw new ApolloError(error.message, error.code ?? '500', { sentryId })
   }
 }
