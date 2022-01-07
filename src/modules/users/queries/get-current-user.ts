@@ -6,7 +6,7 @@ import { Context } from '@types'
 export default async (
   _parent: unknown,
   _args: unknown,
-  { user, prisma }: Context & Required<Context>
+  { user }: Context & Required<Context>
 ): Promise<User | null> => {
   logQuery('getCurrentUser %o', user)
 

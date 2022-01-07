@@ -110,6 +110,7 @@ export type Mutation = {
   useEmailCode: User;
   usePasswordResetCode: User;
   usePhoneCode: User;
+  verifyUsername?: Maybe<Scalars['Boolean']>;
   version: Scalars['String'];
 };
 
@@ -207,6 +208,11 @@ export type MutationUsePasswordResetCodeArgs = {
 
 export type MutationUsePhoneCodeArgs = {
   code: Scalars['String'];
+};
+
+
+export type MutationVerifyUsernameArgs = {
+  username: Scalars['String'];
 };
 
 export type Query = {
@@ -478,6 +484,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   useEmailCode?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUseEmailCodeArgs, 'code'>>;
   usePasswordResetCode?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUsePasswordResetCodeArgs, 'code' | 'email'>>;
   usePhoneCode?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUsePhoneCodeArgs, 'code'>>;
+  verifyUsername?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationVerifyUsernameArgs, 'username'>>;
   version?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
