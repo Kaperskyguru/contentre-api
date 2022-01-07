@@ -9,6 +9,7 @@ import usePasswordResetCode from './mutations/use-password-reset-code'
 import usePhoneCode from './mutations/use-phone-code'
 import verifyUsername from './mutations/verify-username'
 import sendEmailCode from './mutations/send-email-code'
+import sendPasswordResetCode from './mutations/send-password-reset-code'
 
 const typeDefs = gql`
   input LoginUserInput {
@@ -54,7 +55,8 @@ const resolvers: Resolvers = {
     usePasswordResetCode,
     usePhoneCode,
     verifyUsername,
-    sendEmailCode
+    sendEmailCode,
+    sendPasswordResetCode
   }
 }
 export default { typeDefs, resolvers }

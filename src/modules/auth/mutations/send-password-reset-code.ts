@@ -9,13 +9,14 @@ import { ApolloError } from 'apollo-server-core'
 export default async (
   _parent: unknown,
   input: MutationSendPasswordResetCodeArgs,
-  { sentryId, prisma, ipAddress, requestURL }: Context
+  { sentryId, prisma, ipAddress, requestURL, requestOrigin }: Context
 ): Promise<boolean> => {
   const { email } = input
   logMutation('sendPasswordResetCode %o', {
     input,
     ipAddress,
-    requestURL
+    requestURL,
+    requestOrigin
   })
 
   try {
@@ -27,7 +28,7 @@ export default async (
 
     // Check if no Mailgun configuration in develop context.
     const isDevelop =
-      !environment.mailgun && ['LOCAL', 'DEVELOP'].includes(environment.context)
+      !environment.mail && ['LOCAL', 'DEVELOP'].includes(environment.context)
 
     // Try to find phone verification intents of the current user.
     const intentsCount = await prisma.$queryRaw`
@@ -36,8 +37,7 @@ export default async (
     WHERE "type" = 'EMAIL'
       AND "createdAt" >= (NOW() AT TIME ZONE 'UTC' - INTERVAL '1' HOUR)
       AND "expiresAt" > (NOW() AT TIME ZONE 'UTC')
-      AND ("userId" = ${user.id}
-      OR "ipAddress" = ${ipAddress.address})
+      AND ("userId" = ${user.id})
   `.then((data: any) => data[0].count as number)
 
     // If at least 3 intents was already created and still not expired.
@@ -67,10 +67,12 @@ export default async (
       await sendEmail({
         to: email,
         subject: 'Password reset request',
-        template: 'password_recovery',
+        template: 'forgot-password',
         variables: {
-          FIRST_NAME: user.name,
-          VERIFICATION_CODE: refreshCode
+          token: refreshCode,
+          email: user.email,
+          to_name: user.name,
+          BASE_URL: requestOrigin
         }
       })
     }
@@ -86,9 +88,12 @@ export default async (
 
     const message = useErrorParser(e)
 
-    if (message === '3 intents limit' || message === 'user not found') {
-      return true
-    }
+    if (message === '3 intents limit')
+      throw new ApolloError(
+        'Maximum number of verification codes per hour reached.',
+        '403',
+        { handled: true }
+      )
 
     if (message === 'invalid email address')
       throw new ApolloError(
@@ -103,6 +108,9 @@ export default async (
         '400',
         { handled: true }
       )
+
+    if (message.includes('user not found'))
+      throw new ApolloError('User not found', '404', { handled: true })
 
     throw new ApolloError(message, e.code ?? '500', { sentryId })
   }
