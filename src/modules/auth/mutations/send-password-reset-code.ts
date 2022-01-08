@@ -69,7 +69,7 @@ export default async (
         subject: 'Password reset request',
         template: 'forgot-password',
         variables: {
-          token: refreshCode,
+          code: refreshCode,
           email: user.email,
           to_name: user.name,
           BASE_URL: requestOrigin

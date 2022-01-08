@@ -38,11 +38,12 @@ const generateEmailLink = ({ email, token, BASE_URL }: GenerateEmailLink) => {
 const selectTemplate = ({ template, variables }: SelectTemplate) => {
   switch (template) {
     case 'forgot-password':
-      variables.link = generateEmailLink({
-        email: variables.email,
-        token: variables.token,
-        BASE_URL: variables.BASE_URL
-      })
+      // variables.link = generateEmailLink({
+      //   email: variables.email,
+      //   token: variables.token,
+      //   BASE_URL: variables.BASE_URL
+      // })
+      // variables.code = variables.token
       return forgotPassword(variables)
   }
 }

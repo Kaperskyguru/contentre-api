@@ -47,9 +47,14 @@ export default async (
     }
 
     // Generate an UUID V5 compliant verification code.
+    // const refreshCode = isDevelop
+    //   ? '123456'
+    //   : generateEmailCode(email, UUID_V5_NAMESPACE)
+
+    // Generate a 6 digit code.
     const refreshCode = isDevelop
       ? '123456'
-      : generateEmailCode(email, UUID_V5_NAMESPACE)
+      : String(Math.floor(100000 + Math.random() * 900000))
 
     // Create a new email intent before sending the code.
     // NOTE: A trigger in the `VerificationIntent` table will guarantee
@@ -70,7 +75,7 @@ export default async (
         template: 'forgot-password',
         subject: `${process.env.APP_NAME} Password Reset`,
         variables: {
-          token: refreshCode,
+          code: refreshCode,
           email: user.email,
           to_name: user.name,
           BASE_URL: requestOrigin
