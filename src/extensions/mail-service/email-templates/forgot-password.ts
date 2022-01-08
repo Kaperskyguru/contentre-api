@@ -469,7 +469,8 @@ export default (message: any) => {
                                 <table width="100%" border="0" cellspacing="0" cellpadding="0" role="presentation">
                                   <tr>
                                     <td align="center">
-                                      <a href="${message.link}" class="f-fallback button button--green" target="_blank">Reset your password</a>
+                                     <!-- <a href="${message.link}" class="f-fallback button button--green" target="_blank">Reset your password</a> -->
+                                     <h3>${message.code}</h3>
                                     </td>
                                   </tr>
                                 </table>
@@ -480,14 +481,14 @@ export default (message: any) => {
                           <p>Thanks,
                             <br>The ${process.env.APP_NAME} Team</p>
                           <!-- Sub copy -->
-                          <table class="body-sub" role="presentation">
+                          <!--<table class="body-sub" role="presentation">
                             <tr>
                               <td>
                                 <p class="f-fallback sub">If you’re having trouble with the button above, copy and paste the URL below into your web browser.</p>
                                 <p class="f-fallback sub">${message.link}</p>
                               </td>
                             </tr>
-                          </table>
+                          </table> -->
                         </div>
                       </td>
                     </tr>
