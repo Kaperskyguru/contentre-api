@@ -13,8 +13,9 @@ export default async (
   { input }: MutationCreateUserArgs,
   context: Context & Required<Context>
 ): Promise<User> => {
-  const { setCookies, sentryId, prisma, ipAddress, requestURL } = context
-  logMutation('createUser %o', { input, ipAddress, requestURL })
+  const { setCookies, sentryId, prisma, ipAddress, requestURL, requestOrigin } =
+    context
+  logMutation('createUser %o', { input, ipAddress, requestURL, requestOrigin })
 
   // Will be filled by the user creation process below.
   let user: DBUser | null = null
@@ -35,6 +36,7 @@ export default async (
         email: input.email,
         username: input.username,
         name: input.name,
+        portfolio: `${requestOrigin}/${input.username}`,
         password: await hashPassword(input.password)
       }
     })
@@ -43,7 +45,13 @@ export default async (
 
     return getUser(user)
   } catch (e) {
-    logError('createUser %o', { input, ipAddress, requestURL, error: e })
+    logError('createUser %o', {
+      input,
+      ipAddress,
+      requestURL,
+      requestOrigin,
+      error: e
+    })
 
     const message = useErrorParser(e)
 

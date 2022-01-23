@@ -17,6 +17,12 @@ const typeDefs = gql`
     id: ID!
     email: String!
     name: String!
+    firstname: String
+    lastname: String
+    bio: String
+    homeAddress: String
+    portfolio: String
+    jobTitle: String
     username: String
     phoneCode: String
     phoneNumber: String
@@ -43,6 +49,8 @@ const typeDefs = gql`
     portfolio: String
     email: String
     avatarURL: String
+    firstname: String
+    lastname: String
   }
 
   extend type Query {

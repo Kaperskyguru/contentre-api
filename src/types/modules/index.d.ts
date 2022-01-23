@@ -281,8 +281,10 @@ export type UpdateUserInput = {
   avatarURL?: InputMaybe<Scalars['String']>;
   bio?: InputMaybe<Scalars['String']>;
   email?: InputMaybe<Scalars['String']>;
+  firstname?: InputMaybe<Scalars['String']>;
   homeAddress?: InputMaybe<Scalars['String']>;
   jobTitle?: InputMaybe<Scalars['String']>;
+  lastname?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   phoneNumber?: InputMaybe<Scalars['String']>;
   portfolio?: InputMaybe<Scalars['String']>;
@@ -295,8 +297,10 @@ export type User = {
   createdAt: Scalars['Time'];
   email: Scalars['String'];
   emailConfirmed: Scalars['Boolean'];
+  firstname?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   lastActivityAt: Scalars['Time'];
+  lastname?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   phoneCode?: Maybe<Scalars['String']>;
   phoneConfirmed: Scalars['Boolean'];
@@ -508,8 +512,10 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   emailConfirmed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  firstname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   lastActivityAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  lastname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   phoneCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   phoneConfirmed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
