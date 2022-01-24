@@ -58,6 +58,10 @@ export default async (
     logError('deleteUser %o', e)
     const message = useErrorParser(e)
 
+    if (message === 'no match') {
+      throw new ApolloError('You can not delete this account.', '422')
+    }
+
     throw new ApolloError(e?.code ?? 'generic', '500', {
       handled: !!e,
       originalMessage: e?.message ?? message

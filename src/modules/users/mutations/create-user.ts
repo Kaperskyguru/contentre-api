@@ -29,6 +29,14 @@ export default async (
       throw new ApolloError('verify email')
     }
     user = null
+    const data: Record<string, unknown> = {}
+
+    if (input.referrer) {
+      const referredUser = await prisma.user.findFirst({
+        where: { username: input.referrer }
+      })
+      if (referredUser) data.referrerId = referredUser.id
+    }
 
     // If success, create a new user in our DB.
     user = await prisma.user.create({
@@ -37,7 +45,8 @@ export default async (
         username: input.username,
         name: input.name,
         portfolio: `${requestOrigin}/${input.username}`,
-        password: await hashPassword(input.password)
+        password: await hashPassword(input.password),
+        ...data
       }
     })
 

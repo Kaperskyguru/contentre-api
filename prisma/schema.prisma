@@ -30,10 +30,20 @@ model User {
   createdAt           DateTime             @default(now()) @db.Timestamp(6)
   updatedAt           DateTime             @default(now()) @updatedAt @db.Timestamp(6)
   lastActivityAt      DateTime             @default(now()) @db.Timestamp(6)
+  twofactor           TwoFactorType        @default(NONE)
+  referrerId          String?              @db.Char(36)
+  referrer            User?                @relation("UserToUser", fields: [referrerId], references: [id])
   verificationIntents VerificationIntent[] @relation("UserVerificationIntent")
   clients             Client[]             @relation("UserClient")
   contents            Content[]            @relation("UserContent")
   socials             Social[]             @relation("SocialUser")
+  User                User[]               @relation("UserToUser")
+}
+
+enum TwoFactorType {
+  EMAIL
+  SMS
+  NONE
 }
 
 model VerificationIntent {

@@ -80,6 +80,7 @@ export type CreateUserInput = {
   email: Scalars['String'];
   name: Scalars['String'];
   password: Scalars['String'];
+  referrer?: InputMaybe<Scalars['String']>;
   username: Scalars['String'];
 };
 
@@ -293,18 +294,23 @@ export type UpdateUserInput = {
 export type User = {
   __typename?: 'User';
   avatarURL?: Maybe<Scalars['String']>;
+  bio?: Maybe<Scalars['String']>;
   clients?: Maybe<Array<Client>>;
   createdAt: Scalars['Time'];
   email: Scalars['String'];
   emailConfirmed: Scalars['Boolean'];
   firstname?: Maybe<Scalars['String']>;
+  homeAddress?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  jobTitle?: Maybe<Scalars['String']>;
   lastActivityAt: Scalars['Time'];
   lastname?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   phoneCode?: Maybe<Scalars['String']>;
   phoneConfirmed: Scalars['Boolean'];
   phoneNumber?: Maybe<Scalars['String']>;
+  portfolio?: Maybe<Scalars['String']>;
+  totalUsersReferred?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Time'];
   username?: Maybe<Scalars['String']>;
 };
@@ -508,18 +514,23 @@ export interface TimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   avatarURL?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   clients?: Resolver<Maybe<Array<ResolversTypes['Client']>>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   emailConfirmed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   firstname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  homeAddress?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  jobTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastActivityAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   lastname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   phoneCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   phoneConfirmed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   phoneNumber?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  portfolio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  totalUsersReferred?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   username?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

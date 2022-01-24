@@ -6,6 +6,7 @@ import getCurrentUser from './queries/get-current-user'
 import updateUser from './mutations/update-user'
 import deleteUser from './mutations/delete-user'
 import getUser from './queries/getUser'
+import usersReferred from './fields/users-referred'
 
 const typeDefs = gql`
   enum SignedUpThrough {
@@ -26,6 +27,7 @@ const typeDefs = gql`
     username: String
     phoneCode: String
     phoneNumber: String
+    totalUsersReferred: String
     avatarURL: String
     createdAt: Time!
     updatedAt: Time!
@@ -38,6 +40,7 @@ const typeDefs = gql`
     password: String!
     name: String!
     username: String!
+    referrer: String
   }
 
   input UpdateUserInput {
@@ -80,7 +83,8 @@ const resolvers: Resolvers = {
   },
 
   User: {
-    avatarURL: userAvatarURL
+    avatarURL: userAvatarURL,
+    totalUsersReferred: usersReferred
   }
 }
 

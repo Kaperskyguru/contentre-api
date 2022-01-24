@@ -29,11 +29,11 @@ export default async (
       }
     })
 
-    // Remove phone confirmed when user logs out to ensure 2FA on next login.
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { phoneConfirmed: false }
-    })
+    // // Remove phone confirmed when user logs out to ensure 2FA on next login.
+    // await prisma.user.update({
+    //   where: { id: user.id },
+    //   data: { phoneConfirmed: false }
+    // })
 
     return true
   } catch (e) {
