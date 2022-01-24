@@ -66,19 +66,39 @@ export default async (
 
     // If the user still needs to confirm the phone after authentication.
     if (
-      !updatedUser.phoneConfirmed &&
+      updatedUser.twofactor === 'SMS' &&
       updatedUser.phoneCode &&
       updatedUser.phoneNumber
     ) {
       // Call the mutation to send the phone verification code.
-      // sendPhoneCode(
-      //   _parent,
-      //   {
-      //     phoneCode: updatedUser.phoneCode,
-      //     phoneNumber: updatedUser.phoneNumber
-      //   },
-      //   { ...context, user: updatedUser }
-      // )
+      sendPhoneCode(
+        _parent,
+        {
+          phoneCode: updatedUser.phoneCode,
+          phoneNumber: updatedUser.phoneNumber
+        },
+        { ...context, user: updatedUser }
+      )
+
+      await prisma.user.update({
+        where: { id: updatedUser.id },
+        data: { phoneConfirmed: false }
+      })
+    }
+
+    if (updatedUser.twofactor === 'EMAIL' && updatedUser.email) {
+      // Call the mutation to send the email verification code.
+      sendEmailCode(
+        _parent,
+        {
+          email: updatedUser.email
+        },
+        { ...context, user: updatedUser }
+      )
+      await prisma.user.update({
+        where: { id: updatedUser.id },
+        data: { emailConfirmed: false }
+      })
     }
 
     //   await clearLoginAttempts(email, context)

@@ -13,8 +13,9 @@ export default async (
   { input }: MutationCreateUserArgs,
   context: Context & Required<Context>
 ): Promise<User> => {
-  const { setCookies, sentryId, prisma, ipAddress, requestURL } = context
-  logMutation('createUser %o', { input, ipAddress, requestURL })
+  const { setCookies, sentryId, prisma, ipAddress, requestURL, requestOrigin } =
+    context
+  logMutation('createUser %o', { input, ipAddress, requestURL, requestOrigin })
 
   // Will be filled by the user creation process below.
   let user: DBUser | null = null
@@ -28,6 +29,14 @@ export default async (
       throw new ApolloError('verify email')
     }
     user = null
+    const data: Record<string, unknown> = {}
+
+    if (input.referrer) {
+      const referredUser = await prisma.user.findFirst({
+        where: { username: input.referrer }
+      })
+      if (referredUser) data.referrerId = referredUser.id
+    }
 
     // If success, create a new user in our DB.
     user = await prisma.user.create({
@@ -35,7 +44,9 @@ export default async (
         email: input.email,
         username: input.username,
         name: input.name,
-        password: await hashPassword(input.password)
+        portfolio: `${requestOrigin}/${input.username}`,
+        password: await hashPassword(input.password),
+        ...data
       }
     })
 
@@ -43,7 +54,13 @@ export default async (
 
     return getUser(user)
   } catch (e) {
-    logError('createUser %o', { input, ipAddress, requestURL, error: e })
+    logError('createUser %o', {
+      input,
+      ipAddress,
+      requestURL,
+      requestOrigin,
+      error: e
+    })
 
     const message = useErrorParser(e)
 
