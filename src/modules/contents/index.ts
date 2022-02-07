@@ -5,6 +5,7 @@ import deleteContent from './mutations/delete-content'
 import updateContent from './mutations/update-content'
 import getContent from './queries/get-content'
 import getContents from './queries/get-contents'
+import uploadContent from './mutations/upload-content'
 
 const typeDefs = gql`
   type Content {
@@ -13,15 +14,21 @@ const typeDefs = gql`
     client: Client
     visibility: VisibilityType!
     lastUpdated: Time
-    url: String!
-    tags: [String!]
+    url: String
+    tags: JSON
     topics: [String!]
     type: ContentType!
+    user: User
     excerpt: String!
     content: String
     featuredImage: String
     createdAt: Time!
     updatedAt: Time!
+  }
+
+  type Tag {
+    id: ID
+    name: String!
   }
 
   enum VisibilityType {
@@ -38,7 +45,16 @@ const typeDefs = gql`
 
   input CreateContentInput {
     url: String
+    content: String
+    title: String!
+    excerpt: String!
     clientId: ID!
+    tags: JSON
+    category: String
+  }
+
+  input UploadContentInput {
+    url: String!
   }
 
   input UpdateContentInput {
@@ -57,6 +73,7 @@ const typeDefs = gql`
 
   extend type Mutation {
     createContent(input: CreateContentInput!): Content
+    uploadContent(input: UploadContentInput!): Content!
     deleteContent(id: ID!): Boolean!
     updateContent(id: ID!, input: UpdateContentInput!): Content!
   }
@@ -70,6 +87,7 @@ const resolvers: Resolvers = {
 
   Mutation: {
     createContent,
+    uploadContent,
     deleteContent,
     updateContent
   }

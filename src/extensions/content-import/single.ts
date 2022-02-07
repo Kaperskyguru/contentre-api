@@ -7,6 +7,13 @@ interface Metadata {
   url: string
   excerpt: string
   tags?: string[]
+  client: Client
+}
+
+interface Client {
+  website: string
+  name: string
+  icon?: string
 }
 
 const generateTags = (metadata: urlMetadata.Result) => {
@@ -17,20 +24,54 @@ const generateTags = (metadata: urlMetadata.Result) => {
     (v) => v
   )
 }
+
+const generateName = (metadata: urlMetadata.Result) => {
+  const n = metadata['og:site_name']
+  if (!n) {
+    const sites = metadata.source.split('.')
+    if (sites.includes('www')) {
+      return sites[1]
+    } else {
+      return sites[0]
+    }
+  }
+  return n
+}
+
+const generateFavicon = (metadata: urlMetadata.Result) => {
+  if (metadata.url.startsWith('https')) {
+    return `https://${metadata.source}/favicon.ico`
+  }
+  return `http://${metadata.source}/favicon.ico`
+}
+
+const generateURL = (metadata: urlMetadata.Result) => {
+  const url = metadata['og:url'] ?? metadata.url
+  if (url.trim().charAt(url.length - 1) === '/') {
+    return url.trim().substring(0, url.length - 1)
+  }
+  return url
+}
+
 export default async (url: string): Promise<Metadata> => {
   try {
     const rawMetadata = await urlMetadata(url)
 
     const metadata = {
-      url: rawMetadata['og:url'] ?? rawMetadata.url,
+      url: generateURL(rawMetadata),
       title: rawMetadata.title,
       excerpt: rawMetadata.description,
-      tags: generateTags(rawMetadata)
+      tags: generateTags(rawMetadata),
+      client: {
+        website: rawMetadata.source,
+        name: generateName(rawMetadata),
+        icon: generateFavicon(rawMetadata)
+      }
     }
 
     return metadata
   } catch (e) {
-    logError('updateClient %o', e)
+    logError('importContent %o', e)
 
     const message = useErrorParser(e)
 
@@ -38,6 +79,13 @@ export default async (url: string): Promise<Metadata> => {
       throw new ApolloError(
         'A client with the same name already exists.',
         '409'
+      )
+
+    if (e?.Error === 'response code 403')
+      throw new ApolloError(
+        'The website does not permit this operation. You can still add it manually',
+        '403',
+        {}
       )
 
     throw new ApolloError(message, e.code ?? '500', {})

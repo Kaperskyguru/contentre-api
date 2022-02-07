@@ -5,13 +5,16 @@ import updateClient from './mutations/update-client'
 import getClient from './queries/get-client'
 import getClients from './queries/get-clients'
 import deleteClient from './mutations/delete-client'
+import totalContents from './fields/total-contents'
 
 const typeDefs = gql`
   type Client {
-    id: String
+    id: ID!
     name: String!
     website: String
-    authorsLink: String
+    profile: String
+    user: User
+    totalContents: String
     updatedAt: Time!
     createdAt: Time!
   }
@@ -24,7 +27,7 @@ const typeDefs = gql`
   input CreateClientInput {
     name: String!
     website: String
-    profile: CreateProfileInput
+    profile: String
   }
 
   input ClientFiltersInput {
@@ -34,7 +37,7 @@ const typeDefs = gql`
   input UpdateClientInput {
     name: String
     website: String
-    profileId: String
+    profile: String
   }
 
   extend type Query {
@@ -58,6 +61,10 @@ const resolvers: Resolvers = {
     createClient,
     updateClient,
     deleteClient
+  },
+
+  Client: {
+    totalContents: totalContents
   }
 }
 export default { typeDefs, resolvers }

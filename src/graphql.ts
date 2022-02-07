@@ -33,7 +33,7 @@ async function startApolloServer() {
       if (!sentryId) return error
 
       // Detect if we ensured the error was handled.
-      const handled = !!(error?.extensions?.handled || false)
+      // const handled = !!(error?.extensions?.handled || false)
 
       // Define the tracing message based on the context.
       const tracingMessage = ['LOCAL', 'DEVELOP'].includes(environment.context)
@@ -41,10 +41,9 @@ async function startApolloServer() {
         : `Tracing ID: ${sentryId}.`
 
       let errorResponse: { message: string; debug?: GraphQLError } = {
-        message:
-          handled && error.message
-            ? error.message
-            : `Something unexpected happened. ${tracingMessage}`
+        message: error.message
+          ? error.message
+          : `Something unexpected happened. ${tracingMessage}`
       }
 
       // Attach the whole error object for development environment.
