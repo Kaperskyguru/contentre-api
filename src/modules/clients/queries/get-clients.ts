@@ -10,15 +10,18 @@ export default async (
   { size, skip, filters }: QueryGetClientsArgs,
   { user, sentryId, prisma }: Context & Required<Context>
 ): Promise<Client[]> => {
-  logQuery('getClients %o', user)
+  logQuery('getClients %o', { size, skip, filters })
   try {
-    if (!user) throw new ApolloError('You must be logged in.', '401')
+    if (!user) throw new Error(Errors.MUST_LOGIN)
 
     const where = whereClients(user, filters)
 
     const clients = await prisma.client.findMany({
       orderBy: [{ name: 'desc' }],
       where,
+      include: {
+        user: true
+      },
       take: size ?? undefined,
       skip: skip ?? 0
     })

@@ -11,10 +11,11 @@ export default async (
 ): Promise<Client> => {
   logQuery('getClient %o', user)
   try {
-    if (!user) throw new ApolloError('You must be logged in.', '401')
+    if (!user) throw new Error(Errors.MUST_LOGIN)
 
     const client = await prisma.client.findUnique({
-      where: { id }
+      where: { id },
+      include: { user: true }
     })
 
     if (!client) throw new Error('client not found')

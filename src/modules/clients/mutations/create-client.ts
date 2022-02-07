@@ -2,7 +2,6 @@ import { useErrorParser } from '@/helpers'
 import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
 import { Client, MutationCreateClientArgs } from '@/types/modules'
-import { Profile } from '@prisma/client'
 import { ApolloError } from 'apollo-server-core'
 
 export default async (
@@ -21,9 +20,9 @@ export default async (
   try {
     const { name, website, profile } = input
 
-    if (!user) throw new ApolloError('You must be logged in.', '401')
+    if (!user) throw new Error(Errors.MUST_LOGIN)
 
-    if (!name) throw new ApolloError('invalid input', '422')
+    if (!name) throw new Error(Errors.INVALID_INPUT)
 
     // Checking if client already exists
     const client = await prisma.client.findFirst({
@@ -32,27 +31,15 @@ export default async (
 
     if (client) throw new Error('duplicated')
 
-    // Create Profile link
-    let newProfile: Profile | undefined
-
-    if (profile?.profileLink !== undefined) {
-      newProfile = await prisma.profile.create({
-        data: {
-          name,
-          link: profile.profileLink,
-          avatar: profile.profileAvatar ?? undefined
-        }
-      })
-    }
-
     // If success, create a new client in our DB.
     return await prisma.client.create({
       data: {
         name,
         website,
-        profile: { connect: { id: newProfile?.id } },
+        profile,
         user: { connect: { id: user.id } }
-      }
+      },
+      include: { user: true }
     })
   } catch (e) {
     logError('createClient %o', {

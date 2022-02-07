@@ -1,6 +1,6 @@
 import { useErrorParser } from '@helpers'
 import { logError, logQuery } from '@helpers/logger'
-import { Client, Content, QueryGetClientsArgs } from '@modules-types'
+import { Content, QueryGetClientsArgs } from '@modules-types'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 import whereClients from '../helpers/where-clients'
@@ -19,6 +19,7 @@ export default async (
     const contents = await prisma.content.findMany({
       orderBy: [{ title: 'desc' }],
       where,
+      include: { user: true, client: true },
       take: size ?? undefined,
       skip: skip ?? 0
     })

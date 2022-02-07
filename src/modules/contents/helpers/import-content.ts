@@ -5,12 +5,24 @@ import importSingleContent from '@/extensions/content-import/single'
 
 interface URLContent {
   url: string
-  clientId: string
+}
+interface Metadata {
+  title: string
+  url: string
+  excerpt: string
+  tags?: string[]
+  client: Client
+}
+
+interface Client {
+  website: string
+  name: string
+  icon?: string
 }
 export const ImportContent = async (
-  { url, clientId }: URLContent,
+  { url }: URLContent,
   context: Context & Required<Context>
-): Promise<Content> => {
+): Promise<Metadata> => {
   const { prisma, user } = context
 
   if (!user) throw new ApolloError('You must be logged in.', '401')
@@ -28,28 +40,7 @@ export const ImportContent = async (
   if (content) throw new ApolloError('duplicate content', '401')
 
   // If success, create a new content in our DB.
-  const importedContent = await importSingleContent(url)
-
-  const newContent = await prisma.content.create({
-    data: {
-      url,
-      title: importedContent.title,
-      excerpt: importedContent.excerpt,
-      tags: importedContent.tags,
-      user: { connect: { id: user.id } },
-      client: { connect: { id: clientId } }
-    }
-  })
-
-  if (importedContent.tags) {
-    const tags = importedContent.tags.map((name) => ({ name }))
-    await prisma.tag.createMany({
-      data: tags,
-      skipDuplicates: true
-    })
-  }
-
-  return newContent
+  return await importSingleContent(url)
 }
 
 export default ImportContent

@@ -1,9 +1,9 @@
 import { useErrorParser } from '@/helpers'
 import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
-import { Content, MutationCreateContentArgs } from '@/types/modules'
+import { Content, MutationCreateContentArgs, Tag } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
-import ImportContent from '../helpers/import-content'
+import getOrCreateCategoryId from '../helpers/getOrCreateCategory'
 
 export default async (
   _parent: unknown,
@@ -11,7 +11,7 @@ export default async (
   context: Context & Required<Context>
 ): Promise<Content | null> => {
   const { prisma, user, ipAddress, requestURL, sentryId } = context
-  logMutation('createClient %o', {
+  logMutation('createContent %o', {
     input,
     user,
     ipAddress,
@@ -20,13 +20,37 @@ export default async (
   try {
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
-    const { url, clientId } = input
-    if (url) {
-      return ImportContent({ url, clientId }, context)
+    const { url, clientId, content, excerpt, title, tags, category } = input
+
+    const categoryId =
+      (await getOrCreateCategoryId(category, { user, prisma })) ?? undefined
+
+    const newContent = await prisma.content.create({
+      data: {
+        url,
+        title,
+        excerpt,
+        content,
+        category: { connect: { id: categoryId } },
+        tags: tags,
+        user: { connect: { id: user.id } },
+        client: { connect: { id: clientId } }
+      }
+    })
+
+    if (tags) {
+      const tagNames = tags.map((tag: Tag) => {
+        tag.name
+      })
+      await prisma.tag.createMany({
+        data: tagNames,
+        skipDuplicates: true
+      })
     }
-    return null
+
+    return newContent
   } catch (e) {
-    logError('createClient %o', {
+    logError('createContent %o', {
       input,
       user,
       ipAddress,
