@@ -38,6 +38,8 @@ model User {
   contents            Content[]            @relation("UserContent")
   socials             Social[]             @relation("SocialUser")
   User                User[]               @relation("UserToUser")
+  Portfolio           Portfolio[]          @relation("UserPortfolio")
+  Template            Template[]           @relation("UserTemplate")
 }
 
 enum TwoFactorType {
@@ -97,6 +99,49 @@ model Content {
   category      Category?      @relation("ContentCategory", fields: [categoryId], references: [id])
 
   @@index([clientId, userId])
+}
+
+model Portfolio {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  title       String       @db.VarChar(2048)
+  userId      String       @db.Char(36)
+  user        User         @relation("UserPortfolio", fields: [userId], references: [id])
+  url         String       @db.VarChar(2048)
+  description String?      @db.Text
+  type        String?      @db.VarChar(36)
+  template    UserTemplate @relation("UserTemplatePortfolio", fields: [templateId], references: [id])
+  templateId  String       @db.Char(36)
+  createdAt   DateTime     @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime     @default(now()) @updatedAt @db.Timestamp(6)
+
+  @@unique([url], name: "uniqueURL", map: "uniqueURL")
+}
+
+model Template {
+  id           String           @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  title        String           @db.VarChar(2048)
+  userId       String?          @db.Char(36)
+  user         User?            @relation("UserTemplate", fields: [userId], references: [id])
+  content      String           @db.Text
+  visibility   TemplateVisility @default(PRIVATE)
+  createdAt    DateTime         @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime         @default(now()) @updatedAt @db.Timestamp(6)
+  UserTemplate UserTemplate[]   @relation("TemplateUserTemplate")
+}
+
+model UserTemplate {
+  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  content    String      @db.Text
+  templateId String      @db.Char(36)
+  template   Template    @relation("TemplateUserTemplate", fields: [templateId], references: [id])
+  portfolio  Portfolio[] @relation("UserTemplatePortfolio")
+  createdAt  DateTime    @default(now()) @db.Timestamp(6)
+  updatedAt  DateTime    @default(now()) @updatedAt @db.Timestamp(6)
+}
+
+enum TemplateVisility {
+  PUBLIC
+  PRIVATE
 }
 
 enum VisibilityType {
