@@ -40,6 +40,7 @@ model User {
   User                User[]               @relation("UserToUser")
   Portfolio           Portfolio[]          @relation("UserPortfolio")
   Template            Template[]           @relation("UserTemplate")
+  Category            Category[]           @relation("UserCategory")
 }
 
 enum TwoFactorType {
@@ -65,16 +66,18 @@ enum VerificationIntentType {
 }
 
 model Client {
-  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  name      String    @db.VarChar(60)
-  website   String?   @db.VarChar(2048)
-  userId    String    @db.Char(36)
-  user      User      @relation("UserClient", fields: [userId], references: [id])
-  profile   String?   @db.VarChar(2048)
-  icon      String?   @db.VarChar(2048)
-  createdAt DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt DateTime  @default(now()) @updatedAt @db.Timestamp(6)
-  contents  Content[] @relation("ClientContent")
+  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name        String      @db.VarChar(60)
+  website     String?     @db.VarChar(2048)
+  userId      String      @db.Char(36)
+  user        User        @relation("UserClient", fields: [userId], references: [id])
+  profile     String?     @db.VarChar(2048)
+  icon        String?     @db.VarChar(2048)
+  paymentType PaymentType @default(ARTICLE)
+  amount      Float       @default(0.0)
+  createdAt   DateTime    @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime    @default(now()) @updatedAt @db.Timestamp(6)
+  contents    Content[]   @relation("ClientContent")
 }
 
 model Content {
@@ -90,6 +93,11 @@ model Content {
   type          ContentType    @default(TEXT)
   excerpt       String         @db.VarChar(2048)
   content       String?        @db.Text
+  amount        Float          @default(0.0)
+  comments      Int            @default(0)
+  paymentType   PaymentType    @default(ARTICLE)
+  likes         Int            @default(0)
+  shares        Int            @default(0)
   featuredImage String?        @db.VarChar(2048)
   createdAt     DateTime       @default(now()) @db.Timestamp(6)
   updatedAt     DateTime       @default(now()) @updatedAt @db.Timestamp(6)
@@ -142,6 +150,13 @@ model UserTemplate {
 enum TemplateVisility {
   PUBLIC
   PRIVATE
+  TEAM
+}
+
+enum PaymentType {
+  ARTICLE
+  MONTHLY
+  ONETIME
 }
 
 enum VisibilityType {
@@ -157,14 +172,21 @@ enum ContentType {
 }
 
 model Tag {
-  id   String @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  name String @db.VarChar(120)
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name      String   @db.VarChar(120)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(6)
 }
 
 model Category {
-  id       String    @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  name     String    @db.VarChar(120)
-  contents Content[] @relation("ContentCategory")
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name      String    @db.VarChar(120)
+  color     String?   @db.Char(6)
+  userId    String?   @db.Char(36)
+  user      User?     @relation("UserCategory", fields: [userId], references: [id])
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @default(now()) @updatedAt @db.Timestamp(6)
+  contents  Content[] @relation("ContentCategory")
 }
 
 model Topic {
@@ -172,13 +194,17 @@ model Topic {
   name      String   @db.VarChar(120)
   content   Content? @relation("ContentTopic", fields: [contentId], references: [id])
   contentId String?  @db.Char(36)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(6)
 }
 
 model Social {
-  id     String  @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  name   String  @db.VarChar(120)
-  link   String  @db.VarChar(2048)
-  icon   String? @db.VarChar(2048)
-  user   User    @relation("SocialUser", fields: [userId], references: [id])
-  userId String  @db.Char(36)
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name      String   @db.VarChar(120)
+  link      String   @db.VarChar(2048)
+  icon      String?  @db.VarChar(2048)
+  user      User     @relation("SocialUser", fields: [userId], references: [id])
+  userId    String   @db.Char(36)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(6)
 }

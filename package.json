@@ -25,6 +25,9 @@
   "engines": {
     "node": ">=14.x.x"
   },
+  "prisma": {
+    "seed": "yarn ts-node prisma/seed.ts"
+  },
   "dependencies": {
     "@graphql-tools/schema": "^8.3.1",
     "@prisma/client": "^3.6.0",

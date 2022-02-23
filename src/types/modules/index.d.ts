@@ -19,11 +19,27 @@ export type Scalars = {
   Time: any;
 };
 
-export type Client = {
-  __typename?: 'Client';
+export type Category = {
+  __typename?: 'Category';
+  color?: Maybe<Scalars['String']>;
   createdAt: Scalars['Time'];
   id: Scalars['ID'];
   name: Scalars['String'];
+  updatedAt: Scalars['Time'];
+};
+
+export type CategoryFiltersInput = {
+  terms?: InputMaybe<Scalars['String']>;
+};
+
+export type Client = {
+  __typename?: 'Client';
+  amount?: Maybe<Scalars['Float']>;
+  createdAt: Scalars['Time'];
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  paymentType?: Maybe<PaymentType>;
   profile?: Maybe<Scalars['String']>;
   totalContents?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Time'];
@@ -37,13 +53,19 @@ export type ClientFiltersInput = {
 
 export type Content = {
   __typename?: 'Content';
+  amount?: Maybe<Scalars['Float']>;
+  category?: Maybe<Category>;
   client?: Maybe<Client>;
+  comments?: Maybe<Scalars['Int']>;
   content?: Maybe<Scalars['String']>;
   createdAt: Scalars['Time'];
   excerpt: Scalars['String'];
   featuredImage?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   lastUpdated?: Maybe<Scalars['Time']>;
+  likes?: Maybe<Scalars['Int']>;
+  paymentType?: Maybe<PaymentType>;
+  shares?: Maybe<Scalars['Int']>;
   tags?: Maybe<Scalars['JSON']>;
   title: Scalars['String'];
   topics?: Maybe<Array<Scalars['String']>>;
@@ -63,17 +85,29 @@ export type ContentType =
   | 'TEXT'
   | 'VIDEO';
 
-export type CreateClientInput = {
+export type CreateCategoryInput = {
+  color?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
+};
+
+export type CreateClientInput = {
+  amount?: InputMaybe<Scalars['Float']>;
+  name: Scalars['String'];
+  paymentType?: InputMaybe<PaymentType>;
   profile?: InputMaybe<Scalars['String']>;
   website?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateContentInput = {
+  amount?: InputMaybe<Scalars['Float']>;
   category?: InputMaybe<Scalars['String']>;
   clientId: Scalars['ID'];
+  comments?: InputMaybe<Scalars['Int']>;
   content?: InputMaybe<Scalars['String']>;
   excerpt: Scalars['String'];
+  likes?: InputMaybe<Scalars['Int']>;
+  paymentType?: InputMaybe<PaymentType>;
+  shares?: InputMaybe<Scalars['Int']>;
   tags?: InputMaybe<Scalars['JSON']>;
   title: Scalars['String'];
   url?: InputMaybe<Scalars['String']>;
@@ -109,10 +143,12 @@ export type LoginUserInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   changePassword: User;
+  createCategory: Category;
   createClient: Client;
   createContent?: Maybe<Content>;
   createPortfolio?: Maybe<Portfolio>;
   createUser: User;
+  deleteCategory: Scalars['Boolean'];
   deleteClient: Scalars['Boolean'];
   deleteContent: Scalars['Boolean'];
   deletePortfolio: Scalars['Boolean'];
@@ -123,6 +159,7 @@ export type Mutation = {
   sendEmailCode: Scalars['Boolean'];
   sendPasswordResetCode: Scalars['Boolean'];
   sendPhoneCode: Scalars['Boolean'];
+  updateCategory: Category;
   updateClient: Client;
   updateContent: Content;
   updatePortfolio: Portfolio;
@@ -139,6 +176,11 @@ export type Mutation = {
 export type MutationChangePasswordArgs = {
   newPassword: Scalars['String'];
   oldPassword: Scalars['String'];
+};
+
+
+export type MutationCreateCategoryArgs = {
+  input: CreateCategoryInput;
 };
 
 
@@ -159,6 +201,11 @@ export type MutationCreatePortfolioArgs = {
 
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
+};
+
+
+export type MutationDeleteCategoryArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -206,6 +253,12 @@ export type MutationSendPasswordResetCodeArgs = {
 export type MutationSendPhoneCodeArgs = {
   phoneCode: Scalars['String'];
   phoneNumber: Scalars['String'];
+};
+
+
+export type MutationUpdateCategoryArgs = {
+  id: Scalars['ID'];
+  input: CreateCategoryInput;
 };
 
 
@@ -257,15 +310,22 @@ export type MutationVerifyUsernameArgs = {
   username: Scalars['String'];
 };
 
+export type PaymentType =
+  | 'ARTICLE'
+  | 'MONTHLY'
+  | 'ONETIME';
+
 export type Portfolio = {
   __typename?: 'Portfolio';
   createdAt: Scalars['Time'];
+  description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  templateId: Scalars['ID'];
   title: Scalars['String'];
   type?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Time'];
   url: Scalars['String'];
-  user?: Maybe<User>;
+  userId?: Maybe<Scalars['ID']>;
 };
 
 export type PortfolioFiltersInput = {
@@ -274,6 +334,8 @@ export type PortfolioFiltersInput = {
 
 export type Query = {
   __typename?: 'Query';
+  getCategories: Array<Category>;
+  getCategory: Category;
   getClient: Client;
   getClients: Array<Client>;
   getContent: Content;
@@ -283,6 +345,18 @@ export type Query = {
   getPortfolios: Array<Portfolio>;
   getUser: User;
   getVersion: Scalars['String'];
+};
+
+
+export type QueryGetCategoriesArgs = {
+  filters?: InputMaybe<CategoryFiltersInput>;
+  size?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryGetCategoryArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -344,7 +418,9 @@ export type Tag = {
 };
 
 export type UpdateClientInput = {
+  amount?: InputMaybe<Scalars['Float']>;
   name?: InputMaybe<Scalars['String']>;
+  paymentType?: InputMaybe<PaymentType>;
   profile?: InputMaybe<Scalars['String']>;
   website?: InputMaybe<Scalars['String']>;
 };
@@ -476,21 +552,26 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Category: ResolverTypeWrapper<Category>;
+  CategoryFiltersInput: CategoryFiltersInput;
   Client: ResolverTypeWrapper<Client>;
   ClientFiltersInput: ClientFiltersInput;
   Content: ResolverTypeWrapper<Content>;
   ContentFiltersInput: ContentFiltersInput;
   ContentType: ContentType;
+  CreateCategoryInput: CreateCategoryInput;
   CreateClientInput: CreateClientInput;
   CreateContentInput: CreateContentInput;
   CreatePortfolioInput: CreatePortfolioInput;
   CreateProfileInput: CreateProfileInput;
   CreateUserInput: CreateUserInput;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   LoginUserInput: LoginUserInput;
   Mutation: ResolverTypeWrapper<{}>;
+  PaymentType: PaymentType;
   Portfolio: ResolverTypeWrapper<Portfolio>;
   PortfolioFiltersInput: PortfolioFiltersInput;
   Query: ResolverTypeWrapper<{}>;
@@ -511,15 +592,19 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
+  Category: Category;
+  CategoryFiltersInput: CategoryFiltersInput;
   Client: Client;
   ClientFiltersInput: ClientFiltersInput;
   Content: Content;
   ContentFiltersInput: ContentFiltersInput;
+  CreateCategoryInput: CreateCategoryInput;
   CreateClientInput: CreateClientInput;
   CreateContentInput: CreateContentInput;
   CreatePortfolioInput: CreatePortfolioInput;
   CreateProfileInput: CreateProfileInput;
   CreateUserInput: CreateUserInput;
+  Float: Scalars['Float'];
   ID: Scalars['ID'];
   Int: Scalars['Int'];
   JSON: Scalars['JSON'];
@@ -540,10 +625,22 @@ export type ResolversParentTypes = {
   User: User;
 };
 
-export type ClientResolvers<ContextType = any, ParentType extends ResolversParentTypes['Client'] = ResolversParentTypes['Client']> = {
+export type CategoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = {
+  color?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ClientResolvers<ContextType = any, ParentType extends ResolversParentTypes['Client'] = ResolversParentTypes['Client']> = {
+  amount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  paymentType?: Resolver<Maybe<ResolversTypes['PaymentType']>, ParentType, ContextType>;
   profile?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   totalContents?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
@@ -553,13 +650,19 @@ export type ClientResolvers<ContextType = any, ParentType extends ResolversParen
 };
 
 export type ContentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Content'] = ResolversParentTypes['Content']> = {
+  amount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  category?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType>;
   client?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType>;
+  comments?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   excerpt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   featuredImage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   lastUpdated?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>;
+  likes?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  paymentType?: Resolver<Maybe<ResolversTypes['PaymentType']>, ParentType, ContextType>;
+  shares?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   tags?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   topics?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
@@ -577,10 +680,12 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   changePassword?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'oldPassword'>>;
+  createCategory?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<MutationCreateCategoryArgs, 'input'>>;
   createClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationCreateClientArgs, 'input'>>;
   createContent?: Resolver<Maybe<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<MutationCreateContentArgs, 'input'>>;
   createPortfolio?: Resolver<Maybe<ResolversTypes['Portfolio']>, ParentType, ContextType, RequireFields<MutationCreatePortfolioArgs, 'input'>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'input'>>;
+  deleteCategory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, 'id'>>;
   deleteClient?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteClientArgs, 'id'>>;
   deleteContent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteContentArgs, 'id'>>;
   deletePortfolio?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeletePortfolioArgs, 'id'>>;
@@ -591,6 +696,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   sendEmailCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendEmailCodeArgs, 'email'>>;
   sendPasswordResetCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendPasswordResetCodeArgs, 'email'>>;
   sendPhoneCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendPhoneCodeArgs, 'phoneCode' | 'phoneNumber'>>;
+  updateCategory?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<MutationUpdateCategoryArgs, 'id' | 'input'>>;
   updateClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationUpdateClientArgs, 'id' | 'input'>>;
   updateContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<MutationUpdateContentArgs, 'id' | 'input'>>;
   updatePortfolio?: Resolver<ResolversTypes['Portfolio'], ParentType, ContextType, RequireFields<MutationUpdatePortfolioArgs, 'id' | 'input'>>;
@@ -605,16 +711,20 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type PortfolioResolvers<ContextType = any, ParentType extends ResolversParentTypes['Portfolio'] = ResolversParentTypes['Portfolio']> = {
   createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  templateId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getCategories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<QueryGetCategoriesArgs, never>>;
+  getCategory?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<QueryGetCategoryArgs, 'id'>>;
   getClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<QueryGetClientArgs, 'id'>>;
   getClients?: Resolver<Array<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<QueryGetClientsArgs, never>>;
   getContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<QueryGetContentArgs, 'id'>>;
@@ -661,6 +771,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type Resolvers<ContextType = any> = {
+  Category?: CategoryResolvers<ContextType>;
   Client?: ClientResolvers<ContextType>;
   Content?: ContentResolvers<ContextType>;
   JSON?: GraphQLScalarType;

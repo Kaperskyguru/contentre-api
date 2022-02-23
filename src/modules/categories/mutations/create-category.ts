@@ -1,16 +1,16 @@
 import { useErrorParser } from '@/helpers'
 import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
-import { Client, MutationCreateClientArgs } from '@/types/modules'
+import { Category, MutationCreateCategoryArgs } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
 
 export default async (
   _parent: unknown,
-  { input }: MutationCreateClientArgs,
+  { input }: MutationCreateCategoryArgs,
   context: Context & Required<Context>
-): Promise<Client> => {
+): Promise<Category> => {
   const { prisma, user, ipAddress, requestURL, sentryId } = context
-  logMutation('createClient %o', {
+  logMutation('createCategory %o', {
     input,
     user,
     ipAddress,
@@ -18,33 +18,29 @@ export default async (
   })
 
   try {
-    const { name, website, profile, paymentType, amount } = input
+    const { name, color } = input
 
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
     if (!name) throw new ApolloError('invalid input', '422')
 
     // Checking if client already exists
-    const client = await prisma.client.findFirst({
+    const category = await prisma.category.findFirst({
       where: { name, userId: user.id }
     })
 
-    if (client) throw new Error('duplicated')
+    if (category) throw new ApolloError('Category already created')
 
     // If success, create a new client in our DB.
-    return await prisma.client.create({
+    return await prisma.category.create({
       data: {
         name,
-        website,
-        amount: amount ?? 0.0,
-        paymentType: paymentType ?? 'ARTICLE',
-        profile,
+        color,
         user: { connect: { id: user.id } }
-      },
-      include: { user: true }
+      }
     })
   } catch (e) {
-    logError('createClient %o', {
+    logError('createCategory %o', {
       input,
       user,
       ipAddress,

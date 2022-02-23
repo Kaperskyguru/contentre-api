@@ -21,6 +21,12 @@ const typeDefs = gql`
     user: User
     excerpt: String!
     content: String
+    comments: Int
+    amount: Float
+    paymentType: PaymentType
+    likes: Int
+    shares: Int
+    category: Category
     featuredImage: String
     createdAt: Time!
     updatedAt: Time!
@@ -43,6 +49,12 @@ const typeDefs = gql`
     VIDEO
   }
 
+  enum PaymentType {
+    ARTICLE
+    MONTHLY
+    ONETIME
+  }
+
   input CreateContentInput {
     url: String
     content: String
@@ -51,6 +63,11 @@ const typeDefs = gql`
     clientId: ID!
     tags: JSON
     category: String
+    amount: Float
+    comments: Int
+    likes: Int
+    shares: Int
+    paymentType: PaymentType
   }
 
   input UploadContentInput {

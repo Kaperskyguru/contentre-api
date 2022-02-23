@@ -13,6 +13,9 @@ const typeDefs = gql`
     name: String!
     website: String
     profile: String
+    icon: String
+    amount: Float
+    paymentType: PaymentType
     user: User
     totalContents: String
     updatedAt: Time!
@@ -27,6 +30,8 @@ const typeDefs = gql`
   input CreateClientInput {
     name: String!
     website: String
+    amount: Float
+    paymentType: PaymentType
     profile: String
   }
 
@@ -37,6 +42,8 @@ const typeDefs = gql`
   input UpdateClientInput {
     name: String
     website: String
+    amount: Float
+    paymentType: PaymentType
     profile: String
   }
 

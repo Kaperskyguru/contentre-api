@@ -8,6 +8,7 @@ import users from './users'
 import clients from './clients'
 import contents from './contents'
 import portfolios from './portfolios'
+import categories from './categories'
 
 const typeDefs = gql`
   scalar Time
@@ -44,7 +45,7 @@ const schema = makeExecutableSchema({
     auth.typeDefs,
     contents.typeDefs,
     //   companies.typeDefs,
-    //   categories.typeDefs,
+    categories.typeDefs,
     //   institutions.typeDefs,
     //   invites.typeDefs,
     //   notifications.typeDefs,
@@ -62,7 +63,7 @@ const schema = makeExecutableSchema({
     auth.resolvers,
     contents.resolvers,
     //   companies.resolvers,
-    //   categories.resolvers,
+    categories.resolvers,
     //   institutions.resolvers,
     //   invites.resolvers,
     //   notifications.resolvers,

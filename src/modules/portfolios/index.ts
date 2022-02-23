@@ -1,14 +1,18 @@
 import { Resolvers } from '@/types/modules'
 import { gql } from 'apollo-server-core'
-// import createPortfolio from './mutations/create-portfolio'
+import createPortfolio from './mutations/create-portfolio'
+import getPortfolios from './queries/get-portfolios'
+import deletePortfolio from './mutations/delete-portfolio'
 
 const typeDefs = gql`
   type Portfolio {
     id: ID!
     title: String!
-    user: User
+    userId: ID
     type: String
     url: String!
+    description: String
+    templateId: ID!
     createdAt: Time!
     updatedAt: Time!
   }
@@ -48,13 +52,13 @@ const typeDefs = gql`
 `
 const resolvers: Resolvers = {
   Query: {
-    // getPortfolios,
+    getPortfolios
     // getPortfolio
   },
 
   Mutation: {
-    // createPortfolio,
-    // deletePortfolio,
+    createPortfolio,
+    deletePortfolio
     // updatePortfolio
   }
 }
