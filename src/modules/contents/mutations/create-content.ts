@@ -32,16 +32,17 @@ export default async (
         excerpt,
         content,
         category: { connect: { id: categoryId } },
-        tags: tags,
+        // tags: { ...Object.values(tags) },
         user: { connect: { id: user.id } },
         client: { connect: { id: clientId } }
       }
     })
 
     if (tags) {
-      const tagNames = tags.map((tag: Tag) => {
-        tag.name
-      })
+      const tagNames = Object.values(tags).map((name: any) => ({
+        name
+      }))
+
       await prisma.tag.createMany({
         data: tagNames,
         skipDuplicates: true

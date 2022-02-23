@@ -13,14 +13,14 @@ export default async (
 
   try {
     // User must be logged in before performing the operation.
-    if (!user) throw new Error(Errors.MUST_LOGIN)
+    if (!user) throw new ApolloError('You must be logged in.', '401')
 
     // Extract fields from the mutation input.
-    const { name, website, profile } = input
+    const { name, website, profile, amount, paymentType } = input
 
     // Check for required arguments not provided.
     if (!id || !name) {
-      throw new Error(Errors.INVALID_INPUT)
+      throw new ApolloError('Invalid input', '422')
     }
 
     const client = await prisma.client.findUnique({
@@ -31,12 +31,14 @@ export default async (
 
     // Check if the transaction to delete is not from the current company.
     if (client.userId !== user.id) {
-      throw new Error(Errors.UNAUTHORIZED)
+      throw new Error('unauthorized')
     }
 
     const data: Record<string, unknown> = {}
     if (name !== undefined) data.name = name
     if (website !== undefined) data.website = website
+    if (amount !== undefined) data.amount = amount
+    if (paymentType !== undefined) data.paymentType = paymentType
     if (profile !== undefined) data.profile = profile
 
     // Finally update the category.

@@ -12,7 +12,7 @@ export default async (
 ): Promise<Client[]> => {
   logQuery('getClients %o', { size, skip, filters })
   try {
-    if (!user) throw new Error(Errors.MUST_LOGIN)
+    if (!user) throw new ApolloError('You must be logged in.', '401')
 
     const where = whereClients(user, filters)
 
