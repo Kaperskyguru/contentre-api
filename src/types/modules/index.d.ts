@@ -62,6 +62,7 @@ export type Content = {
   excerpt: Scalars['String'];
   featuredImage?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  interactions?: Maybe<Scalars['Int']>;
   lastUpdated?: Maybe<Scalars['Time']>;
   likes?: Maybe<Scalars['Int']>;
   paymentType?: Maybe<PaymentType>;
@@ -77,6 +78,7 @@ export type Content = {
 };
 
 export type ContentFiltersInput = {
+  sortBy?: InputMaybe<Scalars['String']>;
   terms?: InputMaybe<Scalars['String']>;
 };
 
@@ -132,6 +134,16 @@ export type CreateUserInput = {
   password: Scalars['String'];
   referrer?: InputMaybe<Scalars['String']>;
   username: Scalars['String'];
+};
+
+export type IndexMetadataResponse = {
+  __typename?: 'IndexMetadataResponse';
+  commentPercent: Scalars['Float'];
+  comments: Scalars['Float'];
+  likePercent: Scalars['Float'];
+  likes: Scalars['Float'];
+  sharePercent: Scalars['Float'];
+  shares: Scalars['Float'];
 };
 
 export type LoginUserInput = {
@@ -341,6 +353,7 @@ export type Query = {
   getContent: Content;
   getContents: Array<Content>;
   getCurrentUser?: Maybe<User>;
+  getIndexMetadata: IndexMetadataResponse;
   getPortfolio: Portfolio;
   getPortfolios: Array<Portfolio>;
   getUser: User;
@@ -381,6 +394,11 @@ export type QueryGetContentsArgs = {
   filters?: InputMaybe<ContentFiltersInput>;
   size?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryGetIndexMetadataArgs = {
+  filters?: InputMaybe<ContentFiltersInput>;
 };
 
 
@@ -567,6 +585,7 @@ export type ResolversTypes = {
   CreateUserInput: CreateUserInput;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  IndexMetadataResponse: ResolverTypeWrapper<IndexMetadataResponse>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   LoginUserInput: LoginUserInput;
@@ -606,6 +625,7 @@ export type ResolversParentTypes = {
   CreateUserInput: CreateUserInput;
   Float: Scalars['Float'];
   ID: Scalars['ID'];
+  IndexMetadataResponse: IndexMetadataResponse;
   Int: Scalars['Int'];
   JSON: Scalars['JSON'];
   LoginUserInput: LoginUserInput;
@@ -659,6 +679,7 @@ export type ContentResolvers<ContextType = any, ParentType extends ResolversPare
   excerpt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   featuredImage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  interactions?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   lastUpdated?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>;
   likes?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   paymentType?: Resolver<Maybe<ResolversTypes['PaymentType']>, ParentType, ContextType>;
@@ -671,6 +692,16 @@ export type ContentResolvers<ContextType = any, ParentType extends ResolversPare
   url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   visibility?: Resolver<ResolversTypes['VisibilityType'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type IndexMetadataResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['IndexMetadataResponse'] = ResolversParentTypes['IndexMetadataResponse']> = {
+  commentPercent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  comments?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  likePercent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  likes?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  sharePercent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  shares?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -730,6 +761,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<QueryGetContentArgs, 'id'>>;
   getContents?: Resolver<Array<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<QueryGetContentsArgs, never>>;
   getCurrentUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  getIndexMetadata?: Resolver<ResolversTypes['IndexMetadataResponse'], ParentType, ContextType, RequireFields<QueryGetIndexMetadataArgs, never>>;
   getPortfolio?: Resolver<ResolversTypes['Portfolio'], ParentType, ContextType, RequireFields<QueryGetPortfolioArgs, 'id'>>;
   getPortfolios?: Resolver<Array<ResolversTypes['Portfolio']>, ParentType, ContextType, RequireFields<QueryGetPortfoliosArgs, never>>;
   getUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryGetUserArgs, 'uuid'>>;
@@ -774,6 +806,7 @@ export type Resolvers<ContextType = any> = {
   Category?: CategoryResolvers<ContextType>;
   Client?: ClientResolvers<ContextType>;
   Content?: ContentResolvers<ContextType>;
+  IndexMetadataResponse?: IndexMetadataResponseResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   Portfolio?: PortfolioResolvers<ContextType>;

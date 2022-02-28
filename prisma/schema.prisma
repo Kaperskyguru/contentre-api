@@ -94,6 +94,8 @@ model Content {
   excerpt       String         @db.VarChar(2048)
   content       String?        @db.Text
   amount        Float          @default(0.0)
+  favourite     Boolean        @default(false)
+  bookmark      Boolean        @default(false)
   comments      Int            @default(0)
   paymentType   PaymentType    @default(ARTICLE)
   likes         Int            @default(0)

@@ -1,6 +1,7 @@
 import { Resolvers } from '@/types/modules'
 import { gql } from 'apollo-server-core'
 import getCategories from './queries/get-categories'
+import createCategory from './mutations/create-category'
 
 const typeDefs = gql`
   type Category {
@@ -42,7 +43,7 @@ const resolvers: Resolvers = {
   },
 
   Mutation: {
-    // createCategory,
+    createCategory
     // updateCategory,
     // deleteCategory
   }
