@@ -6,6 +6,8 @@ import updateContent from './mutations/update-content'
 import getContent from './queries/get-content'
 import getContents from './queries/get-contents'
 import uploadContent from './mutations/upload-content'
+import interactions from './fields/interactions'
+import getIndexMetadata from './queries/get-index-metadata'
 
 const typeDefs = gql`
   type Content {
@@ -26,6 +28,7 @@ const typeDefs = gql`
     paymentType: PaymentType
     likes: Int
     shares: Int
+    interactions: Int
     category: Category
     featuredImage: String
     createdAt: Time!
@@ -55,6 +58,15 @@ const typeDefs = gql`
     ONETIME
   }
 
+  type IndexMetadataResponse {
+    likePercent: Float!
+    commentPercent: Float!
+    sharePercent: Float!
+    likes: Float!
+    shares: Float!
+    comments: Float!
+  }
+
   input CreateContentInput {
     url: String
     content: String
@@ -81,11 +93,13 @@ const typeDefs = gql`
 
   input ContentFiltersInput {
     terms: String
+    sortBy: String
   }
 
   extend type Query {
     getContents(size: Int, skip: Int, filters: ContentFiltersInput): [Content!]!
     getContent(id: ID!): Content!
+    getIndexMetadata(filters: ContentFiltersInput): IndexMetadataResponse!
   }
 
   extend type Mutation {
@@ -99,7 +113,8 @@ const typeDefs = gql`
 const resolvers: Resolvers = {
   Query: {
     getContents,
-    getContent
+    getContent,
+    getIndexMetadata
   },
 
   Mutation: {
@@ -107,6 +122,10 @@ const resolvers: Resolvers = {
     uploadContent,
     deleteContent,
     updateContent
+  },
+
+  Content: {
+    interactions: interactions
   }
 }
 
