@@ -1,7 +1,7 @@
 import { Prisma } from '.prisma/client'
 import { Maybe, User, ContentFiltersInput } from '@modules-types'
 
-export const whereClients = (
+export const whereContents = (
   user: User,
   filters?: Maybe<ContentFiltersInput>
 ): {
@@ -35,4 +35,4 @@ export const whereClients = (
   }
 }
 
-export default whereClients
+export default whereContents
