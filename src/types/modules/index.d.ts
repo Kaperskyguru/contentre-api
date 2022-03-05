@@ -19,6 +19,17 @@ export type Scalars = {
   Time: any;
 };
 
+export type BoxStats = {
+  __typename?: 'BoxStats';
+  amountPercent: Scalars['Float'];
+  commentPercent: Scalars['Float'];
+  comments: Scalars['Float'];
+  likePercent: Scalars['Float'];
+  likes: Scalars['Float'];
+  sharePercent: Scalars['Float'];
+  shares: Scalars['Float'];
+};
+
 export type Category = {
   __typename?: 'Category';
   color?: Maybe<Scalars['String']>;
@@ -32,6 +43,12 @@ export type CategoryFiltersInput = {
   terms?: InputMaybe<Scalars['String']>;
 };
 
+export type Chart = {
+  __typename?: 'Chart';
+  current: Array<Scalars['Float']>;
+  last: Array<Scalars['Float']>;
+};
+
 export type Client = {
   __typename?: 'Client';
   amount?: Maybe<Scalars['Float']>;
@@ -41,6 +58,7 @@ export type Client = {
   name: Scalars['String'];
   paymentType?: Maybe<PaymentType>;
   profile?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
   totalContents?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Time'];
   user?: Maybe<User>;
@@ -138,12 +156,8 @@ export type CreateUserInput = {
 
 export type IndexMetadataResponse = {
   __typename?: 'IndexMetadataResponse';
-  commentPercent: Scalars['Float'];
-  comments: Scalars['Float'];
-  likePercent: Scalars['Float'];
-  likes: Scalars['Float'];
-  sharePercent: Scalars['Float'];
-  shares: Scalars['Float'];
+  box: BoxStats;
+  revenue: RevenueChart;
 };
 
 export type LoginUserInput = {
@@ -322,10 +336,25 @@ export type MutationVerifyUsernameArgs = {
   username: Scalars['String'];
 };
 
+export type OverallStatsResponse = {
+  __typename?: 'OverallStatsResponse';
+  categoryStat: CategoryStat;
+  performance: Performance;
+  stats: Array<Maybe<Stat>>;
+};
+
 export type PaymentType =
   | 'ARTICLE'
   | 'MONTHLY'
   | 'ONETIME';
+
+export type Performance = {
+  __typename?: 'Performance';
+  totalComments: Scalars['Int'];
+  totalContents: Scalars['Int'];
+  totalLikes: Scalars['Int'];
+  totalShares: Scalars['Int'];
+};
 
 export type Portfolio = {
   __typename?: 'Portfolio';
@@ -354,6 +383,7 @@ export type Query = {
   getContents: Array<Content>;
   getCurrentUser?: Maybe<User>;
   getIndexMetadata: IndexMetadataResponse;
+  getOverallStats: OverallStatsResponse;
   getPortfolio: Portfolio;
   getPortfolios: Array<Portfolio>;
   getUser: User;
@@ -402,6 +432,11 @@ export type QueryGetIndexMetadataArgs = {
 };
 
 
+export type QueryGetOverallStatsArgs = {
+  filters?: InputMaybe<ContentFiltersInput>;
+};
+
+
 export type QueryGetPortfolioArgs = {
   id: Scalars['ID'];
 };
@@ -425,9 +460,27 @@ export type RegisterUserInput = {
   username?: InputMaybe<Scalars['String']>;
 };
 
+export type RevenueChart = {
+  __typename?: 'RevenueChart';
+  data: Chart;
+  months: Array<Scalars['String']>;
+};
+
 export type SignedUpThrough =
   | 'CONTENTRE'
   | 'GOOGLE';
+
+export type Stat = {
+  __typename?: 'Stat';
+  growth: Scalars['Float'];
+  interactions: Scalars['Float'];
+  name: Scalars['String'];
+  status: Scalars['String'];
+  totalComments: Scalars['Int'];
+  totalContents: Scalars['Int'];
+  totalLikes: Scalars['Int'];
+  totalShares: Scalars['Int'];
+};
 
 export type Tag = {
   __typename?: 'Tag';
@@ -500,6 +553,15 @@ export type VisibilityType =
   | 'DRAFT'
   | 'PUBLISHED';
 
+export type CategoryStat = {
+  __typename?: 'categoryStat';
+  name: Scalars['String'];
+  totalComments: Scalars['Int'];
+  totalContents: Scalars['Int'];
+  totalLikes: Scalars['Int'];
+  totalShares: Scalars['Int'];
+};
+
 
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -570,8 +632,10 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  BoxStats: ResolverTypeWrapper<BoxStats>;
   Category: ResolverTypeWrapper<Category>;
   CategoryFiltersInput: CategoryFiltersInput;
+  Chart: ResolverTypeWrapper<Chart>;
   Client: ResolverTypeWrapper<Client>;
   ClientFiltersInput: ClientFiltersInput;
   Content: ResolverTypeWrapper<Content>;
@@ -590,12 +654,16 @@ export type ResolversTypes = {
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   LoginUserInput: LoginUserInput;
   Mutation: ResolverTypeWrapper<{}>;
+  OverallStatsResponse: ResolverTypeWrapper<OverallStatsResponse>;
   PaymentType: PaymentType;
+  Performance: ResolverTypeWrapper<Performance>;
   Portfolio: ResolverTypeWrapper<Portfolio>;
   PortfolioFiltersInput: PortfolioFiltersInput;
   Query: ResolverTypeWrapper<{}>;
   RegisterUserInput: RegisterUserInput;
+  RevenueChart: ResolverTypeWrapper<RevenueChart>;
   SignedUpThrough: SignedUpThrough;
+  Stat: ResolverTypeWrapper<Stat>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Tag: ResolverTypeWrapper<Tag>;
   Time: ResolverTypeWrapper<Scalars['Time']>;
@@ -606,13 +674,16 @@ export type ResolversTypes = {
   UploadContentInput: UploadContentInput;
   User: ResolverTypeWrapper<User>;
   VisibilityType: VisibilityType;
+  categoryStat: ResolverTypeWrapper<CategoryStat>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
+  BoxStats: BoxStats;
   Category: Category;
   CategoryFiltersInput: CategoryFiltersInput;
+  Chart: Chart;
   Client: Client;
   ClientFiltersInput: ClientFiltersInput;
   Content: Content;
@@ -630,10 +701,14 @@ export type ResolversParentTypes = {
   JSON: Scalars['JSON'];
   LoginUserInput: LoginUserInput;
   Mutation: {};
+  OverallStatsResponse: OverallStatsResponse;
+  Performance: Performance;
   Portfolio: Portfolio;
   PortfolioFiltersInput: PortfolioFiltersInput;
   Query: {};
   RegisterUserInput: RegisterUserInput;
+  RevenueChart: RevenueChart;
+  Stat: Stat;
   String: Scalars['String'];
   Tag: Tag;
   Time: Scalars['Time'];
@@ -643,6 +718,18 @@ export type ResolversParentTypes = {
   UpdateUserInput: UpdateUserInput;
   UploadContentInput: UploadContentInput;
   User: User;
+  categoryStat: CategoryStat;
+};
+
+export type BoxStatsResolvers<ContextType = any, ParentType extends ResolversParentTypes['BoxStats'] = ResolversParentTypes['BoxStats']> = {
+  amountPercent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  commentPercent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  comments?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  likePercent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  likes?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  sharePercent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  shares?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type CategoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = {
@@ -654,6 +741,12 @@ export type CategoryResolvers<ContextType = any, ParentType extends ResolversPar
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ChartResolvers<ContextType = any, ParentType extends ResolversParentTypes['Chart'] = ResolversParentTypes['Chart']> = {
+  current?: Resolver<Array<ResolversTypes['Float']>, ParentType, ContextType>;
+  last?: Resolver<Array<ResolversTypes['Float']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ClientResolvers<ContextType = any, ParentType extends ResolversParentTypes['Client'] = ResolversParentTypes['Client']> = {
   amount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
@@ -662,6 +755,7 @@ export type ClientResolvers<ContextType = any, ParentType extends ResolversParen
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   paymentType?: Resolver<Maybe<ResolversTypes['PaymentType']>, ParentType, ContextType>;
   profile?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   totalContents?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
@@ -696,12 +790,8 @@ export type ContentResolvers<ContextType = any, ParentType extends ResolversPare
 };
 
 export type IndexMetadataResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['IndexMetadataResponse'] = ResolversParentTypes['IndexMetadataResponse']> = {
-  commentPercent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  comments?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  likePercent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  likes?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  sharePercent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  shares?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  box?: Resolver<ResolversTypes['BoxStats'], ParentType, ContextType>;
+  revenue?: Resolver<ResolversTypes['RevenueChart'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -740,6 +830,21 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   version?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
+export type OverallStatsResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['OverallStatsResponse'] = ResolversParentTypes['OverallStatsResponse']> = {
+  categoryStat?: Resolver<ResolversTypes['categoryStat'], ParentType, ContextType>;
+  performance?: Resolver<ResolversTypes['Performance'], ParentType, ContextType>;
+  stats?: Resolver<Array<Maybe<ResolversTypes['Stat']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PerformanceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Performance'] = ResolversParentTypes['Performance']> = {
+  totalComments?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalContents?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalLikes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalShares?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type PortfolioResolvers<ContextType = any, ParentType extends ResolversParentTypes['Portfolio'] = ResolversParentTypes['Portfolio']> = {
   createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -762,10 +867,29 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getContents?: Resolver<Array<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<QueryGetContentsArgs, never>>;
   getCurrentUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   getIndexMetadata?: Resolver<ResolversTypes['IndexMetadataResponse'], ParentType, ContextType, RequireFields<QueryGetIndexMetadataArgs, never>>;
+  getOverallStats?: Resolver<ResolversTypes['OverallStatsResponse'], ParentType, ContextType, RequireFields<QueryGetOverallStatsArgs, never>>;
   getPortfolio?: Resolver<ResolversTypes['Portfolio'], ParentType, ContextType, RequireFields<QueryGetPortfolioArgs, 'id'>>;
   getPortfolios?: Resolver<Array<ResolversTypes['Portfolio']>, ParentType, ContextType, RequireFields<QueryGetPortfoliosArgs, never>>;
   getUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryGetUserArgs, 'uuid'>>;
   getVersion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
+export type RevenueChartResolvers<ContextType = any, ParentType extends ResolversParentTypes['RevenueChart'] = ResolversParentTypes['RevenueChart']> = {
+  data?: Resolver<ResolversTypes['Chart'], ParentType, ContextType>;
+  months?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type StatResolvers<ContextType = any, ParentType extends ResolversParentTypes['Stat'] = ResolversParentTypes['Stat']> = {
+  growth?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  interactions?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  totalComments?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalContents?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalLikes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalShares?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type TagResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tag'] = ResolversParentTypes['Tag']> = {
@@ -802,17 +926,33 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type CategoryStatResolvers<ContextType = any, ParentType extends ResolversParentTypes['categoryStat'] = ResolversParentTypes['categoryStat']> = {
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  totalComments?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalContents?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalLikes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalShares?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = any> = {
+  BoxStats?: BoxStatsResolvers<ContextType>;
   Category?: CategoryResolvers<ContextType>;
+  Chart?: ChartResolvers<ContextType>;
   Client?: ClientResolvers<ContextType>;
   Content?: ContentResolvers<ContextType>;
   IndexMetadataResponse?: IndexMetadataResponseResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
+  OverallStatsResponse?: OverallStatsResponseResolvers<ContextType>;
+  Performance?: PerformanceResolvers<ContextType>;
   Portfolio?: PortfolioResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  RevenueChart?: RevenueChartResolvers<ContextType>;
+  Stat?: StatResolvers<ContextType>;
   Tag?: TagResolvers<ContextType>;
   Time?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
+  categoryStat?: CategoryStatResolvers<ContextType>;
 };
 

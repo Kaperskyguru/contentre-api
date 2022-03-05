@@ -8,6 +8,7 @@ import getContents from './queries/get-contents'
 import uploadContent from './mutations/upload-content'
 import interactions from './fields/interactions'
 import getIndexMetadata from './queries/get-index-metadata'
+import getOverallStats from './queries/get-overall-stats'
 
 const typeDefs = gql`
   type Content {
@@ -58,13 +59,61 @@ const typeDefs = gql`
     ONETIME
   }
 
-  type IndexMetadataResponse {
+  type Chart {
+    current: [Float!]!
+    last: [Float!]!
+  }
+
+  type RevenueChart {
+    data: Chart!
+    months: [String!]!
+  }
+
+  type BoxStats {
     likePercent: Float!
     commentPercent: Float!
     sharePercent: Float!
+    amountPercent: Float!
     likes: Float!
     shares: Float!
     comments: Float!
+  }
+
+  type Stat {
+    interactions: Float!
+    growth: Float!
+    name: String!
+    status: String!
+    totalShares: Int!
+    totalComments: Int!
+    totalLikes: Int!
+    totalContents: Int!
+  }
+
+  type Performance {
+    totalShares: Int!
+    totalComments: Int!
+    totalLikes: Int!
+    totalContents: Int!
+  }
+
+  type categoryStat {
+    name: String!
+    totalContents: Int!
+    totalLikes: Int!
+    totalComments: Int!
+    totalShares: Int!
+  }
+
+  type OverallStatsResponse {
+    stats: [Stat]!
+    performance: Performance!
+    categoryStat: categoryStat!
+  }
+
+  type IndexMetadataResponse {
+    box: BoxStats!
+    revenue: RevenueChart!
   }
 
   input CreateContentInput {
@@ -100,6 +149,7 @@ const typeDefs = gql`
     getContents(size: Int, skip: Int, filters: ContentFiltersInput): [Content!]!
     getContent(id: ID!): Content!
     getIndexMetadata(filters: ContentFiltersInput): IndexMetadataResponse!
+    getOverallStats(filters: ContentFiltersInput): OverallStatsResponse!
   }
 
   extend type Mutation {
@@ -114,7 +164,8 @@ const resolvers: Resolvers = {
   Query: {
     getContents,
     getContent,
-    getIndexMetadata
+    getIndexMetadata,
+    getOverallStats
   },
 
   Mutation: {
