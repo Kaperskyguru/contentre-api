@@ -16,13 +16,10 @@ export default async (
 
   try {
     if (!filters?.terms) {
-      const c = await prisma.category.findMany({
+      return await prisma.category.findMany({
         orderBy: [{ name: 'asc' }],
         take: 10
       })
-
-      console.log(c)
-      return c
     }
 
     const categoriesStartsWith = await prisma.category.findMany({

@@ -16,6 +16,7 @@ const typeDefs = gql`
     icon: String
     amount: Float
     paymentType: PaymentType
+    status: String
     user: User
     totalContents: String
     updatedAt: Time!

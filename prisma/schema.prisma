@@ -75,9 +75,15 @@ model Client {
   icon        String?     @db.VarChar(2048)
   paymentType PaymentType @default(ARTICLE)
   amount      Float       @default(0.0)
+  status      Status      @default(ACTIVE)
   createdAt   DateTime    @default(now()) @db.Timestamp(6)
   updatedAt   DateTime    @default(now()) @updatedAt @db.Timestamp(6)
   contents    Content[]   @relation("ClientContent")
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
 }
 
 model Content {
