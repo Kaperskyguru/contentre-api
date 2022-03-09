@@ -16,6 +16,8 @@ export default async (
 
     const { toDate, fromDate, monthsInterval } = getDateIntervals(filters)
 
+    // console.log(monthsInterval)
+
     // Growth: compares sum of total_contents, views, clicks, likes, shares, comments with previous duration (year, month, week, day)
     // Interactions: compares sum of views, clicks, likes, shares, comments with previous duration (year, month, week, day)
 
@@ -102,6 +104,96 @@ export default async (
       stats,
       performance
     }
+
+    type GrowthValues = {
+      currentComments: number
+      currentShares: number
+      lastShares: number
+      lastComments: number
+      lastLikes: number
+      currentLikes: number
+      comments: number
+      shares: number
+      likes: number
+      currentAmount: number
+      lastAmount: number
+    }
+
+    const contentCountsByJanuary1: GrowthValues[] =
+      await prisma.$queryRawUnsafe(
+        `
+    SELECT
+    DATE_TRUNC('year', c."createdAt") as "Year",
+    SUM(c."likes") as "current",
+    LAG(SUM(c."likes"), $2::INT) OVER w as "pastLikes",
+  100 * (SUM(c."likes") - LAG(SUM(c."likes"), $2::INT) OVER w)/LAG(SUM(c."likes"), $2::INT) OVER w as "YoY"
+FROM "Content" c
+WHERE
+(
+  c."userId" = $1
+)
+
+WINDOW w as (ORDER BY DATE_TRUNC('year', c."createdAt") as "Year")          
+
+`.clearIndentation(),
+        user.id,
+        monthsInterval.length
+      )
+
+    console.log(contentCountsByJanuary1)
+
+    const contentCountsByJanuary: GrowthValues[] = await prisma.$queryRawUnsafe(
+      `
+          SELECT
+          AVG("c"."likes") FILTER(WHERE "c"."createdAt" BETWEEN $2::TIMESTAMP AND $3::TIMESTAMP) "likes",
+          AVG("c"."shares") FILTER(WHERE "c"."createdAt" BETWEEN $2::TIMESTAMP AND $3::TIMESTAMP) "shares",
+          AVG("c"."comments") FILTER(WHERE "c"."createdAt" BETWEEN $2::TIMESTAMP AND $3::TIMESTAMP) "comments",
+          
+          SUM(c."likes") FILTER(WHERE "c"."createdAt" BETWEEN $2::TIMESTAMP AND $3::TIMESTAMP) "currentLikes",
+          SUM(c."comments") FILTER(WHERE "c"."createdAt" BETWEEN $2::TIMESTAMP AND $3::TIMESTAMP) "currentComments",
+          SUM(c."shares") FILTER(WHERE "c"."createdAt" BETWEEN $2::TIMESTAMP AND $3::TIMESTAMP) "currentShares",
+          SUM(c."amount") FILTER(WHERE "c"."createdAt" BETWEEN $2::TIMESTAMP AND $3::TIMESTAMP) "currentAmount",
+          
+          SUM(c."shares") FILTER(WHERE "c"."createdAt" BETWEEN $2::TIMESTAMP AND $3::TIMESTAMP - '1 year'::INTERVAL ) "lastShares",
+          SUM(c."comments") FILTER(WHERE "c"."createdAt" BETWEEN $2::TIMESTAMP AND $3::TIMESTAMP - '1 year'::INTERVAL) "lastComments",
+          SUM(c."likes") FILTER(WHERE "c"."createdAt" BETWEEN $2::TIMESTAMP AND $3::TIMESTAMP - '1 year'::INTERVAL) "lastLikes",
+          SUM(c."amount") FILTER(WHERE "c"."createdAt" BETWEEN $2::TIMESTAMP AND $3::TIMESTAMP - '1 year'::INTERVAL) "lastAmount"
+          FROM
+            "Content" c
+          WHERE
+            (
+              c."userId" = $1
+            )
+         
+        `.clearIndentation(),
+      user.id,
+      fromDate,
+      toDate
+    )
+
+    console.log(contentCountsByJanuary)
+
+    const values = contentCountsByJanuary.map((val) => {
+      const subLikes =
+        ((val.currentLikes - val.lastLikes) / val.lastLikes) * 100
+      const subComments =
+        ((val.currentComments - val.lastComments) / val.lastComments) * 100
+      const subShares =
+        ((val.currentShares - val.lastShares) / val.lastShares) * 100
+      const subAmount =
+        ((val.currentAmount - val.lastAmount) / val.lastAmount) * 100
+      return {
+        likePercent: !Number.isFinite(subLikes) ? 100 : subLikes,
+        commentPercent: !Number.isFinite(subComments) ? 100 : subComments,
+        sharePercent: !Number.isFinite(subShares) ? 100 : subShares,
+        amountPercent: !Number.isFinite(subAmount) ? 100 : subAmount,
+        likes: val.likes,
+        comments: val.comments,
+        shares: val.shares
+      }
+    })
+
+    // console.log(contentCountsByJanuary, values, fromDate, toDate)
 
     return result
   } catch (e) {

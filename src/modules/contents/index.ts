@@ -9,6 +9,9 @@ import uploadContent from './mutations/upload-content'
 import interactions from './fields/interactions'
 import getIndexMetadata from './queries/get-index-metadata'
 import getOverallStats from './queries/get-overall-stats'
+import getTagsStats from './queries/get-tags-stats'
+import getCategoryStats from './queries/get-category-stats'
+import getTopicStats from './queries/get-topic-stats'
 
 const typeDefs = gql`
   type Content {
@@ -97,23 +100,23 @@ const typeDefs = gql`
     totalContents: Int!
   }
 
-  type categoryStat {
-    name: String!
-    totalContents: Int!
-    totalLikes: Int!
-    totalComments: Int!
-    totalShares: Int!
-  }
-
   type OverallStatsResponse {
-    stats: [Stat]!
-    performance: Performance!
-    categoryStat: categoryStat!
+    stats: [Stat!]
+    performance: Performance
+    categoryStat: OverallStatResponse
   }
 
   type IndexMetadataResponse {
     box: BoxStats!
     revenue: RevenueChart!
+  }
+
+  type OverallStatResponse {
+    name: String!
+    totalContents: Int!
+    totalLikes: Int!
+    totalComments: Int!
+    totalShares: Int!
   }
 
   input CreateContentInput {
@@ -143,6 +146,17 @@ const typeDefs = gql`
   input ContentFiltersInput {
     terms: String
     sortBy: String
+    categoryIds: [ID!]
+    topicIds: [ID!]
+    duration: Int
+    daily: Boolean
+    tags: [String!]
+    fromAmount: Float
+    toAmount: Float
+    categories: [String!]
+    fromDate: String
+    toDate: String
+    topics: [String!]
   }
 
   extend type Query {
@@ -150,6 +164,10 @@ const typeDefs = gql`
     getContent(id: ID!): Content!
     getIndexMetadata(filters: ContentFiltersInput): IndexMetadataResponse!
     getOverallStats(filters: ContentFiltersInput): OverallStatsResponse!
+
+    getCategoryStats(filters: ContentFiltersInput): OverallStatResponse
+    getTagsStats(filters: ContentFiltersInput): OverallStatResponse!
+    getTopicStats(filters: ContentFiltersInput): OverallStatResponse!
   }
 
   extend type Mutation {
@@ -165,7 +183,10 @@ const resolvers: Resolvers = {
     getContents,
     getContent,
     getIndexMetadata,
-    getOverallStats
+    getOverallStats,
+    getCategoryStats,
+    getTopicStats,
+    getTagsStats
   },
 
   Mutation: {
