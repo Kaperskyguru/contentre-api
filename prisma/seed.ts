@@ -3,12 +3,21 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 const seedTemplates = async () => {
+  const user = await prisma.user.create({
+    data: {
+      name: 'Admin Admin',
+      username: 'admin',
+      password: '$2b$10$cKsE9uzk.TTgtl.kgk15UeV5Adto8NVYTp3Wt3o2YxK9ZrSnx.sEi',
+      email: 'test@test.com'
+    }
+  })
+
   await prisma.template.createMany({
     data: [
       {
         title: 'Blank',
         content: '<h1>Blank</h1>',
-        userId: 'a3f03bc2-2883-45fd-b073-e2673dee7767',
+        userId: user.id,
         visibility: 'PUBLIC'
       }
     ],
@@ -17,7 +26,6 @@ const seedTemplates = async () => {
 }
 
 const seed = async () => {
-  console.log('here')
   await seedTemplates()
 }
 
