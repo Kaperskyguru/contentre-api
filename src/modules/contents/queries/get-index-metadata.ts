@@ -116,6 +116,32 @@ export default async (
           `.clearIndentation(),
       user.id
     )
+    const testYear: AmountGroupQueryResult[] = await prisma.$queryRawUnsafe(
+      `
+    select 
+    
+    TO_CHAR(date_trunc('month', c."createdAt"), 'mon')|| ',' || TO_CHAR(date_trunc('month', c."createdAt"), 'YYYY') as months,
+
+    CASE when sum(c.amount) IS NULL THEN 0 ELSE sum(c.amount)::INT END as current_sale,
+
+    lag( CASE when sum(c.amount) IS NULL THEN 0 ELSE sum(c.amount)::INT END, 1) over w as previous_month_sale,
+
+    (100 * (sum(c.amount) - lag(sum(c.amount), 1) over w) / lag(sum(c.amount), 1) over w) || '%' as growth
+
+   From "Content" c
+
+    where c."userId" = $1 or c."userId" is null
+
+    group by 1
+
+    WINDOW w as (ORDER BY 1)  
+
+    order by 1;
+    `.clearIndentation(),
+      user.id
+    )
+
+    // console.log(lastYear, currentYear, testYear)
 
     const cYearAmounts = currentYear.map((item) => ({
       amount: item.amount,
