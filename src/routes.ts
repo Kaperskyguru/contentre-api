@@ -14,7 +14,7 @@ const origins: Readonly<{
     /https:\/\/deploy-preview-.*--develop-app-contentre\.netlify\.app$/
   ],
   STAGING: ['http://localhost:3000', /\.contentre\.io$/],
-  PRODUCTION: /app\.contentre\.io$/
+  PRODUCTION: /\.contentre\.io$/
 })
 
 const corsOptions = cors({
