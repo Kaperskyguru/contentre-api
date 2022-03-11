@@ -47,13 +47,13 @@ export default async (
       name: 'token',
       value: token,
       options: {
-        domain: 'contentre.io',
+        // domain: 'contentre.io',
         expires: remember ? new Date(Date.now() + thirtyDays) : undefined,
         httpOnly: true,
         sameSite: ['LOCAL', 'DEVELOP'].includes(environment.context)
           ? 'None'
-          : true,
-        secure: true
+          : true
+        // secure: true
       }
     })
 
