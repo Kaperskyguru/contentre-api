@@ -52,9 +52,7 @@ export default async (
         // domain: 'contentre.io',
         expires: remember ? new Date(Date.now() + thirtyDays) : undefined,
         httpOnly: true,
-        sameSite: ['LOCAL', 'DEVELOP'].includes(environment.context)
-          ? 'None'
-          : true,
+        sameSite: 'None',
         secure: true
       }
     })

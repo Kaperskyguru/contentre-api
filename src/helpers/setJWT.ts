@@ -16,9 +16,8 @@ export function setJWT(user: DBUser, setCookies: Cookie[]): void {
     options: {
       // domain: 'contentre.io',
       httpOnly: true,
-      sameSite: ['LOCAL', 'DEVELOP'].includes(environment.context)
-        ? 'None'
-        : true,
+      sameSite: 'None',
+
       secure: true
     }
   })
