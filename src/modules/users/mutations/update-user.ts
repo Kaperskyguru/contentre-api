@@ -20,8 +20,6 @@ export default async (
     const data: Record<string, unknown> = {}
     if (input.avatarURL !== undefined) data.avatarURL = input.avatarURL
     if (input.name !== undefined) data.name = input.name
-    if (input.firstname !== undefined) data.firstname = input.firstname
-    if (input.lastname !== undefined) data.lastname = input.lastname
     if (input.jobTitle !== undefined) data.jobTitle = input.jobTitle
     if (input.homeAddress !== undefined) data.homeAddress = input.homeAddress
     if (input.bio !== undefined) data.bio = input.bio
