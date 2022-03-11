@@ -107,8 +107,8 @@ const typeDefs = gql`
   }
 
   type IndexMetadataResponse {
-    box: BoxStats!
-    revenue: RevenueChart!
+    box: BoxStats
+    revenue: RevenueChart
   }
 
   type OverallStatResponse {
