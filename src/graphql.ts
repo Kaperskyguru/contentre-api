@@ -66,7 +66,7 @@ async function startApolloServer() {
       const token = headers.cookie?.split('token=')[1]
         ? headers.cookie.split('token=')[1].split(';')[0]
         : undefined
-      // Get auth token from cookies
+      // Get auth locale from cookies
       const locale = headers.cookie?.split('i18n_redirected=')[1]
         ? headers.cookie.split('i18n_redirected=')[1].split(';')[0]
         : 'en-GB'
