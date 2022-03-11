@@ -17,7 +17,6 @@ export function setJWT(user: DBUser, setCookies: Cookie[]): void {
       // domain: 'contentre.io',
       httpOnly: true,
       sameSite: 'None',
-
       secure: true
     }
   })

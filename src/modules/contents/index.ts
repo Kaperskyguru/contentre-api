@@ -162,12 +162,12 @@ const typeDefs = gql`
   extend type Query {
     getContents(size: Int, skip: Int, filters: ContentFiltersInput): [Content!]!
     getContent(id: ID!): Content!
-    getIndexMetadata(filters: ContentFiltersInput): IndexMetadataResponse!
-    getOverallStats(filters: ContentFiltersInput): OverallStatsResponse!
+    getIndexMetadata(filters: ContentFiltersInput): IndexMetadataResponse
+    getOverallStats(filters: ContentFiltersInput): OverallStatsResponse
 
     getCategoryStats(filters: ContentFiltersInput): OverallStatResponse
-    getTagsStats(filters: ContentFiltersInput): OverallStatResponse!
-    getTopicStats(filters: ContentFiltersInput): OverallStatResponse!
+    getTagsStats(filters: ContentFiltersInput): OverallStatResponse
+    getTopicStats(filters: ContentFiltersInput): OverallStatResponse
   }
 
   extend type Mutation {
