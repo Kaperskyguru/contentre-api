@@ -167,8 +167,8 @@ export type CreateUserInput = {
 
 export type IndexMetadataResponse = {
   __typename?: 'IndexMetadataResponse';
-  box: BoxStats;
-  revenue: RevenueChart;
+  box?: Maybe<BoxStats>;
+  revenue?: Maybe<RevenueChart>;
 };
 
 export type LoginUserInput = {
@@ -535,8 +535,14 @@ export type UpdateClientInput = {
 };
 
 export type UpdateContentInput = {
-  clientId?: InputMaybe<Scalars['ID']>;
+  amount?: InputMaybe<Scalars['Float']>;
+  categoryId?: InputMaybe<Scalars['ID']>;
+  comments?: InputMaybe<Scalars['Int']>;
+  likes?: InputMaybe<Scalars['Int']>;
+  paymentType?: InputMaybe<Scalars['String']>;
+  shares?: InputMaybe<Scalars['Int']>;
   title?: InputMaybe<Scalars['String']>;
+  visibility?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdatePortfolioInput = {
@@ -549,10 +555,8 @@ export type UpdateUserInput = {
   avatarURL?: InputMaybe<Scalars['String']>;
   bio?: InputMaybe<Scalars['String']>;
   email?: InputMaybe<Scalars['String']>;
-  firstname?: InputMaybe<Scalars['String']>;
   homeAddress?: InputMaybe<Scalars['String']>;
   jobTitle?: InputMaybe<Scalars['String']>;
-  lastname?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   phoneNumber?: InputMaybe<Scalars['String']>;
   portfolio?: InputMaybe<Scalars['String']>;
@@ -571,6 +575,7 @@ export type User = {
   email: Scalars['String'];
   emailConfirmed: Scalars['Boolean'];
   firstname?: Maybe<Scalars['String']>;
+  hasFinishedOnboarding?: Maybe<Scalars['Boolean']>;
   homeAddress?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   jobTitle?: Maybe<Scalars['String']>;
@@ -581,6 +586,7 @@ export type User = {
   phoneConfirmed: Scalars['Boolean'];
   phoneNumber?: Maybe<Scalars['String']>;
   portfolio?: Maybe<Scalars['String']>;
+  totalContents?: Maybe<Scalars['Int']>;
   totalUsersReferred?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Time'];
   username?: Maybe<Scalars['String']>;
@@ -819,8 +825,8 @@ export type ContentResolvers<ContextType = any, ParentType extends ResolversPare
 };
 
 export type IndexMetadataResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['IndexMetadataResponse'] = ResolversParentTypes['IndexMetadataResponse']> = {
-  box?: Resolver<ResolversTypes['BoxStats'], ParentType, ContextType>;
-  revenue?: Resolver<ResolversTypes['RevenueChart'], ParentType, ContextType>;
+  box?: Resolver<Maybe<ResolversTypes['BoxStats']>, ParentType, ContextType>;
+  revenue?: Resolver<Maybe<ResolversTypes['RevenueChart']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -951,6 +957,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   emailConfirmed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   firstname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  hasFinishedOnboarding?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   homeAddress?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   jobTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -961,6 +968,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   phoneConfirmed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   phoneNumber?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   portfolio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  totalContents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   totalUsersReferred?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   username?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

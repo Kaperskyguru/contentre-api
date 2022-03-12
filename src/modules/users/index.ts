@@ -7,6 +7,7 @@ import updateUser from './mutations/update-user'
 import deleteUser from './mutations/delete-user'
 import getUser from './queries/getUser'
 import usersReferred from './fields/users-referred'
+import totalContents from './fields/total-contents'
 
 const typeDefs = gql`
   enum SignedUpThrough {
@@ -28,6 +29,8 @@ const typeDefs = gql`
     phoneCode: String
     phoneNumber: String
     totalUsersReferred: String
+    hasFinishedOnboarding: Boolean
+    totalContents: Int
     avatarURL: String
     createdAt: Time!
     updatedAt: Time!
@@ -52,8 +55,6 @@ const typeDefs = gql`
     portfolio: String
     email: String
     avatarURL: String
-    firstname: String
-    lastname: String
   }
 
   extend type Query {
@@ -84,7 +85,8 @@ const resolvers: Resolvers = {
 
   User: {
     avatarURL: userAvatarURL,
-    totalUsersReferred: usersReferred
+    totalUsersReferred: usersReferred,
+    totalContents: totalContents
   }
 }
 

@@ -140,7 +140,13 @@ const typeDefs = gql`
 
   input UpdateContentInput {
     title: String
-    clientId: ID
+    comments: Int
+    likes: Int
+    shares: Int
+    paymentType: String
+    amount: Float
+    categoryId: ID
+    visibility: String
   }
 
   input ContentFiltersInput {

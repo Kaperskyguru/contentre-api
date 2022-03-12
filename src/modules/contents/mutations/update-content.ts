@@ -20,22 +20,20 @@ export default async (
     // User must be logged in before performing the operation.
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
-    // Extract fields from the mutation input.
-    const { title, clientId } = input
-
     // Check for required arguments not provided.
     if (!id) {
       throw new ApolloError('Invalid input', '422')
     }
 
-    const data: UpdateData = {}
-    if (title) {
-      data.title = title
-    }
+    const data: Record<string, unknown> = {}
 
-    if (clientId) {
-      data.clientId = clientId
-    }
+    if (input.comments !== undefined) data.comments = input.comments
+    if (input.likes !== undefined) data.likes = input.likes
+    if (input.shares !== undefined) data.shares = input.shares
+    if (input.paymentType !== undefined) data.paymentType = input.paymentType
+    if (input.categoryId !== undefined) data.categoryId = input.categoryId
+    if (input.visibility !== undefined) data.visibility = input.visibility
+    if (input.amount !== undefined) data.amount = input.amount
 
     const content = await prisma.content.findUnique({
       where: { id }

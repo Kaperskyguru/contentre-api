@@ -106,7 +106,7 @@ export default async (
        
       FROM  (
          SELECT generate_series(NOW() - interval '1 year'
-                              , NOW() - interval '1 month'
+                              , date_trunc('month', NOW() )
                               , interval  '1 day')
          ) d(day)
       LEFT JOIN public."Content" c ON TO_CHAR(c."createdAt" , 'YYYY-MM-DD') = TO_CHAR(d.day, 'YYYY-MM-DD')
@@ -141,7 +141,7 @@ export default async (
       user.id
     )
 
-    // console.log(lastYear, currentYear, testYear)
+    console.log(lastYear, currentYear, testYear)
 
     const cYearAmounts = currentYear.map((item) => ({
       amount: item.amount,
