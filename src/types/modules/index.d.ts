@@ -36,7 +36,10 @@ export type Category = {
   createdAt: Scalars['Time'];
   id: Scalars['ID'];
   name: Scalars['String'];
+  totalAmount?: Maybe<Scalars['String']>;
+  totalContents?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Time'];
+  userId?: Maybe<Scalars['ID']>;
 };
 
 export type CategoryFiltersInput = {
@@ -772,7 +775,10 @@ export type CategoryResolvers<ContextType = any, ParentType extends ResolversPar
   createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  totalAmount?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  totalContents?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

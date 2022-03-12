@@ -141,7 +141,7 @@ export default async (
       user.id
     )
 
-    console.log(lastYear, currentYear, testYear)
+    // console.log(lastYear, currentYear, testYear)
 
     const cYearAmounts = currentYear.map((item) => ({
       amount: item.amount,

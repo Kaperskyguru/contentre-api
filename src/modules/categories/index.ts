@@ -1,13 +1,19 @@
 import { Resolvers } from '@/types/modules'
 import { gql } from 'apollo-server-core'
 import getCategories from './queries/get-categories'
+import getCategory from './queries/get-category'
 import createCategory from './mutations/create-category'
+import totalContents from './fields/total-contents'
+import totalAmount from './fields/total-amount'
 
 const typeDefs = gql`
   type Category {
     id: ID!
     name: String!
     color: String
+    userId: ID
+    totalContents: String
+    totalAmount: String
     createdAt: Time!
     updatedAt: Time!
   }
@@ -38,14 +44,19 @@ const typeDefs = gql`
 `
 const resolvers: Resolvers = {
   Query: {
-    getCategories
-    // getCategory
+    getCategories,
+    getCategory
   },
 
   Mutation: {
     createCategory
     // updateCategory,
     // deleteCategory
+  },
+
+  Category: {
+    totalContents: totalContents,
+    totalAmount: totalAmount
   }
 }
 export default { typeDefs, resolvers }

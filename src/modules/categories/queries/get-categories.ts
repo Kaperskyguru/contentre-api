@@ -17,6 +17,7 @@ export default async (
   try {
     if (!filters?.terms) {
       return await prisma.category.findMany({
+        where: { userId: user.id },
         orderBy: [{ name: 'asc' }],
         take: 10
       })
@@ -24,7 +25,8 @@ export default async (
 
     const categoriesStartsWith = await prisma.category.findMany({
       where: {
-        name: { startsWith: filters.terms, mode: 'insensitive' }
+        name: { startsWith: filters.terms, mode: 'insensitive' },
+        userId: user.id
       },
       orderBy: [{ name: 'asc' }],
       take: 10
@@ -32,7 +34,8 @@ export default async (
 
     const categoriesContains = await prisma.category.findMany({
       where: {
-        name: { contains: filters.terms, mode: 'insensitive' }
+        name: { contains: filters.terms, mode: 'insensitive' },
+        userId: user.id
       },
       orderBy: [{ name: 'asc' }],
       take: 5
