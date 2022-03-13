@@ -9,6 +9,7 @@ interface URLContent {
 interface Metadata {
   title: string
   url: string
+  image: string
   excerpt: string
   tags?: string[]
   client: Client

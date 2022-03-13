@@ -44,6 +44,7 @@ export default async (
         url,
         title: importedContent.title,
         excerpt: importedContent.excerpt,
+        featuredImage: importedContent.image,
         tags: importedContent.tags,
         user: { connect: { id: user.id } },
         client: { connect: { id: client.id } }

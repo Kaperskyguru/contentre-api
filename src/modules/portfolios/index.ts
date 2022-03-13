@@ -3,6 +3,7 @@ import { gql } from 'apollo-server-core'
 import createPortfolio from './mutations/create-portfolio'
 import getPortfolios from './queries/get-portfolios'
 import deletePortfolio from './mutations/delete-portfolio'
+import getPortfolioContent from './queries/get-portfolio-contents'
 
 const typeDefs = gql`
   type Portfolio {
@@ -15,6 +16,14 @@ const typeDefs = gql`
     templateId: ID!
     createdAt: Time!
     updatedAt: Time!
+  }
+
+  type PortfolioContent {
+    about: String
+    coverImage: String
+    name: String!
+    profileImage: String
+    portfolios: [Content!]
   }
 
   input CreatePortfolioInput {
@@ -35,6 +44,10 @@ const typeDefs = gql`
     terms: String
   }
 
+  input PortfolioContentFilters {
+    username: String!
+  }
+
   extend type Query {
     getPortfolios(
       size: Int
@@ -42,6 +55,11 @@ const typeDefs = gql`
       filters: PortfolioFiltersInput
     ): [Portfolio!]!
     getPortfolio(id: ID!): Portfolio!
+    getPortfolioContent(
+      size: Int
+      skip: Int
+      filters: PortfolioContentFilters!
+    ): PortfolioContent
   }
 
   extend type Mutation {
@@ -52,8 +70,9 @@ const typeDefs = gql`
 `
 const resolvers: Resolvers = {
   Query: {
-    getPortfolios
+    getPortfolios,
     // getPortfolio
+    getPortfolioContent
   },
 
   Mutation: {

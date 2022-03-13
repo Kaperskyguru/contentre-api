@@ -392,6 +392,19 @@ export type Portfolio = {
   userId?: Maybe<Scalars['ID']>;
 };
 
+export type PortfolioContent = {
+  __typename?: 'PortfolioContent';
+  about?: Maybe<Scalars['String']>;
+  coverImage?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  portfolios?: Maybe<Array<Content>>;
+  profileImage?: Maybe<Scalars['String']>;
+};
+
+export type PortfolioContentFilters = {
+  username: Scalars['String'];
+};
+
 export type PortfolioFiltersInput = {
   terms?: InputMaybe<Scalars['String']>;
 };
@@ -409,6 +422,7 @@ export type Query = {
   getIndexMetadata?: Maybe<IndexMetadataResponse>;
   getOverallStats?: Maybe<OverallStatsResponse>;
   getPortfolio: Portfolio;
+  getPortfolioContent?: Maybe<PortfolioContent>;
   getPortfolios: Array<Portfolio>;
   getTagsStats?: Maybe<OverallStatResponse>;
   getTopicStats?: Maybe<OverallStatResponse>;
@@ -470,6 +484,13 @@ export type QueryGetOverallStatsArgs = {
 
 export type QueryGetPortfolioArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryGetPortfolioContentArgs = {
+  filters: PortfolioContentFilters;
+  size?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -697,6 +718,8 @@ export type ResolversTypes = {
   PaymentType: PaymentType;
   Performance: ResolverTypeWrapper<Performance>;
   Portfolio: ResolverTypeWrapper<Portfolio>;
+  PortfolioContent: ResolverTypeWrapper<PortfolioContent>;
+  PortfolioContentFilters: PortfolioContentFilters;
   PortfolioFiltersInput: PortfolioFiltersInput;
   Query: ResolverTypeWrapper<{}>;
   RegisterUserInput: RegisterUserInput;
@@ -743,6 +766,8 @@ export type ResolversParentTypes = {
   OverallStatsResponse: OverallStatsResponse;
   Performance: Performance;
   Portfolio: Portfolio;
+  PortfolioContent: PortfolioContent;
+  PortfolioContentFilters: PortfolioContentFilters;
   PortfolioFiltersInput: PortfolioFiltersInput;
   Query: {};
   RegisterUserInput: RegisterUserInput;
@@ -908,6 +933,15 @@ export type PortfolioResolvers<ContextType = any, ParentType extends ResolversPa
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type PortfolioContentResolvers<ContextType = any, ParentType extends ResolversParentTypes['PortfolioContent'] = ResolversParentTypes['PortfolioContent']> = {
+  about?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  coverImage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  portfolios?: Resolver<Maybe<Array<ResolversTypes['Content']>>, ParentType, ContextType>;
+  profileImage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getCategories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<QueryGetCategoriesArgs, never>>;
   getCategory?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<QueryGetCategoryArgs, 'id'>>;
@@ -920,6 +954,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getIndexMetadata?: Resolver<Maybe<ResolversTypes['IndexMetadataResponse']>, ParentType, ContextType, RequireFields<QueryGetIndexMetadataArgs, never>>;
   getOverallStats?: Resolver<Maybe<ResolversTypes['OverallStatsResponse']>, ParentType, ContextType, RequireFields<QueryGetOverallStatsArgs, never>>;
   getPortfolio?: Resolver<ResolversTypes['Portfolio'], ParentType, ContextType, RequireFields<QueryGetPortfolioArgs, 'id'>>;
+  getPortfolioContent?: Resolver<Maybe<ResolversTypes['PortfolioContent']>, ParentType, ContextType, RequireFields<QueryGetPortfolioContentArgs, 'filters'>>;
   getPortfolios?: Resolver<Array<ResolversTypes['Portfolio']>, ParentType, ContextType, RequireFields<QueryGetPortfoliosArgs, never>>;
   getTagsStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetTagsStatsArgs, never>>;
   getTopicStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetTopicStatsArgs, never>>;
@@ -994,6 +1029,7 @@ export type Resolvers<ContextType = any> = {
   OverallStatsResponse?: OverallStatsResponseResolvers<ContextType>;
   Performance?: PerformanceResolvers<ContextType>;
   Portfolio?: PortfolioResolvers<ContextType>;
+  PortfolioContent?: PortfolioContentResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RevenueChart?: RevenueChartResolvers<ContextType>;
   Stat?: StatResolvers<ContextType>;

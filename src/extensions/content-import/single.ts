@@ -5,6 +5,7 @@ import urlMetadata from 'url-metadata'
 interface Metadata {
   title: string
   url: string
+  image: string
   excerpt: string
   tags?: string[]
   client: Client
@@ -61,6 +62,11 @@ export default async (url: string): Promise<Metadata> => {
       url: generateURL(rawMetadata),
       title: rawMetadata.title,
       excerpt: rawMetadata.description,
+      image:
+        rawMetadata.image ??
+        rawMetadata['og:image'] ??
+        rawMetadata['og:image:secure_url'] ??
+        undefined,
       tags: generateTags(rawMetadata),
       client: {
         website: rawMetadata.source,
