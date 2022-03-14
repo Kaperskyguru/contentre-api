@@ -24,11 +24,5 @@ export default async (parent: Category): Promise<Maybe<string>> => {
     parent.id
   )
 
-  //   const contentCount = await prisma.content.({
-  //     where: { categoryId: parent.id }
-  //   })
-
-  console.log(amount)
-
   return amount[0].amount + ''
 }

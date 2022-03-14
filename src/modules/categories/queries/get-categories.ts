@@ -18,7 +18,15 @@ export default async (
     if (!filters?.terms) {
       return await prisma.category.findMany({
         where: { userId: user.id },
-        orderBy: [{ name: 'asc' }],
+        orderBy: [
+          filters?.sortBy
+            ? filters.sortBy === 'name'
+              ? { name: 'desc' }
+              : filters.sortBy === 'createdAt'
+              ? { createdAt: 'desc' }
+              : { name: 'desc' }
+            : { name: 'desc' }
+        ],
         take: 10
       })
     }
@@ -28,7 +36,15 @@ export default async (
         name: { startsWith: filters.terms, mode: 'insensitive' },
         userId: user.id
       },
-      orderBy: [{ name: 'asc' }],
+      orderBy: [
+        filters?.sortBy
+          ? filters.sortBy === 'name'
+            ? { name: 'desc' }
+            : filters.sortBy === 'createdAt'
+            ? { createdAt: 'desc' }
+            : { name: 'desc' }
+          : { name: 'desc' }
+      ],
       take: 10
     })
 
@@ -37,7 +53,15 @@ export default async (
         name: { contains: filters.terms, mode: 'insensitive' },
         userId: user.id
       },
-      orderBy: [{ name: 'asc' }],
+      orderBy: [
+        filters?.sortBy
+          ? filters.sortBy === 'name'
+            ? { name: 'desc' }
+            : filters.sortBy === 'createdAt'
+            ? { createdAt: 'desc' }
+            : { name: 'desc' }
+          : { name: 'desc' }
+      ],
       take: 5
     })
 

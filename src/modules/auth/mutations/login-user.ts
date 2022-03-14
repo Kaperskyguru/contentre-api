@@ -42,8 +42,6 @@ export default async (
       { expiresIn: '30 days' }
     )
 
-    console.log(token)
-
     const thirtyDays = 30 * 24 * 60 * 60 * 1000
     setCookies.push({
       name: 'token',

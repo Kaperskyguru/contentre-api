@@ -17,7 +17,21 @@ export default async (
     const where = whereClients(user, filters)
 
     const clients = await prisma.client.findMany({
-      orderBy: [{ name: 'desc' }],
+      orderBy: [
+        filters?.sortBy
+          ? filters.sortBy === 'name'
+            ? { name: 'desc' }
+            : filters.sortBy === 'createdAt'
+            ? { createdAt: 'desc' }
+            : filters.sortBy === 'payment'
+            ? { paymentType: 'desc' }
+            : filters.sortBy === 'amount'
+            ? { amount: 'desc' }
+            : filters.sortBy === 'status'
+            ? { status: 'desc' }
+            : { name: 'desc' }
+          : { name: 'desc' }
+      ],
       where,
       include: {
         user: true

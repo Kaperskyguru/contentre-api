@@ -38,6 +38,18 @@ const typeDefs = gql`
 
   input ClientFiltersInput {
     terms: String
+    sortBy: String
+    categoryIds: [ID!]
+    topicIds: [ID!]
+    duration: Int
+    daily: Boolean
+    tags: [String!]
+    fromAmount: Float
+    toAmount: Float
+    categories: [String!]
+    fromDate: String
+    toDate: String
+    topics: [String!]
   }
 
   input UpdateClientInput {

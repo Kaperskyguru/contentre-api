@@ -140,8 +140,6 @@ WINDOW w as (ORDER BY DATE_TRUNC('year', c."createdAt") as "Year")
         monthsInterval.length
       )
 
-    console.log(contentCountsByJanuary1)
-
     const contentCountsByJanuary: GrowthValues[] = await prisma.$queryRawUnsafe(
       `
           SELECT
@@ -170,8 +168,6 @@ WINDOW w as (ORDER BY DATE_TRUNC('year', c."createdAt") as "Year")
       fromDate,
       toDate
     )
-
-    console.log(contentCountsByJanuary)
 
     const values = contentCountsByJanuary.map((val) => {
       const subLikes =
