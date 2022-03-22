@@ -28,6 +28,8 @@ export interface Environment {
     apiKey: string
   }
   mail: {
+    type: string
+    sendAPIKey: string
     host: string
     port: number
     username: string
@@ -105,9 +107,20 @@ export const environment: Environment = {
     apiKey: process.env.VERYFI_API_KEY as string
   },
   mail:
-    process.env.MAIL_HOST || process.env.MAIL_PORT
+    process.env.MAIL_TYPE === 'send'
+      ? {
+          sendAPIKey: process.env.SEND_API_KEY as string,
+          type: process.env.MAIL_TYPE as string,
+          host: process.env.MAIL_HOST as string,
+          port: Number(process.env.MAIL_PORT) || 2525,
+          username: process.env.MAIL_USERNAME as string,
+          password: process.env.MAIL_PASSWORD as string
+        }
+      : process.env.MAIL_HOST || process.env.MAIL_PORT
       ? {
           host: process.env.MAIL_HOST as string,
+          type: process.env.MAIL_TYPE as string,
+          sendAPIKey: process.env.SEND_API_KEY as string,
           port: Number(process.env.MAIL_PORT) || 2525,
           username: process.env.MAIL_USERNAME as string,
           password: process.env.MAIL_PASSWORD as string

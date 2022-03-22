@@ -5,6 +5,7 @@ import { ApolloError } from 'apollo-server-core'
 import nodemailer from 'nodemailer'
 import URL from 'url-parse'
 import forgotPassword from '@extensions/mail-service/email-templates/forgot-password'
+import SendGrid from '@sendgrid/mail'
 interface GenerateEmailLink {
   email: string
   token: string
@@ -50,6 +51,36 @@ const selectTemplate = ({ template, variables }: SelectTemplate) => {
 
 export default async ({ to, subject, template, variables }: SendEmail) => {
   new Promise((resolve, reject) => {
+    // create message
+    var mailOptions: MailOptions = {
+      from: `"${process.env.APP_NAME}" <info@contentre.io>`,
+      to,
+      subject,
+      html: selectTemplate({ template, variables })
+    }
+
+    // if (environment.mail?.type === 'send') {
+    //   SendGrid.setApiKey(environment.mail?.sendAPIKey!)
+    //   console.log('here')
+    //   SendGrid.send(mailOptions).then(
+    //     (info) => {
+    //       console.error(info)
+    //       resolve(info)
+    //     },
+    //     (error) => {
+    //       console.error(error)
+
+    //       if (error.response) {
+    //         console.error(error.response.body)
+    //         reject(new ApolloError(error.response.body))
+    //       }
+    //     }
+    //   )
+
+    //   return
+    // }
+
+    // if (environment.context.includes('DEVELOP')) {
     const transporter = nodemailer.createTransport({
       host: environment.mail?.host || 'smtp.mailtrap.io',
       port: environment.mail?.port || 2525,
@@ -59,22 +90,17 @@ export default async ({ to, subject, template, variables }: SendEmail) => {
       }
     })
 
-    // create message
-    var mailOptions: MailOptions = {
-      from: `"${process.env.APP_NAME}" <no-reply@contentre.io>`,
-      to,
-      subject,
-      html: selectTemplate({ template, variables })
-    }
-
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
+        console.log(error)
         logError('sendEmail %o', { mailOptions, error })
         reject(new ApolloError('try email again later', '500', error))
         return
       }
 
+      console.log(info)
       resolve(info)
     })
+    // }
   })
 }
