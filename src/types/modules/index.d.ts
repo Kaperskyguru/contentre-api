@@ -185,10 +185,14 @@ export type CreateProfileInput = {
 };
 
 export type CreateUserInput = {
+  analyticsSource?: InputMaybe<Scalars['String']>;
+  analyticsSourceData?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  language?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   password: Scalars['String'];
   referrer?: InputMaybe<Scalars['String']>;
+  signedUpThrough?: InputMaybe<SignedUpThrough>;
   username: Scalars['String'];
 };
 
@@ -223,6 +227,7 @@ export type Mutation = {
   sendEmailCode: Scalars['Boolean'];
   sendPasswordResetCode: Scalars['Boolean'];
   sendPhoneCode: Scalars['Boolean'];
+  sendSegment: Scalars['Boolean'];
   updateCategory: Category;
   updateClient: Client;
   updateContent: Content;
@@ -317,6 +322,11 @@ export type MutationSendPasswordResetCodeArgs = {
 export type MutationSendPhoneCodeArgs = {
   phoneCode: Scalars['String'];
   phoneNumber: Scalars['String'];
+};
+
+
+export type MutationSendSegmentArgs = {
+  input: SendSegmentInput;
 };
 
 
@@ -552,6 +562,15 @@ export type RevenueChart = {
   months: Array<Scalars['String']>;
 };
 
+export type SendSegmentInput = {
+  data: Scalars['JSON'];
+  eventName?: InputMaybe<Scalars['String']>;
+  groupId?: InputMaybe<Scalars['String']>;
+  operation: Scalars['String'];
+  pageName?: InputMaybe<Scalars['String']>;
+  userId: Scalars['String'];
+};
+
 export type SignedUpThrough =
   | 'CONTENTRE'
   | 'GOOGLE';
@@ -748,6 +767,7 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
   RegisterUserInput: RegisterUserInput;
   RevenueChart: ResolverTypeWrapper<RevenueChart>;
+  SendSegmentInput: SendSegmentInput;
   SignedUpThrough: SignedUpThrough;
   Stat: ResolverTypeWrapper<Stat>;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -796,6 +816,7 @@ export type ResolversParentTypes = {
   Query: {};
   RegisterUserInput: RegisterUserInput;
   RevenueChart: RevenueChart;
+  SendSegmentInput: SendSegmentInput;
   Stat: Stat;
   String: Scalars['String'];
   Tag: Tag;
@@ -907,6 +928,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   sendEmailCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendEmailCodeArgs, 'email'>>;
   sendPasswordResetCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendPasswordResetCodeArgs, 'email'>>;
   sendPhoneCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendPhoneCodeArgs, 'phoneCode' | 'phoneNumber'>>;
+  sendSegment?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendSegmentArgs, 'input'>>;
   updateCategory?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<MutationUpdateCategoryArgs, 'id' | 'input'>>;
   updateClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationUpdateClientArgs, 'id' | 'input'>>;
   updateContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<MutationUpdateContentArgs, 'id' | 'input'>>;

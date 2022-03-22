@@ -7,6 +7,7 @@ import { MutationCreateUserArgs, User } from '@modules-types'
 import { User as DBUser } from '@prisma/client'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
+import sendToSegment from '@/extensions/segment-service/segment'
 
 export default async (
   _parent: unknown,
@@ -47,6 +48,46 @@ export default async (
         portfolio: `${requestOrigin}/${input.username}`,
         password: await hashPassword(input.password),
         ...data
+      }
+    })
+
+    // Send data to Segment.
+    const segmentData: Record<string, string | boolean | Date | null> = {
+      createdAt: user.createdAt,
+      email: user.email,
+      name: user.name,
+      hasFinishedOnboarding: user.hasFinishedOnboarding,
+      lastActivityAt: user.lastActivityAt
+    }
+
+    if (input.language) {
+      segmentData.language = input.language
+    }
+
+    if (input.analyticsSource) {
+      segmentData.hs_analytics_source = input.analyticsSource
+    }
+
+    if (input.analyticsSourceData) {
+      segmentData.source = input.analyticsSourceData
+    }
+
+    await sendToSegment({
+      operation: 'identify',
+      userId: user.id,
+      data: {
+        ...segmentData,
+        lifecyclestage: '8413994'
+      }
+    })
+
+    await sendToSegment({
+      operation: 'track',
+      eventName: 'user_created',
+      userId: user.id,
+      data: {
+        ...segmentData,
+        signedUpThrough: input.signedUpThrough
       }
     })
 

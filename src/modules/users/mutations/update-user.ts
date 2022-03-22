@@ -4,6 +4,7 @@ import { MutationUpdateUserArgs, User } from '@modules-types'
 import sendEmailCode from '@/modules/auth/mutations/send-email-code'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
+import sendToSegment from '@/extensions/segment-service/segment'
 
 export default async (
   _parent: unknown,
@@ -46,6 +47,32 @@ export default async (
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
       data
+    })
+
+    // Send data to Segment
+    const segmentData = data
+    if (segmentData.phoneNumber) {
+      segmentData.phoneNumber = data.phoneNumber
+    }
+
+    await sendToSegment({
+      operation: 'identify',
+      userId: user.id,
+      data: {
+        ...segmentData,
+        name: updatedUser.name,
+        email: user.email
+      }
+    })
+    await sendToSegment({
+      operation: 'track',
+      eventName: 'user_updated',
+      userId: user.id,
+      data: {
+        ...segmentData,
+        name: updatedUser.name,
+        email: user.email
+      }
     })
 
     // If the user needs to confirm the email after a change.

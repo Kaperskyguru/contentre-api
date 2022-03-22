@@ -3,6 +3,7 @@ import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
 import { Portfolio, MutationCreatePortfolioArgs } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
+import sendToSegment from '@extensions/segment-service/segment'
 
 export default async (
   _parent: unknown,
@@ -39,18 +40,46 @@ export default async (
         content: template?.content!
       }
     })
+    const [result, countPortfolios] = await prisma.$transaction([
+      prisma.portfolio.create({
+        data: {
+          url,
+          title,
+          template: { connect: { id: userTemplate.id } },
+          description,
+          user: { connect: { id: user.id } }
+        }
+      }),
 
-    const newPortfolio = await prisma.portfolio.create({
+      prisma.portfolio.count({
+        where: { userId: user.id }
+      })
+    ])
+
+    await sendToSegment({
+      operation: 'identify',
+      userId: user.id,
       data: {
-        url,
-        title,
-        template: { connect: { id: userTemplate.id } },
-        description,
-        user: { connect: { id: user.id } }
+        email: user.email
       }
     })
 
-    return newPortfolio
+    await sendToSegment({
+      operation: 'track',
+      eventName: 'create_new_portfolio',
+      userId: user.id,
+      data: {
+        portfolioTitle: title,
+        templateId: templateId,
+        template: { ...template },
+        userTemplate: { ...userTemplate },
+        portfolioURL: url,
+        multiple: countPortfolios > 1 ? true : false,
+        portfolioCount: countPortfolios
+      }
+    })
+
+    return result
   } catch (e) {
     logError('createPortfolio %o', {
       input,

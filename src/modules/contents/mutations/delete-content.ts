@@ -1,9 +1,9 @@
 import { useErrorParser } from '@/helpers'
 import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
-import { Content, MutationDeleteContentArgs } from '@/types/modules'
+import { MutationDeleteContentArgs } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
-import ImportContent from '../helpers/import-content'
+import sendToSegment from '@/extensions/segment-service/segment'
 
 export default async (
   _parent: unknown,
@@ -34,9 +34,20 @@ export default async (
       throw new Error('unauthorized')
     }
 
-    return !!(await prisma.content.delete({
+    const deleted = !!(await prisma.content.delete({
       where: { id }
     }))
+
+    // Send data to segment
+    await sendToSegment({
+      operation: 'track',
+      eventName: 'content_deleted',
+      userId: user.id,
+      data: {
+        userEmail: user.email
+      }
+    })
+    return deleted
   } catch (e) {
     logError('createContent %o', user)
 

@@ -3,6 +3,7 @@ import { logError, logMutation } from '@helpers/logger'
 import { MutationDeleteClientArgs } from '@modules-types'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
+import sendToSegment from '@extensions/segment-service/segment'
 
 export default async (
   _parent: unknown,
@@ -33,9 +34,38 @@ export default async (
       throw new Error('unauthorized')
     }
 
-    return !!(await prisma.client.delete({
-      where: { id }
-    }))
+    const [result, countClients] = await prisma.$transaction([
+      prisma.client.delete({
+        where: { id }
+      }),
+
+      prisma.category.count({
+        where: { id: user.id }
+      })
+    ])
+
+    await sendToSegment({
+      operation: 'identify',
+      userId: user.id,
+      data: {
+        email: user.email
+      }
+    })
+
+    await sendToSegment({
+      operation: 'track',
+      eventName: 'delete_client',
+      userId: user.id,
+      data: {
+        clientId: client.id,
+        clientName: client?.name,
+        clientWebsite: client?.website,
+        clientPaymentType: client?.paymentType,
+        clientCount: countClients
+      }
+    })
+
+    return !!result
   } catch (e) {
     logError('deleteClient %o', e)
 

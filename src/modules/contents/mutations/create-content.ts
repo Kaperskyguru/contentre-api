@@ -4,6 +4,7 @@ import { Context } from '@/types'
 import { Content, MutationCreateContentArgs, Tag } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
 import getOrCreateCategoryId from '../helpers/getOrCreateCategory'
+import sendToSegment from '@extensions/segment-service/segment'
 
 export default async (
   _parent: unknown,
@@ -48,6 +49,19 @@ export default async (
         skipDuplicates: true
       })
     }
+
+    // Send data to segment
+    await sendToSegment({
+      operation: 'track',
+      eventName: 'create_new_content',
+      userId: user.id,
+      data: {
+        userEmail: user.email,
+        clientId: clientId,
+        url
+        // companyId: user.activeCompanyId,
+      }
+    })
 
     return newContent
   } catch (e) {

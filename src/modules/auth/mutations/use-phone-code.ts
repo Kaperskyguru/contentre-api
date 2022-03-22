@@ -3,6 +3,7 @@ import { getUser } from '@helpers/getUser'
 import { logError, logMutation } from '@helpers/logger'
 import { MutationUsePhoneCodeArgs, User } from '@modules-types'
 import { Context } from '@types'
+import sendToSegment from '@/extensions/segment-service/segment'
 import { ApolloError } from 'apollo-server-errors'
 
 export default async (
@@ -47,6 +48,75 @@ export default async (
 
     // Run a transaction to ensure operations succeeds together.
     const [updatedUser] = await prisma.$transaction([updateUser, deleteIntents])
+
+    // Send data to Segment.
+    const segmentData = {
+      email: user.email,
+      phone: user.phoneNumber,
+      hasFinishedOnboarding: user.hasFinishedOnboarding,
+      phoneConfirmed: true,
+      ipAddress
+    }
+
+    await sendToSegment({
+      operation: 'identify',
+      userId: user.id,
+      data: segmentData
+    })
+
+    if (requestURL?.includes('/auth/register/verify-phone')) {
+      await sendToSegment({
+        operation: 'identify',
+        userId: user.id,
+        data: {
+          lifecyclestage: '8117148',
+          email: user.email,
+          hasFinishedOnboarding: updatedUser.hasFinishedOnboarding
+        }
+      })
+      await sendToSegment({
+        operation: 'track',
+        eventName: 'onboarding_phone_confirmed',
+        userId: user.id,
+        data: segmentData
+      })
+      await sendToSegment({
+        operation: 'track',
+        eventName: 'signup_completed',
+        userId: user.id,
+        data: {
+          ...user,
+          name: user.name,
+          hasFinishedOnboarding: updatedUser.hasFinishedOnboarding
+        }
+      })
+      await sendToSegment({
+        operation: 'pageview',
+        userId: user.id,
+        pageName: 'update_content',
+        data: {
+          email: user.email
+        }
+      })
+    } else {
+      await sendToSegment({
+        operation: 'track',
+        eventName: 'phone_confirmed',
+        userId: user.id,
+        data: segmentData
+      })
+    }
+
+    await sendToSegment({
+      operation: 'track',
+      eventName: 'signup_completed',
+      userId: user.id,
+      data: {
+        ...user,
+        name: user.name,
+        hasFinishedOnboarding: updatedUser.hasFinishedOnboarding
+      }
+    })
 
     // Get the formatted updated user to return.
     return getUser(updatedUser)

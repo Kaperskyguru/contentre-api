@@ -5,6 +5,7 @@ import { Context } from '@/types'
 import { MutationSendPhoneCodeArgs } from '@/types/modules'
 import sendSms from '@extensions/phone-service/send-sms'
 import { ApolloError } from 'apollo-server-errors'
+import sendToSegment from '@/extensions/segment-service/segment'
 
 export default async (
   _parent: unknown,
@@ -69,6 +70,27 @@ export default async (
         code: phoneCode
       })
     }
+
+    // Send data to Segment
+    await sendToSegment({
+      operation: 'identify',
+      userId: user.id,
+      data: {
+        email: user.email,
+        lastActivityAt: user.lastActivityAt
+      }
+    })
+
+    await sendToSegment({
+      operation: 'track',
+      eventName: requestURL?.includes('/auth/register/add-phone')
+        ? 'onboarding_phone_added'
+        : 'verification_code_sent',
+      userId: user.id,
+      data: {
+        phoneNumber
+      }
+    })
 
     return !!intent
   } catch (e) {
