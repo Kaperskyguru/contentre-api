@@ -1,6 +1,7 @@
 import { logError } from '@helpers/logger'
 import { Maybe, Scalars, User } from '@modules-types'
 import { PrismaClient } from '@prisma/client'
+import sendToSegment from '@extensions/segment-service/segment'
 
 export const getOrCreateCategoryId = async (
   name: Maybe<string> | undefined,
@@ -12,6 +13,7 @@ export const getOrCreateCategoryId = async (
     // Let's try to find an already existing.
     const foundCategory = await prisma.category.findFirst({
       where: {
+        userId: user.id,
         name: {
           equals: name,
           mode: 'insensitive'
@@ -23,9 +25,26 @@ export const getOrCreateCategoryId = async (
     if (foundCategory) return foundCategory.id
 
     // Otherwise, we need to create the new category.
-    const category = await prisma.category.create({
+    const [category, countCategories] = await prisma.$transaction([
+      prisma.category.create({
+        data: {
+          userId: user.id,
+          name
+        }
+      }),
+      prisma.category.count({
+        where: { userId: user!.id! }
+      })
+    ])
+
+    await sendToSegment({
+      operation: 'track',
+      eventName: 'new_category',
+      userId: user!.id,
       data: {
-        name
+        userId: user!.id!,
+        categoryName: name,
+        categoryCount: countCategories
       }
     })
 
