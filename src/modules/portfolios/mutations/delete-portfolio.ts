@@ -3,6 +3,7 @@ import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
 import { MutationDeletePortfolioArgs } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
+import sendToSegment from '@extensions/segment-service/segment'
 
 export default async (
   _parent: unknown,
@@ -20,8 +21,8 @@ export default async (
       throw new ApolloError('Invalid input', '422')
     }
 
-    const portfolio = await prisma.portfolio.findUnique({
-      where: { id }
+    const portfolio = await prisma.portfolio.findFirst({
+      where: { id, userId: user.id }
     })
 
     if (!portfolio) {
@@ -33,7 +34,7 @@ export default async (
       throw new Error('unauthorized')
     }
 
-    const deleteTemplate = prisma.portfolio.delete({
+    const deleteTemplate = prisma.userTemplate.delete({
       where: { id: portfolio.templateId }
     })
 
@@ -41,12 +42,36 @@ export default async (
       where: { id }
     })
 
-    const [deletedPortfolio] = await prisma.$transaction([
-      deleteTemplate,
-      deletePortfolio
-    ])
+    const [deleteTemplateResult, deletePortfolioResult, countPortfolios] =
+      await prisma.$transaction([
+        deleteTemplate,
+        deletePortfolio,
+        prisma.portfolio.count({
+          where: { userId: user.id }
+        })
+      ])
 
-    return !!deletedPortfolio
+    await sendToSegment({
+      operation: 'identify',
+      userId: user.id,
+      data: {
+        email: user.email
+      }
+    })
+
+    await sendToSegment({
+      operation: 'track',
+      eventName: 'delete_portfolio',
+      userId: user.id,
+      data: {
+        portfolioId: portfolio.id,
+        portfolioURL: portfolio.url,
+        userTemplateDeleted: !!deleteTemplateResult,
+        portfolioCount: countPortfolios
+      }
+    })
+
+    return !!deletePortfolioResult
   } catch (e) {
     logError('createPortfolio %o', user)
 

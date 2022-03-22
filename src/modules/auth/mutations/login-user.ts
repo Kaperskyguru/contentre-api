@@ -9,6 +9,7 @@ import { ApolloError } from 'apollo-server-errors'
 import jwt from 'jsonwebtoken'
 import sendEmailCode from './send-email-code'
 import sendPhoneCode from './send-phone-code'
+import sendToSegment from '@/extensions/segment-service/segment'
 
 export default async (
   _parent: unknown,
@@ -102,6 +103,24 @@ export default async (
     }
 
     //   await clearLoginAttempts(email, context)
+
+    // Send data to Segment
+    await sendToSegment({
+      operation: 'identify',
+      userId: updatedUser.id,
+      data: {
+        email: updatedUser.email,
+        lastActivityAt: updatedUser.lastActivityAt
+      }
+    })
+    await sendToSegment({
+      operation: 'track',
+      eventName: 'login',
+      userId: updatedUser.id,
+      data: {
+        // companyId: updatedUser.activeCompanyId
+      }
+    })
 
     return getUser(updatedUser)
   } catch (error) {

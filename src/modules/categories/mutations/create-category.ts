@@ -3,6 +3,7 @@ import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
 import { Category, MutationCreateCategoryArgs } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
+import sendToSegment from '@extensions/segment-service/segment'
 
 export default async (
   _parent: unknown,
@@ -32,13 +33,32 @@ export default async (
     if (category) throw new ApolloError('Category already created')
 
     // If success, create a new client in our DB.
-    return await prisma.category.create({
+    const [result, countCategories] = await prisma.$transaction([
+      prisma.category.create({
+        data: {
+          name,
+          color,
+          user: { connect: { id: user.id } }
+        }
+      }),
+
+      prisma.category.count({
+        where: { userId: user.id }
+      })
+    ])
+
+    await sendToSegment({
+      operation: 'track',
+      eventName: 'create_new_category',
+      userId: user.id,
       data: {
-        name,
-        color,
-        user: { connect: { id: user.id } }
+        categoryName: input.name,
+        categoryColor: input.color,
+        categoryCount: countCategories
       }
     })
+
+    return result
   } catch (e) {
     logError('createCategory %o', {
       input,

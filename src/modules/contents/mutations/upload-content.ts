@@ -4,6 +4,7 @@ import { Context } from '@/types'
 import { Content, MutationUploadContentArgs } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
 import ImportContent from '../helpers/import-content'
+import sendToSegment from '@/extensions/segment-service/segment'
 
 export default async (
   _parent: unknown,
@@ -29,7 +30,7 @@ export default async (
       where: { website: importedContent.client.website, userId: user.id }
     })
 
-    if (!client)
+    if (!client) {
       client = await prisma.client.create({
         data: {
           name: importedContent.client.name,
@@ -38,6 +39,20 @@ export default async (
           user: { connect: { id: user.id } }
         }
       })
+
+      // Send data to segment
+      await sendToSegment({
+        operation: 'track',
+        eventName: 'create_new_client',
+        userId: user.id,
+        data: {
+          userEmail: user.email,
+          clientId: client.id,
+          through: 'article_upload',
+          name: client.name
+        }
+      })
+    }
 
     const newContent = await prisma.content.create({
       data: {
@@ -58,6 +73,18 @@ export default async (
         skipDuplicates: true
       })
     }
+
+    // Send data to segment
+    await sendToSegment({
+      operation: 'track',
+      eventName: 'upload_new_content',
+      userId: user.id,
+      data: {
+        userEmail: user.email,
+        clientId: client.id,
+        url
+      }
+    })
 
     return newContent
   } catch (e) {

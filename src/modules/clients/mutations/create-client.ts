@@ -3,6 +3,7 @@ import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
 import { Client, MutationCreateClientArgs } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
+import sendToSegment from '@extensions/segment-service/segment'
 
 export default async (
   _parent: unknown,
@@ -32,17 +33,45 @@ export default async (
     if (client) throw new Error('duplicated')
 
     // If success, create a new client in our DB.
-    return await prisma.client.create({
+    const [result, countClients] = await prisma.$transaction([
+      prisma.client.create({
+        data: {
+          name,
+          website,
+          amount: amount ?? 0.0,
+          paymentType: paymentType ?? 'ARTICLE',
+          profile,
+          user: { connect: { id: user.id } }
+        },
+        include: { user: true }
+      }),
+      prisma.client.count({
+        where: { userId: user.id }
+      })
+    ])
+
+    await sendToSegment({
+      operation: 'identify',
+      userId: user.id,
       data: {
-        name,
-        website,
-        amount: amount ?? 0.0,
-        paymentType: paymentType ?? 'ARTICLE',
-        profile,
-        user: { connect: { id: user.id } }
-      },
-      include: { user: true }
+        email: user.email
+      }
     })
+
+    await sendToSegment({
+      operation: 'track',
+      eventName: 'create_new_client',
+      userId: user.id,
+      data: {
+        clientId: result.id,
+        clientName: name,
+        clientWebsite: website,
+        clientPaymentType: paymentType ?? 'ARTICLE',
+        clientCount: countClients
+      }
+    })
+
+    return result
   } catch (e) {
     logError('createClient %o', {
       input,

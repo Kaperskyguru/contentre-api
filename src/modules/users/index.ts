@@ -44,6 +44,15 @@ const typeDefs = gql`
     name: String!
     username: String!
     referrer: String
+    language: String
+    analyticsSource: String
+    analyticsSourceData: String
+    signedUpThrough: SignedUpThrough
+  }
+
+  enum SignedUpThrough {
+    CONTENTRE
+    GOOGLE
   }
 
   input UpdateUserInput {

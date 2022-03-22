@@ -2,6 +2,7 @@ import { useErrorParser } from '@helpers'
 import { logError, logMutation } from '@helpers/logger'
 import { Client, MutationUpdateClientArgs } from '@modules-types'
 import { Context } from '@types'
+import sendToSegment from '@extensions/segment-service/segment'
 import { ApolloError } from 'apollo-server-errors'
 
 export default async (
@@ -42,11 +43,31 @@ export default async (
     if (profile !== undefined) data.profile = profile
 
     // Finally update the category.
-    return await prisma.client.update({
+    const updatedClient = await prisma.client.update({
       where: { id },
       include: { user: true },
       data
     })
+
+    await sendToSegment({
+      operation: 'identify',
+      userId: user.id,
+      data: {
+        email: user.email
+      }
+    })
+
+    await sendToSegment({
+      operation: 'track',
+      eventName: 'update_client',
+      userId: user.id,
+      data: {
+        clientId: client.id,
+        ...data
+      }
+    })
+
+    return updatedClient
   } catch (e) {
     logError('updateClient %o', e)
 

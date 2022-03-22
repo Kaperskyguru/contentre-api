@@ -185,10 +185,14 @@ export type CreateProfileInput = {
 };
 
 export type CreateUserInput = {
+  analyticsSource?: InputMaybe<Scalars['String']>;
+  analyticsSourceData?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  language?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   password: Scalars['String'];
   referrer?: InputMaybe<Scalars['String']>;
+  signedUpThrough?: InputMaybe<SignedUpThrough>;
   username: Scalars['String'];
 };
 

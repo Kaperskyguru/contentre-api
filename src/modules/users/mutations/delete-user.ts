@@ -6,6 +6,7 @@ import { environment } from '@helpers/environment'
 import { logError, logMutation } from '@helpers/logger'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
+import sendToSegment from '@/extensions/segment-service/segment'
 
 export default async (
   _parent: unknown,
@@ -50,6 +51,24 @@ export default async (
           ? 'None'
           : true,
         secure: true
+      }
+    })
+
+    // Send data to Segment
+    await sendToSegment({
+      operation: 'identify',
+      userId: user.id,
+      data: {
+        email: user.email,
+        deleted: true
+      }
+    })
+    await sendToSegment({
+      operation: 'track',
+      eventName: 'user_deleted',
+      userId: user.id,
+      data: {
+        deleted: true
       }
     })
 
