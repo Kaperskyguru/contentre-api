@@ -1,3 +1,4 @@
+import { getOrCreateCategoryId } from '@/modules/categories/helpers'
 import { useErrorParser } from '@helpers'
 import { logError, logMutation } from '@helpers/logger'
 import { Content, MutationUpdateContentArgs } from '@modules-types'
@@ -31,7 +32,11 @@ export default async (
     if (input.likes !== undefined) data.likes = input.likes
     if (input.shares !== undefined) data.shares = input.shares
     if (input.paymentType !== undefined) data.paymentType = input.paymentType
-    if (input.categoryId !== undefined) data.categoryId = input.categoryId
+    if (input.category !== undefined)
+      data.categoryId = await getOrCreateCategoryId(input.category, {
+        user,
+        prisma
+      })
     if (input.visibility !== undefined) data.visibility = input.visibility
     if (input.amount !== undefined) data.amount = input.amount
 

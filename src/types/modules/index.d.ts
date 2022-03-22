@@ -332,7 +332,7 @@ export type MutationSendSegmentArgs = {
 
 export type MutationUpdateCategoryArgs = {
   id: Scalars['ID'];
-  input: CreateCategoryInput;
+  input: UpdateCategoryInput;
 };
 
 
@@ -593,6 +593,11 @@ export type Tag = {
   name: Scalars['String'];
 };
 
+export type UpdateCategoryInput = {
+  color?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
 export type UpdateClientInput = {
   amount?: InputMaybe<Scalars['Float']>;
   name?: InputMaybe<Scalars['String']>;
@@ -603,7 +608,7 @@ export type UpdateClientInput = {
 
 export type UpdateContentInput = {
   amount?: InputMaybe<Scalars['Float']>;
-  categoryId?: InputMaybe<Scalars['ID']>;
+  category?: InputMaybe<Scalars['String']>;
   comments?: InputMaybe<Scalars['Int']>;
   likes?: InputMaybe<Scalars['Int']>;
   paymentType?: InputMaybe<Scalars['String']>;
@@ -773,6 +778,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   Tag: ResolverTypeWrapper<Tag>;
   Time: ResolverTypeWrapper<Scalars['Time']>;
+  UpdateCategoryInput: UpdateCategoryInput;
   UpdateClientInput: UpdateClientInput;
   UpdateContentInput: UpdateContentInput;
   UpdatePortfolioInput: UpdatePortfolioInput;
@@ -821,6 +827,7 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   Tag: Tag;
   Time: Scalars['Time'];
+  UpdateCategoryInput: UpdateCategoryInput;
   UpdateClientInput: UpdateClientInput;
   UpdateContentInput: UpdateContentInput;
   UpdatePortfolioInput: UpdatePortfolioInput;

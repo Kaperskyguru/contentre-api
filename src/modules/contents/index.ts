@@ -145,7 +145,7 @@ const typeDefs = gql`
     shares: Int
     paymentType: String
     amount: Float
-    categoryId: ID
+    category: String
     visibility: String
   }
 
