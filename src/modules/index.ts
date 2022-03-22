@@ -9,6 +9,7 @@ import clients from './clients'
 import contents from './contents'
 import portfolios from './portfolios'
 import categories from './categories'
+import segment from './segment'
 
 const typeDefs = gql`
   scalar Time
@@ -49,11 +50,11 @@ const schema = makeExecutableSchema({
     //   institutions.typeDefs,
     //   invites.typeDefs,
     //   notifications.typeDefs,
-    users.typeDefs
+    users.typeDefs,
     //   transactions.typeDefs,
     //   storage.typeDefs,
     //   admin.typeDefs,
-    //   segment.typeDefs,
+    segment.typeDefs
     //   invoices.typeDefs
   ],
   resolvers: [
@@ -67,11 +68,11 @@ const schema = makeExecutableSchema({
     //   institutions.resolvers,
     //   invites.resolvers,
     //   notifications.resolvers,
-    users.resolvers
+    users.resolvers,
     //   transactions.resolvers,
     //   storage.resolvers,
     //   admin.resolvers,
-    //   segment.resolvers,
+    segment.resolvers
     //   invoices.resolvers
   ]
 })
