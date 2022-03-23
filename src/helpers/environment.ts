@@ -3,6 +3,7 @@ const defaultPort = 9000
 export interface Environment {
   context: 'LOCAL' | 'DEVELOP' | 'STAGING' | 'PRODUCTION'
   apiURL: string
+  domain: string
   port: number | string
   debug?: string
   apollo: {
@@ -83,6 +84,7 @@ export const environment: Environment = {
   context,
   port: process.env.PORT || defaultPort,
   apiURL: process.env.API_URL as string,
+  domain: process.env.FE_URL as string,
   debug: process.env.DEBUG,
   apollo: {
     introspection: ['LOCAL', 'DEVELOP'].includes(context),

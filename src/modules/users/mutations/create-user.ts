@@ -8,6 +8,7 @@ import { User as DBUser } from '@prisma/client'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 import sendToSegment from '@/extensions/segment-service/segment'
+import { environment } from '@/helpers/environment'
 
 export default async (
   _parent: unknown,
@@ -45,7 +46,7 @@ export default async (
         email: input.email,
         username: input.username,
         name: input.name,
-        portfolio: `${requestOrigin}/${input.username}`,
+        portfolio: `${environment.domain}/${input.username}`,
         password: await hashPassword(input.password),
         ...data
       }
