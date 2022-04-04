@@ -63,6 +63,7 @@ export default async (
       eventName: 'create_new_client',
       userId: user.id,
       data: {
+        through: 'created',
         clientId: result.id,
         clientName: name,
         clientWebsite: website,

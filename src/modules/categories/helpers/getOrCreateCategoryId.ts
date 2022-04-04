@@ -39,7 +39,7 @@ export const getOrCreateCategoryId = async (
 
     await sendToSegment({
       operation: 'track',
-      eventName: 'new_category',
+      eventName: 'create_new_category',
       userId: user!.id,
       data: {
         userId: user!.id!,

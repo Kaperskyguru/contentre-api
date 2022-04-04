@@ -48,6 +48,14 @@ export default async (
     ])
 
     await sendToSegment({
+      operation: 'identify',
+      userId: user.id,
+      data: {
+        email: user.email
+      }
+    })
+
+    await sendToSegment({
       operation: 'track',
       eventName: 'create_new_category',
       userId: user.id,

@@ -116,32 +116,32 @@ export default async (
           `.clearIndentation(),
       user.id
     )
-    const testYear: AmountGroupQueryResult[] = await prisma.$queryRawUnsafe(
-      `
-    select 
-    
-    TO_CHAR(date_trunc('month', c."createdAt"), 'mon')|| ',' || TO_CHAR(date_trunc('month', c."createdAt"), 'YYYY') as months,
+    //   const testYear: AmountGroupQueryResult[] = await prisma.$queryRawUnsafe(
+    //     `
+    //   select
 
-    CASE when sum(c.amount) IS NULL THEN 0 ELSE sum(c.amount)::INT END as current_sale,
+    //   TO_CHAR(date_trunc('month', c."createdAt"), 'mon')|| ',' || TO_CHAR(date_trunc('month', c."createdAt"), 'YYYY') as months,
 
-    lag( CASE when sum(c.amount) IS NULL THEN 0 ELSE sum(c.amount)::INT END, 1) over w as previous_month_sale,
+    //   CASE when sum(c.amount) IS NULL THEN 0 ELSE sum(c.amount)::INT END as current_sale,
 
-    (100 * (sum(c.amount) - lag(sum(c.amount), 1) over w) / lag(sum(c.amount), 1) over w) || '%' as growth
+    //   lag( CASE when sum(c.amount) IS NULL THEN 0 ELSE sum(c.amount)::INT END, 1) over w as previous_month_sale,
 
-   From "Content" c
+    //   (100 * (sum(c.amount) - lag(sum(c.amount), 1) over w) / lag(sum(c.amount), 1) over w) || '%' as growth
 
-    where c."userId" = $1 or c."userId" is null
+    //  From "Content" c
 
-    group by 1
+    //   where c."userId" = $1 or c."userId" is null
 
-    WINDOW w as (ORDER BY 1)  
+    //   group by 1
 
-    order by 1;
-    `.clearIndentation(),
-      user.id
-    )
+    //   WINDOW w as (ORDER BY 1)
 
-    // console.log(lastYear, currentYear, testYear)
+    //   order by 1;
+    //   `.clearIndentation(),
+    //     user.id
+    //   )
+
+    console.log(lastYear, currentYear)
 
     const cYearAmounts = currentYear.map((item) => ({
       amount: item.amount,
