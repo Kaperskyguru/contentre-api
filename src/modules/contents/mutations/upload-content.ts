@@ -27,7 +27,7 @@ export default async (
 
     // Checking if content already exists
     let client = await prisma.client.findFirst({
-      where: { website: importedContent.client.website, userId: user.id }
+      where: { name: importedContent.client.name, userId: user.id }
     })
 
     if (!client) {
