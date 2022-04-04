@@ -141,7 +141,7 @@ export default async (
     //     user.id
     //   )
 
-    console.log(lastYear, currentYear)
+    // console.log(lastYear, currentYear, contentCountsByJanuary)
 
     const cYearAmounts = currentYear.map((item) => ({
       amount: item.amount,
@@ -205,6 +205,16 @@ export default async (
 
     // TO HERE
 
+    const totalLastAmount = lastYear.reduce(
+      (amount, item) => amount + item.amount,
+      0
+    )
+
+    const totalCurrentAmount = currentYear.reduce(
+      (amount, item) => amount + item.amount,
+      0
+    )
+
     const values = contentCountsByJanuary.map((val) => {
       const subLikes =
         ((val.currentLikes - val.lastLikes) / val.lastLikes) * 100
@@ -213,7 +223,7 @@ export default async (
       const subShares =
         ((val.currentShares - val.lastShares) / val.lastShares) * 100
       const subAmount =
-        ((val.currentAmount - val.lastAmount) / val.lastAmount) * 100
+        ((totalCurrentAmount - totalLastAmount) / totalLastAmount) * 100
       return {
         likePercent: !Number.isFinite(subLikes) ? 100 : subLikes,
         commentPercent: !Number.isFinite(subComments) ? 100 : subComments,
