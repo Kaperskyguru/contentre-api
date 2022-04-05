@@ -184,6 +184,10 @@ export type CreateProfileInput = {
   profileLink: Scalars['String'];
 };
 
+export type CreateTagInput = {
+  name: Scalars['String'];
+};
+
 export type CreateUserInput = {
   analyticsSource?: InputMaybe<Scalars['String']>;
   analyticsSourceData?: InputMaybe<Scalars['String']>;
@@ -215,11 +219,13 @@ export type Mutation = {
   createClient: Client;
   createContent?: Maybe<Content>;
   createPortfolio?: Maybe<Portfolio>;
+  createTag?: Maybe<Tag>;
   createUser: User;
   deleteCategory: Scalars['Boolean'];
   deleteClient: Scalars['Boolean'];
   deleteContent: Scalars['Boolean'];
   deletePortfolio: Scalars['Boolean'];
+  deleteTag: Scalars['Boolean'];
   deleteUser: Scalars['Boolean'];
   loginUser: User;
   logoutUser: Scalars['Boolean'];
@@ -232,6 +238,7 @@ export type Mutation = {
   updateClient: Client;
   updateContent: Content;
   updatePortfolio: Portfolio;
+  updateTag: Tag;
   updateUser: User;
   uploadContent: Content;
   useEmailCode: User;
@@ -268,6 +275,11 @@ export type MutationCreatePortfolioArgs = {
 };
 
 
+export type MutationCreateTagArgs = {
+  input: CreateTagInput;
+};
+
+
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
 };
@@ -289,6 +301,11 @@ export type MutationDeleteContentArgs = {
 
 
 export type MutationDeletePortfolioArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteTagArgs = {
   id: Scalars['ID'];
 };
 
@@ -351,6 +368,12 @@ export type MutationUpdateContentArgs = {
 export type MutationUpdatePortfolioArgs = {
   id: Scalars['ID'];
   input: UpdatePortfolioInput;
+};
+
+
+export type MutationUpdateTagArgs = {
+  id: Scalars['ID'];
+  input: UpdateTagInput;
 };
 
 
@@ -458,6 +481,8 @@ export type Query = {
   getPortfolio: Portfolio;
   getPortfolioContent?: Maybe<PortfolioContent>;
   getPortfolios: Array<Portfolio>;
+  getTag: Tag;
+  getTags: Array<Tag>;
   getTagsStats?: Maybe<OverallStatResponse>;
   getTopicStats?: Maybe<OverallStatResponse>;
   getUser: User;
@@ -535,6 +560,18 @@ export type QueryGetPortfoliosArgs = {
 };
 
 
+export type QueryGetTagArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryGetTagsArgs = {
+  filters?: InputMaybe<TagFiltersInput>;
+  size?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryGetTagsStatsArgs = {
   filters?: InputMaybe<ContentFiltersInput>;
 };
@@ -591,6 +628,12 @@ export type Tag = {
   __typename?: 'Tag';
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
+  userId?: Maybe<Scalars['ID']>;
+};
+
+export type TagFiltersInput = {
+  sortBy?: InputMaybe<Scalars['String']>;
+  terms?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateCategoryInput = {
@@ -621,6 +664,10 @@ export type UpdatePortfolioInput = {
   description?: InputMaybe<Scalars['String']>;
   title?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateTagInput = {
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateUserInput = {
@@ -753,6 +800,7 @@ export type ResolversTypes = {
   CreateContentInput: CreateContentInput;
   CreatePortfolioInput: CreatePortfolioInput;
   CreateProfileInput: CreateProfileInput;
+  CreateTagInput: CreateTagInput;
   CreateUserInput: CreateUserInput;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
@@ -777,11 +825,13 @@ export type ResolversTypes = {
   Stat: ResolverTypeWrapper<Stat>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Tag: ResolverTypeWrapper<Tag>;
+  TagFiltersInput: TagFiltersInput;
   Time: ResolverTypeWrapper<Scalars['Time']>;
   UpdateCategoryInput: UpdateCategoryInput;
   UpdateClientInput: UpdateClientInput;
   UpdateContentInput: UpdateContentInput;
   UpdatePortfolioInput: UpdatePortfolioInput;
+  UpdateTagInput: UpdateTagInput;
   UpdateUserInput: UpdateUserInput;
   UploadContentInput: UploadContentInput;
   User: ResolverTypeWrapper<User>;
@@ -804,6 +854,7 @@ export type ResolversParentTypes = {
   CreateContentInput: CreateContentInput;
   CreatePortfolioInput: CreatePortfolioInput;
   CreateProfileInput: CreateProfileInput;
+  CreateTagInput: CreateTagInput;
   CreateUserInput: CreateUserInput;
   Float: Scalars['Float'];
   ID: Scalars['ID'];
@@ -826,11 +877,13 @@ export type ResolversParentTypes = {
   Stat: Stat;
   String: Scalars['String'];
   Tag: Tag;
+  TagFiltersInput: TagFiltersInput;
   Time: Scalars['Time'];
   UpdateCategoryInput: UpdateCategoryInput;
   UpdateClientInput: UpdateClientInput;
   UpdateContentInput: UpdateContentInput;
   UpdatePortfolioInput: UpdatePortfolioInput;
+  UpdateTagInput: UpdateTagInput;
   UpdateUserInput: UpdateUserInput;
   UploadContentInput: UploadContentInput;
   User: User;
@@ -923,11 +976,13 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationCreateClientArgs, 'input'>>;
   createContent?: Resolver<Maybe<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<MutationCreateContentArgs, 'input'>>;
   createPortfolio?: Resolver<Maybe<ResolversTypes['Portfolio']>, ParentType, ContextType, RequireFields<MutationCreatePortfolioArgs, 'input'>>;
+  createTag?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<MutationCreateTagArgs, 'input'>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'input'>>;
   deleteCategory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, 'id'>>;
   deleteClient?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteClientArgs, 'id'>>;
   deleteContent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteContentArgs, 'id'>>;
   deletePortfolio?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeletePortfolioArgs, 'id'>>;
+  deleteTag?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteTagArgs, 'id'>>;
   deleteUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'oldPassword'>>;
   loginUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'data'>>;
   logoutUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -940,6 +995,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationUpdateClientArgs, 'id' | 'input'>>;
   updateContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<MutationUpdateContentArgs, 'id' | 'input'>>;
   updatePortfolio?: Resolver<ResolversTypes['Portfolio'], ParentType, ContextType, RequireFields<MutationUpdatePortfolioArgs, 'id' | 'input'>>;
+  updateTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<MutationUpdateTagArgs, 'id' | 'input'>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'input'>>;
   uploadContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<MutationUploadContentArgs, 'input'>>;
   useEmailCode?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUseEmailCodeArgs, 'code'>>;
@@ -1009,6 +1065,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getPortfolio?: Resolver<ResolversTypes['Portfolio'], ParentType, ContextType, RequireFields<QueryGetPortfolioArgs, 'id'>>;
   getPortfolioContent?: Resolver<Maybe<ResolversTypes['PortfolioContent']>, ParentType, ContextType, RequireFields<QueryGetPortfolioContentArgs, 'filters'>>;
   getPortfolios?: Resolver<Array<ResolversTypes['Portfolio']>, ParentType, ContextType, RequireFields<QueryGetPortfoliosArgs, never>>;
+  getTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<QueryGetTagArgs, 'id'>>;
+  getTags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<QueryGetTagsArgs, never>>;
   getTagsStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetTagsStatsArgs, never>>;
   getTopicStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetTopicStatsArgs, never>>;
   getUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryGetUserArgs, 'uuid'>>;
@@ -1036,6 +1094,7 @@ export type StatResolvers<ContextType = any, ParentType extends ResolversParentT
 export type TagResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tag'] = ResolversParentTypes['Tag']> = {
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
