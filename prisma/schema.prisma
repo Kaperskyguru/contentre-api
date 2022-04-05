@@ -42,6 +42,7 @@ model User {
   Portfolio             Portfolio[]          @relation("UserPortfolio")
   Template              Template[]           @relation("UserTemplate")
   Category              Category[]           @relation("UserCategory")
+  Tag                   Tag[]                @relation("UserTag")
 }
 
 enum TwoFactorType {
@@ -183,6 +184,8 @@ enum ContentType {
 model Tag {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
   name      String   @db.VarChar(120)
+  userId    String?  @db.Char(36)
+  user      User?    @relation("UserTag", fields: [userId], references: [id])
   createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(6)
 }
