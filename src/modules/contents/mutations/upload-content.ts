@@ -67,10 +67,22 @@ export default async (
     })
 
     if (importedContent.tags) {
-      const tags = importedContent.tags.map((name) => ({ name }))
+      const tags = importedContent.tags.map((name) => ({
+        name,
+        userId: user.id
+      }))
       await prisma.tag.createMany({
-        data: tags,
-        skipDuplicates: true
+        data: tags
+      })
+
+      await sendToSegment({
+        operation: 'track',
+        eventName: 'bulk_create_new_tag',
+        userId: user.id,
+        data: {
+          userEmail: user.email,
+          tags: importedContent.tags
+        }
       })
     }
 

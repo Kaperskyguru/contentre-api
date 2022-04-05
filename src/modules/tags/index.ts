@@ -5,12 +5,18 @@ import getTags from './queries/get-tags'
 import createTag from './mutations/create-tag'
 import deleteTag from './mutations/delete-tag'
 import updateTag from './mutations/update-tag'
+import totalAmount from './fields/total-amount'
+import totalContents from './fields/total-contents'
 
 const typeDefs = gql`
   type Tag {
     id: ID
     name: String!
+    totalContents: Int
+    totalAmount: Int
     userId: ID
+    createdAt: Time!
+    updatedAt: Time!
   }
 
   input CreateTagInput {
@@ -47,6 +53,11 @@ const resolvers: Resolvers = {
     createTag,
     deleteTag,
     updateTag
+  },
+
+  Tag: {
+    totalContents,
+    totalAmount
   }
 }
 export default { typeDefs, resolvers }

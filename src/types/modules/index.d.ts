@@ -626,8 +626,12 @@ export type Stat = {
 
 export type Tag = {
   __typename?: 'Tag';
+  createdAt: Scalars['Time'];
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
+  totalAmount?: Maybe<Scalars['Int']>;
+  totalContents?: Maybe<Scalars['Int']>;
+  updatedAt: Scalars['Time'];
   userId?: Maybe<Scalars['ID']>;
 };
 
@@ -1092,8 +1096,12 @@ export type StatResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type TagResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tag'] = ResolversParentTypes['Tag']> = {
+  createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  totalAmount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  totalContents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
