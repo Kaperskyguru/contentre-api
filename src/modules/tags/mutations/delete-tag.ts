@@ -1,16 +1,16 @@
 import { useErrorParser } from '@helpers'
 import { logError, logMutation } from '@helpers/logger'
-import { MutationDeleteClientArgs } from '@modules-types'
+import { MutationDeleteTagArgs } from '@modules-types'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 import sendToSegment from '@extensions/segment-service/segment'
 
 export default async (
   _parent: unknown,
-  { id }: MutationDeleteClientArgs,
+  { id }: MutationDeleteTagArgs,
   { user, sentryId, prisma }: Context & Required<Context>
 ): Promise<boolean> => {
-  logMutation('deleteClient %o', user)
+  logMutation('deleteTag %o', user)
 
   try {
     // User must be logged in before performing the operation.
@@ -21,25 +21,25 @@ export default async (
       throw new ApolloError('Invalid input', '422')
     }
 
-    const client = await prisma.client.findUnique({
+    const tag = await prisma.tag.findUnique({
       where: { id }
     })
 
-    if (!client) {
-      throw new ApolloError('client not found', '404')
+    if (!tag) {
+      throw new ApolloError('tag not found', '404')
     }
 
-    // Check if the user is authorized to delete the client.
-    if (client.userId !== user.id) {
+    // Check if the user is authorized to delete the tag.
+    if (tag.userId !== user.id) {
       throw new Error('unauthorized')
     }
 
-    const [result, countClients] = await prisma.$transaction([
-      prisma.client.delete({
+    const [result, countTags] = await prisma.$transaction([
+      prisma.tag.delete({
         where: { id }
       }),
 
-      prisma.client.count({
+      prisma.tag.count({
         where: { id: user.id }
       })
     ])
@@ -54,20 +54,18 @@ export default async (
 
     await sendToSegment({
       operation: 'track',
-      eventName: 'delete_client',
+      eventName: 'delete_tag',
       userId: user.id,
       data: {
-        clientId: client.id,
-        clientName: client?.name,
-        clientWebsite: client?.website,
-        clientPaymentType: client?.paymentType,
-        clientCount: countClients
+        tagId: tag.id,
+        tagName: tag?.name,
+        tagCount: countTags
       }
     })
 
     return !!result
   } catch (e) {
-    logError('deleteClient %o', e)
+    logError('deleteTag %o', e)
 
     const message = useErrorParser(e)
     throw new ApolloError(message, e.code ?? '500', { sentryId })
