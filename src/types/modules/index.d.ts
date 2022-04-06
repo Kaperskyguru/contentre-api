@@ -166,7 +166,7 @@ export type CreateContentInput = {
   likes?: InputMaybe<Scalars['Int']>;
   paymentType?: InputMaybe<PaymentType>;
   shares?: InputMaybe<Scalars['Int']>;
-  tags?: InputMaybe<Scalars['JSON']>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
   title: Scalars['String'];
   url?: InputMaybe<Scalars['String']>;
 };
@@ -482,6 +482,7 @@ export type Query = {
   getPortfolioContent?: Maybe<PortfolioContent>;
   getPortfolios: Array<Portfolio>;
   getTag: Tag;
+  getTagStats?: Maybe<OverallStatResponse>;
   getTags: Array<Tag>;
   getTagsStats?: Maybe<OverallStatResponse>;
   getTopicStats?: Maybe<OverallStatResponse>;
@@ -565,6 +566,11 @@ export type QueryGetTagArgs = {
 };
 
 
+export type QueryGetTagStatsArgs = {
+  filters?: InputMaybe<ContentFiltersInput>;
+};
+
+
 export type QueryGetTagsArgs = {
   filters?: InputMaybe<TagFiltersInput>;
   size?: InputMaybe<Scalars['Int']>;
@@ -636,6 +642,7 @@ export type Tag = {
 };
 
 export type TagFiltersInput = {
+  all?: InputMaybe<Scalars['Boolean']>;
   sortBy?: InputMaybe<Scalars['String']>;
   terms?: InputMaybe<Scalars['String']>;
 };
@@ -1070,6 +1077,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getPortfolioContent?: Resolver<Maybe<ResolversTypes['PortfolioContent']>, ParentType, ContextType, RequireFields<QueryGetPortfolioContentArgs, 'filters'>>;
   getPortfolios?: Resolver<Array<ResolversTypes['Portfolio']>, ParentType, ContextType, RequireFields<QueryGetPortfoliosArgs, never>>;
   getTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<QueryGetTagArgs, 'id'>>;
+  getTagStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetTagStatsArgs, never>>;
   getTags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<QueryGetTagsArgs, never>>;
   getTagsStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetTagsStatsArgs, never>>;
   getTopicStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetTopicStatsArgs, never>>;

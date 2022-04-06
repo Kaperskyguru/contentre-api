@@ -7,6 +7,7 @@ import deleteTag from './mutations/delete-tag'
 import updateTag from './mutations/update-tag'
 import totalAmount from './fields/total-amount'
 import totalContents from './fields/total-contents'
+import getTagStats from './queries/get-tag-stats'
 
 const typeDefs = gql`
   type Tag {
@@ -30,11 +31,13 @@ const typeDefs = gql`
   input TagFiltersInput {
     terms: String
     sortBy: String
+    all: Boolean
   }
 
   extend type Query {
     getTags(size: Int, skip: Int, filters: TagFiltersInput): [Tag!]!
     getTag(id: ID!): Tag!
+    getTagStats(filters: ContentFiltersInput): OverallStatResponse
   }
 
   extend type Mutation {
@@ -47,7 +50,8 @@ const typeDefs = gql`
 const resolvers: Resolvers = {
   Query: {
     getTags,
-    getTag
+    getTag,
+    getTagStats
   },
   Mutation: {
     createTag,

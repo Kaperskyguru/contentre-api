@@ -10,7 +10,7 @@ export default async (
   _parent: unknown,
   { input }: MutationCreateContentArgs,
   context: Context & Required<Context>
-): Promise<Content | null> => {
+): Promise<Content> => {
   const { prisma, user, ipAddress, requestURL, sentryId } = context
   logMutation('createContent %o', {
     input,
@@ -33,20 +33,30 @@ export default async (
         excerpt,
         content,
         category: { connect: { id: categoryId } },
-        // tags: { ...Object.values(tags) },
+        tags: tags?.length || undefined,
         user: { connect: { id: user.id } },
         client: { connect: { id: clientId } }
       }
     })
 
-    if (tags) {
+    if (tags?.length) {
       const tagNames = Object.values(tags).map((name: any) => ({
-        name
+        name,
+        userId: user.id
       }))
 
       await prisma.tag.createMany({
-        data: tagNames,
-        skipDuplicates: true
+        data: tagNames
+      })
+
+      await sendToSegment({
+        operation: 'track',
+        eventName: 'bulk_create_new_tag',
+        userId: user.id,
+        data: {
+          userEmail: user.email,
+          tags: tags
+        }
       })
     }
 

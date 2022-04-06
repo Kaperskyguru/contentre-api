@@ -15,9 +15,13 @@ export default async (
   if (!user) throw new ApolloError('You must be logged in.', '401')
 
   try {
+    const where: any = {}
+    if (!filters?.all) {
+      where.userId = user.id
+    }
     if (!filters?.terms) {
       return await prisma.tag.findMany({
-        where: { userId: user.id },
+        where: { ...where },
         orderBy: [
           filters?.sortBy
             ? filters.sortBy === 'name'
@@ -34,7 +38,7 @@ export default async (
     const tagsStartsWith = await prisma.tag.findMany({
       where: {
         name: { startsWith: filters.terms, mode: 'insensitive' },
-        userId: user.id
+        ...where
       },
       orderBy: [
         filters?.sortBy
@@ -51,7 +55,7 @@ export default async (
     const tagsContains = await prisma.tag.findMany({
       where: {
         name: { contains: filters.terms, mode: 'insensitive' },
-        userId: user.id
+        ...where
       },
       orderBy: [
         filters?.sortBy
