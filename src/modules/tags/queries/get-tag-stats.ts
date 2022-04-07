@@ -27,7 +27,7 @@ export default async (
 
     const tags = await prisma.content.aggregate({
       where: {
-        userId: user.id,
+        userId: user?.id! ?? undefined,
         tags: {
           path: [],
           array_contains: filters?.tags?.length ? filters?.tags : null
