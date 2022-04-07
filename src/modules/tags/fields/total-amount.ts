@@ -7,6 +7,7 @@ export default async (parent: Tag): Promise<Maybe<number>> => {
 
   const tags = await prisma.content.aggregate({
     where: {
+      userId: parent?.userId! ?? undefined,
       tags: {
         path: [],
         array_contains: [parent.name]

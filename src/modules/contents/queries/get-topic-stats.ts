@@ -4,7 +4,7 @@ import { QueryGetIndexMetadataArgs, OverallStatResponse } from '@modules-types'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 
-import getDateIntervals from '../helpers/get-date-intervals'
+import getDateIntervals from '@helpers/get-date-intervals'
 
 export default async (
   _parent: unknown,

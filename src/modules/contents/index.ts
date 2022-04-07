@@ -9,7 +9,6 @@ import uploadContent from './mutations/upload-content'
 import interactions from './fields/interactions'
 import getIndexMetadata from './queries/get-index-metadata'
 import getOverallStats from './queries/get-overall-stats'
-import getTagsStats from './queries/get-tags-stats'
 import getCategoryStats from './queries/get-category-stats'
 import getTopicStats from './queries/get-topic-stats'
 
@@ -125,7 +124,7 @@ const typeDefs = gql`
     title: String!
     excerpt: String!
     clientId: ID!
-    tags: JSON
+    tags: [String!]
     category: String
     amount: Float
     comments: Int
@@ -172,7 +171,6 @@ const typeDefs = gql`
     getOverallStats(filters: ContentFiltersInput): OverallStatsResponse
 
     getCategoryStats(filters: ContentFiltersInput): OverallStatResponse
-    getTagsStats(filters: ContentFiltersInput): OverallStatResponse
     getTopicStats(filters: ContentFiltersInput): OverallStatResponse
   }
 
@@ -191,8 +189,7 @@ const resolvers: Resolvers = {
     getIndexMetadata,
     getOverallStats,
     getCategoryStats,
-    getTopicStats,
-    getTagsStats
+    getTopicStats
   },
 
   Mutation: {
