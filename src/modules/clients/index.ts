@@ -6,6 +6,7 @@ import getClient from './queries/get-client'
 import getClients from './queries/get-clients'
 import deleteClient from './mutations/delete-client'
 import totalContents from './fields/total-contents'
+import totalAmount from './fields/total-amount'
 
 const typeDefs = gql`
   type Client {
@@ -15,9 +16,11 @@ const typeDefs = gql`
     profile: String
     icon: String
     amount: Float
+    totalAmount: Float
     paymentType: PaymentType
     status: String
     user: User
+    visibility: Visibility
     totalContents: String
     updatedAt: Time!
     createdAt: Time!
@@ -58,6 +61,7 @@ const typeDefs = gql`
     amount: Float
     paymentType: PaymentType
     profile: String
+    visibility: Visibility
   }
 
   extend type Query {
@@ -84,7 +88,8 @@ const resolvers: Resolvers = {
   },
 
   Client: {
-    totalContents: totalContents
+    totalContents: totalContents,
+    totalAmount: totalAmount
   }
 }
 export default { typeDefs, resolvers }

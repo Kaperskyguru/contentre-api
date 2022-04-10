@@ -76,6 +76,7 @@ model Client {
   profile     String?     @db.VarChar(2048)
   icon        String?     @db.VarChar(2048)
   paymentType PaymentType @default(ARTICLE)
+  visibility  Visibility  @default(PUBLIC)
   amount      Float       @default(0.0)
   status      Status      @default(ACTIVE)
   createdAt   DateTime    @default(now()) @db.Timestamp(6)
@@ -89,32 +90,33 @@ enum Status {
 }
 
 model Content {
-  id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  title         String         @db.VarChar(2048)
-  clientId      String         @db.Char(36)
-  client        Client         @relation("ClientContent", fields: [clientId], references: [id])
-  userId        String         @db.Char(36)
-  user          User           @relation("UserContent", fields: [userId], references: [id])
-  visibility    VisibilityType @default(PUBLISHED)
-  lastUpdated   DateTime       @default(now()) @db.Timestamp(6)
-  url           String?        @db.VarChar(2048)
-  type          ContentType    @default(TEXT)
-  excerpt       String         @db.VarChar(2048)
-  content       String?        @db.Text
-  amount        Float          @default(0.0)
-  favourite     Boolean        @default(false)
-  bookmark      Boolean        @default(false)
-  comments      Int            @default(0)
-  paymentType   PaymentType    @default(ARTICLE)
-  likes         Int            @default(0)
-  shares        Int            @default(0)
-  featuredImage String?        @db.VarChar(2048)
-  createdAt     DateTime       @default(now()) @db.Timestamp(6)
-  updatedAt     DateTime       @default(now()) @updatedAt @db.Timestamp(6)
-  topics        Topic[]        @relation("ContentTopic")
-  categoryId    String?        @db.Char(36)
-  tags          Json?          @db.Json
-  category      Category?      @relation("ContentCategory", fields: [categoryId], references: [id])
+  id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  title         String      @db.VarChar(2048)
+  clientId      String      @db.Char(36)
+  client        Client      @relation("ClientContent", fields: [clientId], references: [id])
+  userId        String      @db.Char(36)
+  user          User        @relation("UserContent", fields: [userId], references: [id])
+  status        StatusType  @default(PUBLISHED)
+  lastUpdated   DateTime    @default(now()) @db.Timestamp(6)
+  url           String?     @db.VarChar(2048)
+  type          ContentType @default(TEXT)
+  excerpt       String      @db.VarChar(2048)
+  content       String?     @db.Text
+  amount        Float       @default(0.0)
+  favourite     Boolean     @default(false)
+  bookmark      Boolean     @default(false)
+  comments      Int         @default(0)
+  visibility    Visibility  @default(PUBLIC)
+  paymentType   PaymentType @default(ARTICLE)
+  likes         Int         @default(0)
+  shares        Int         @default(0)
+  featuredImage String?     @db.VarChar(2048)
+  createdAt     DateTime    @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime    @default(now()) @updatedAt @db.Timestamp(6)
+  topics        Topic[]     @relation("ContentTopic")
+  categoryId    String?     @db.Char(36)
+  tags          Json?       @db.Json
+  category      Category?   @relation("ContentCategory", fields: [categoryId], references: [id])
 
   @@index([clientId, userId])
 }
@@ -136,15 +138,15 @@ model Portfolio {
 }
 
 model Template {
-  id           String           @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  title        String           @db.VarChar(2048)
-  userId       String?          @db.Char(36)
-  user         User?            @relation("UserTemplate", fields: [userId], references: [id])
-  content      String           @db.Text
-  visibility   TemplateVisility @default(PRIVATE)
-  createdAt    DateTime         @default(now()) @db.Timestamp(6)
-  updatedAt    DateTime         @default(now()) @updatedAt @db.Timestamp(6)
-  UserTemplate UserTemplate[]   @relation("TemplateUserTemplate")
+  id           String         @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  title        String         @db.VarChar(2048)
+  userId       String?        @db.Char(36)
+  user         User?          @relation("UserTemplate", fields: [userId], references: [id])
+  content      String         @db.Text
+  visibility   Visibility     @default(PRIVATE)
+  createdAt    DateTime       @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime       @default(now()) @updatedAt @db.Timestamp(6)
+  UserTemplate UserTemplate[] @relation("TemplateUserTemplate")
 }
 
 model UserTemplate {
@@ -157,10 +159,11 @@ model UserTemplate {
   updatedAt  DateTime    @default(now()) @updatedAt @db.Timestamp(6)
 }
 
-enum TemplateVisility {
+enum Visibility {
   PUBLIC
   PRIVATE
   TEAM
+  UNLISTED
 }
 
 enum PaymentType {
@@ -169,7 +172,7 @@ enum PaymentType {
   ONETIME
 }
 
-enum VisibilityType {
+enum StatusType {
   PUBLISHED
   DRAFT
   DELETED

@@ -21,12 +21,18 @@ export default async (
       throw new ApolloError('User not found', '404')
     }
 
+    const portfolio = await prisma.portfolio.findFirst({
+      where: { userId: user.id, url: filters?.url! },
+      include: { template: true }
+    })
+
     // Select Contents
     const contents = await prisma.content.findMany({
       where: { userId: user?.id }
     })
 
     return {
+      html: portfolio?.template?.content,
       about: user.bio,
       coverImage: '',
       profileImage: user.avatarURL,

@@ -19,6 +19,7 @@ const typeDefs = gql`
   }
 
   type PortfolioContent {
+    html: String
     about: String
     coverImage: String
     name: String!
@@ -46,6 +47,7 @@ const typeDefs = gql`
 
   input PortfolioContentFilters {
     username: String!
+    url: String
   }
 
   extend type Query {

@@ -9,6 +9,7 @@ import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 import sendToSegment from '@/extensions/segment-service/segment'
 import { environment } from '@/helpers/environment'
+import { createPortfolio } from '@/modules/portfolios/helpers/create-portfolio'
 
 export default async (
   _parent: unknown,
@@ -93,6 +94,16 @@ export default async (
     })
 
     setJWT(user, setCookies)
+
+    // Create Default portfolio
+    createPortfolio(
+      {
+        url: `${environment.domain}/${input.username}`,
+        title: 'Default',
+        description: 'This is your default portfolio'
+      },
+      context
+    )
 
     return getUser(user)
   } catch (e) {
