@@ -74,9 +74,11 @@ export type Client = {
   paymentType?: Maybe<PaymentType>;
   profile?: Maybe<Scalars['String']>;
   status?: Maybe<Scalars['String']>;
+  totalAmount?: Maybe<Scalars['Float']>;
   totalContents?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Time'];
   user?: Maybe<User>;
+  visibility?: Maybe<Visibility>;
   website?: Maybe<Scalars['String']>;
 };
 
@@ -112,6 +114,7 @@ export type Content = {
   likes?: Maybe<Scalars['Int']>;
   paymentType?: Maybe<PaymentType>;
   shares?: Maybe<Scalars['Int']>;
+  status?: Maybe<StatusType>;
   tags?: Maybe<Scalars['JSON']>;
   title: Scalars['String'];
   topics?: Maybe<Array<Scalars['String']>>;
@@ -119,7 +122,7 @@ export type Content = {
   updatedAt: Scalars['Time'];
   url?: Maybe<Scalars['String']>;
   user?: Maybe<User>;
-  visibility: VisibilityType;
+  visibility: Visibility;
 };
 
 export type ContentFiltersInput = {
@@ -453,12 +456,14 @@ export type PortfolioContent = {
   __typename?: 'PortfolioContent';
   about?: Maybe<Scalars['String']>;
   coverImage?: Maybe<Scalars['String']>;
+  html?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   portfolios?: Maybe<Array<Content>>;
   profileImage?: Maybe<Scalars['String']>;
 };
 
 export type PortfolioContentFilters = {
+  url?: InputMaybe<Scalars['String']>;
   username: Scalars['String'];
 };
 
@@ -484,7 +489,6 @@ export type Query = {
   getTag: Tag;
   getTagStats?: Maybe<OverallStatResponse>;
   getTags: Array<Tag>;
-  getTagsStats?: Maybe<OverallStatResponse>;
   getTopicStats?: Maybe<OverallStatResponse>;
   getUser: User;
   getVersion: Scalars['String'];
@@ -578,11 +582,6 @@ export type QueryGetTagsArgs = {
 };
 
 
-export type QueryGetTagsStatsArgs = {
-  filters?: InputMaybe<ContentFiltersInput>;
-};
-
-
 export type QueryGetTopicStatsArgs = {
   filters?: InputMaybe<ContentFiltersInput>;
 };
@@ -630,6 +629,11 @@ export type Stat = {
   totalShares: Scalars['Int'];
 };
 
+export type StatusType =
+  | 'DELETED'
+  | 'DRAFT'
+  | 'PUBLISHED';
+
 export type Tag = {
   __typename?: 'Tag';
   createdAt: Scalars['Time'];
@@ -657,6 +661,7 @@ export type UpdateClientInput = {
   name?: InputMaybe<Scalars['String']>;
   paymentType?: InputMaybe<PaymentType>;
   profile?: InputMaybe<Scalars['String']>;
+  visibility?: InputMaybe<Visibility>;
   website?: InputMaybe<Scalars['String']>;
 };
 
@@ -667,6 +672,7 @@ export type UpdateContentInput = {
   likes?: InputMaybe<Scalars['Int']>;
   paymentType?: InputMaybe<Scalars['String']>;
   shares?: InputMaybe<Scalars['Int']>;
+  status?: InputMaybe<Scalars['String']>;
   title?: InputMaybe<Scalars['String']>;
   visibility?: InputMaybe<Scalars['String']>;
 };
@@ -722,10 +728,11 @@ export type User = {
   username?: Maybe<Scalars['String']>;
 };
 
-export type VisibilityType =
-  | 'DELETED'
-  | 'DRAFT'
-  | 'PUBLISHED';
+export type Visibility =
+  | 'PRIVATE'
+  | 'PUBLIC'
+  | 'TEAM'
+  | 'UNLISTED';
 
 
 
@@ -834,6 +841,7 @@ export type ResolversTypes = {
   SendSegmentInput: SendSegmentInput;
   SignedUpThrough: SignedUpThrough;
   Stat: ResolverTypeWrapper<Stat>;
+  StatusType: StatusType;
   String: ResolverTypeWrapper<Scalars['String']>;
   Tag: ResolverTypeWrapper<Tag>;
   TagFiltersInput: TagFiltersInput;
@@ -846,7 +854,7 @@ export type ResolversTypes = {
   UpdateUserInput: UpdateUserInput;
   UploadContentInput: UploadContentInput;
   User: ResolverTypeWrapper<User>;
-  VisibilityType: VisibilityType;
+  Visibility: Visibility;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -938,9 +946,11 @@ export type ClientResolvers<ContextType = any, ParentType extends ResolversParen
   paymentType?: Resolver<Maybe<ResolversTypes['PaymentType']>, ParentType, ContextType>;
   profile?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  totalAmount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   totalContents?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  visibility?: Resolver<Maybe<ResolversTypes['Visibility']>, ParentType, ContextType>;
   website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -960,6 +970,7 @@ export type ContentResolvers<ContextType = any, ParentType extends ResolversPare
   likes?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   paymentType?: Resolver<Maybe<ResolversTypes['PaymentType']>, ParentType, ContextType>;
   shares?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['StatusType']>, ParentType, ContextType>;
   tags?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   topics?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
@@ -967,7 +978,7 @@ export type ContentResolvers<ContextType = any, ParentType extends ResolversPare
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  visibility?: Resolver<ResolversTypes['VisibilityType'], ParentType, ContextType>;
+  visibility?: Resolver<ResolversTypes['Visibility'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1056,6 +1067,7 @@ export type PortfolioResolvers<ContextType = any, ParentType extends ResolversPa
 export type PortfolioContentResolvers<ContextType = any, ParentType extends ResolversParentTypes['PortfolioContent'] = ResolversParentTypes['PortfolioContent']> = {
   about?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   coverImage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  html?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   portfolios?: Resolver<Maybe<Array<ResolversTypes['Content']>>, ParentType, ContextType>;
   profileImage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1079,7 +1091,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<QueryGetTagArgs, 'id'>>;
   getTagStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetTagStatsArgs, never>>;
   getTags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<QueryGetTagsArgs, never>>;
-  getTagsStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetTagsStatsArgs, never>>;
   getTopicStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetTopicStatsArgs, never>>;
   getUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryGetUserArgs, 'uuid'>>;
   getVersion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

@@ -17,7 +17,7 @@ const typeDefs = gql`
     id: ID!
     title: String!
     client: Client
-    visibility: VisibilityType!
+    visibility: Visibility!
     lastUpdated: Time
     url: String
     tags: JSON
@@ -30,6 +30,7 @@ const typeDefs = gql`
     amount: Float
     paymentType: PaymentType
     likes: Int
+    status: StatusType
     shares: Int
     interactions: Int
     category: Category
@@ -43,7 +44,14 @@ const typeDefs = gql`
     name: String!
   }
 
-  enum VisibilityType {
+  enum Visibility {
+    PUBLIC
+    PRIVATE
+    TEAM
+    UNLISTED
+  }
+
+  enum StatusType {
     PUBLISHED
     DRAFT
     DELETED
@@ -146,6 +154,7 @@ const typeDefs = gql`
     amount: Float
     category: String
     visibility: String
+    status: String
   }
 
   input ContentFiltersInput {

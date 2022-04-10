@@ -38,6 +38,7 @@ export default async (
         prisma
       })
     if (input.visibility !== undefined) data.visibility = input.visibility
+    if (input.status !== undefined) data.status = input.status
     if (input.amount !== undefined) data.amount = input.amount
 
     const content = await prisma.content.findUnique({

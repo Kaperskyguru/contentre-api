@@ -41,6 +41,7 @@ export default async (
     if (amount !== undefined) data.amount = amount
     if (paymentType !== undefined) data.paymentType = paymentType
     if (profile !== undefined) data.profile = profile
+    if (input.visibility !== undefined) data.visibility = input.visibility
 
     // Finally update the category.
     const updatedClient = await prisma.client.update({
