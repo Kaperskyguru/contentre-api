@@ -98,6 +98,12 @@ export type ClientFiltersInput = {
   topics?: InputMaybe<Array<Scalars['String']>>;
 };
 
+export type ClientResponse = {
+  __typename?: 'ClientResponse';
+  clients: Array<Client>;
+  meta: Meta;
+};
+
 export type Content = {
   __typename?: 'Content';
   amount?: Maybe<Scalars['Float']>;
@@ -139,6 +145,12 @@ export type ContentFiltersInput = {
   toDate?: InputMaybe<Scalars['String']>;
   topicIds?: InputMaybe<Array<Scalars['ID']>>;
   topics?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type ContentResponse = {
+  __typename?: 'ContentResponse';
+  contents: Array<Content>;
+  meta: Meta;
 };
 
 export type ContentType =
@@ -213,6 +225,11 @@ export type LoginUserInput = {
   email: Scalars['String'];
   password?: InputMaybe<Scalars['String']>;
   remember?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type Meta = {
+  __typename?: 'Meta';
+  total: Scalars['Int'];
 };
 
 export type Mutation = {
@@ -477,9 +494,9 @@ export type Query = {
   getCategory: Category;
   getCategoryStats?: Maybe<OverallStatResponse>;
   getClient: Client;
-  getClients: Array<Client>;
+  getClients: ClientResponse;
   getContent: Content;
-  getContents: Array<Content>;
+  getContents: ContentResponse;
   getCurrentUser?: Maybe<User>;
   getIndexMetadata?: Maybe<IndexMetadataResponse>;
   getOverallStats?: Maybe<OverallStatsResponse>;
@@ -810,8 +827,10 @@ export type ResolversTypes = {
   Chart: ResolverTypeWrapper<Chart>;
   Client: ResolverTypeWrapper<Client>;
   ClientFiltersInput: ClientFiltersInput;
+  ClientResponse: ResolverTypeWrapper<ClientResponse>;
   Content: ResolverTypeWrapper<Content>;
   ContentFiltersInput: ContentFiltersInput;
+  ContentResponse: ResolverTypeWrapper<ContentResponse>;
   ContentType: ContentType;
   CreateCategoryInput: CreateCategoryInput;
   CreateClientInput: CreateClientInput;
@@ -826,6 +845,7 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   LoginUserInput: LoginUserInput;
+  Meta: ResolverTypeWrapper<Meta>;
   Mutation: ResolverTypeWrapper<{}>;
   OverallStatResponse: ResolverTypeWrapper<OverallStatResponse>;
   OverallStatsResponse: ResolverTypeWrapper<OverallStatsResponse>;
@@ -866,8 +886,10 @@ export type ResolversParentTypes = {
   Chart: Chart;
   Client: Client;
   ClientFiltersInput: ClientFiltersInput;
+  ClientResponse: ClientResponse;
   Content: Content;
   ContentFiltersInput: ContentFiltersInput;
+  ContentResponse: ContentResponse;
   CreateCategoryInput: CreateCategoryInput;
   CreateClientInput: CreateClientInput;
   CreateContentInput: CreateContentInput;
@@ -881,6 +903,7 @@ export type ResolversParentTypes = {
   Int: Scalars['Int'];
   JSON: Scalars['JSON'];
   LoginUserInput: LoginUserInput;
+  Meta: Meta;
   Mutation: {};
   OverallStatResponse: OverallStatResponse;
   OverallStatsResponse: OverallStatsResponse;
@@ -955,6 +978,12 @@ export type ClientResolvers<ContextType = any, ParentType extends ResolversParen
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ClientResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['ClientResponse'] = ResolversParentTypes['ClientResponse']> = {
+  clients?: Resolver<Array<ResolversTypes['Client']>, ParentType, ContextType>;
+  meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ContentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Content'] = ResolversParentTypes['Content']> = {
   amount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   category?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType>;
@@ -982,6 +1011,12 @@ export type ContentResolvers<ContextType = any, ParentType extends ResolversPare
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ContentResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['ContentResponse'] = ResolversParentTypes['ContentResponse']> = {
+  contents?: Resolver<Array<ResolversTypes['Content']>, ParentType, ContextType>;
+  meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type IndexMetadataResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['IndexMetadataResponse'] = ResolversParentTypes['IndexMetadataResponse']> = {
   box?: Resolver<Maybe<ResolversTypes['BoxStats']>, ParentType, ContextType>;
   revenue?: Resolver<Maybe<ResolversTypes['RevenueChart']>, ParentType, ContextType>;
@@ -991,6 +1026,11 @@ export type IndexMetadataResponseResolvers<ContextType = any, ParentType extends
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
   name: 'JSON';
 }
+
+export type MetaResolvers<ContextType = any, ParentType extends ResolversParentTypes['Meta'] = ResolversParentTypes['Meta']> = {
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   changePassword?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'oldPassword'>>;
@@ -1079,9 +1119,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getCategory?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<QueryGetCategoryArgs, 'id'>>;
   getCategoryStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetCategoryStatsArgs, never>>;
   getClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<QueryGetClientArgs, 'id'>>;
-  getClients?: Resolver<Array<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<QueryGetClientsArgs, never>>;
+  getClients?: Resolver<ResolversTypes['ClientResponse'], ParentType, ContextType, RequireFields<QueryGetClientsArgs, never>>;
   getContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<QueryGetContentArgs, 'id'>>;
-  getContents?: Resolver<Array<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<QueryGetContentsArgs, never>>;
+  getContents?: Resolver<ResolversTypes['ContentResponse'], ParentType, ContextType, RequireFields<QueryGetContentsArgs, never>>;
   getCurrentUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   getIndexMetadata?: Resolver<Maybe<ResolversTypes['IndexMetadataResponse']>, ParentType, ContextType, RequireFields<QueryGetIndexMetadataArgs, never>>;
   getOverallStats?: Resolver<Maybe<ResolversTypes['OverallStatsResponse']>, ParentType, ContextType, RequireFields<QueryGetOverallStatsArgs, never>>;
@@ -1160,9 +1200,12 @@ export type Resolvers<ContextType = any> = {
   Category?: CategoryResolvers<ContextType>;
   Chart?: ChartResolvers<ContextType>;
   Client?: ClientResolvers<ContextType>;
+  ClientResponse?: ClientResponseResolvers<ContextType>;
   Content?: ContentResolvers<ContextType>;
+  ContentResponse?: ContentResponseResolvers<ContextType>;
   IndexMetadataResponse?: IndexMetadataResponseResolvers<ContextType>;
   JSON?: GraphQLScalarType;
+  Meta?: MetaResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   OverallStatResponse?: OverallStatResponseResolvers<ContextType>;
   OverallStatsResponse?: OverallStatsResponseResolvers<ContextType>;

@@ -1,6 +1,6 @@
 import { useErrorParser } from '@helpers'
 import { logError, logQuery } from '@helpers/logger'
-import { Client, QueryGetClientsArgs } from '@modules-types'
+import { QueryGetClientsArgs, ClientResponse } from '@modules-types'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 import whereClients from '../helpers/where-clients'
@@ -9,7 +9,7 @@ export default async (
   _parent: unknown,
   { size, skip, filters }: QueryGetClientsArgs,
   { user, sentryId, prisma }: Context & Required<Context>
-): Promise<Client[]> => {
+): Promise<ClientResponse> => {
   logQuery('getClients %o', { size, skip, filters })
   try {
     if (!user) throw new ApolloError('You must be logged in.', '401')
@@ -40,7 +40,17 @@ export default async (
       skip: skip ?? 0
     })
 
-    return clients
+    const clientWithTotal = await prisma.client.count({
+      where,
+      select: { id: true }
+    })
+
+    return {
+      meta: {
+        total: clientWithTotal.id ?? 0
+      },
+      clients
+    }
   } catch (e) {
     logError('getClients %o', e)
 

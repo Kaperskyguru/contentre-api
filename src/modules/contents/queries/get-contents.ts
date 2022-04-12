@@ -1,6 +1,6 @@
 import { useErrorParser } from '@helpers'
 import { logError, logQuery } from '@helpers/logger'
-import { Content, QueryGetContentsArgs } from '@modules-types'
+import { ContentResponse, QueryGetContentsArgs } from '@modules-types'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 import whereContents from '../helpers/where-contents'
@@ -9,12 +9,17 @@ export default async (
   _parent: unknown,
   { size, skip, filters }: QueryGetContentsArgs,
   { user, sentryId, prisma }: Context & Required<Context>
-): Promise<Content[]> => {
+): Promise<ContentResponse> => {
   logQuery('getContents %o', user)
   try {
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
     const where = whereContents(user, filters)
+
+    const contentWithTotal = await prisma.content.count({
+      where,
+      select: { id: true }
+    })
 
     const contents = await prisma.content.findMany({
       orderBy: [
@@ -47,7 +52,12 @@ export default async (
       take: size ?? undefined,
       skip: skip ?? 0
     })
-    return contents
+    return {
+      meta: {
+        total: contentWithTotal.id ?? 0
+      },
+      contents
+    }
   } catch (e) {
     logError('getContents %o', e)
 

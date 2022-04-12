@@ -173,8 +173,21 @@ const typeDefs = gql`
     topics: [String!]
   }
 
+  type Meta {
+    total: Int!
+  }
+
+  type ContentResponse {
+    meta: Meta!
+    contents: [Content!]!
+  }
+
   extend type Query {
-    getContents(size: Int, skip: Int, filters: ContentFiltersInput): [Content!]!
+    getContents(
+      size: Int
+      skip: Int
+      filters: ContentFiltersInput
+    ): ContentResponse!
     getContent(id: ID!): Content!
     getIndexMetadata(filters: ContentFiltersInput): IndexMetadataResponse
     getOverallStats(filters: ContentFiltersInput): OverallStatsResponse

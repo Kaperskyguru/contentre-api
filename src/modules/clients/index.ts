@@ -55,6 +55,11 @@ const typeDefs = gql`
     topics: [String!]
   }
 
+  type ClientResponse {
+    meta: Meta!
+    clients: [Client!]!
+  }
+
   input UpdateClientInput {
     name: String
     website: String
@@ -65,7 +70,11 @@ const typeDefs = gql`
   }
 
   extend type Query {
-    getClients(size: Int, skip: Int, filters: ClientFiltersInput): [Client!]!
+    getClients(
+      size: Int
+      skip: Int
+      filters: ClientFiltersInput
+    ): ClientResponse!
     getClient(id: ID!): Client!
   }
 
