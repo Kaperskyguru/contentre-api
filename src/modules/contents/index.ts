@@ -32,6 +32,7 @@ const typeDefs = gql`
     likes: Int
     status: StatusType
     shares: Int
+    publishedDate: Time
     interactions: Int
     category: Category
     featuredImage: String

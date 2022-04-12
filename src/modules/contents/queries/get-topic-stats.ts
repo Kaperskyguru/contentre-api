@@ -48,7 +48,7 @@ export default async (
                 t."id" = $2
               )
               AND (
-                "c"."createdAt" BETWEEN $3::TIMESTAMP AND $4::TIMESTAMP
+                "c"."publishedDate" BETWEEN $3::TIMESTAMP AND $4::TIMESTAMP
                 )
             
             GROUP BY 1

@@ -14,8 +14,6 @@ export default async (
   try {
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
-    console.log(filters)
-
     const where = whereContents(user, filters)
 
     const contentWithTotal = await prisma.content.count({

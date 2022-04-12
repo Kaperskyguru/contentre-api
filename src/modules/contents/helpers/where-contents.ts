@@ -43,7 +43,7 @@ export const whereContents = (
       },
 
       {
-        createdAt:
+        publishedDate:
           filters?.fromDate || filters?.toDate
             ? {
                 gte: filters?.fromDate
