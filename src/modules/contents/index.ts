@@ -135,6 +135,7 @@ const typeDefs = gql`
     tags: [String!]
     category: String
     amount: Float
+    status: StatusType
     comments: Int
     likes: Int
     shares: Int
@@ -150,11 +151,11 @@ const typeDefs = gql`
     comments: Int
     likes: Int
     shares: Int
+    status: StatusType
     paymentType: String
     amount: Float
     category: String
     visibility: String
-    status: String
   }
 
   input ContentFiltersInput {
