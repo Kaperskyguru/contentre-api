@@ -10,11 +10,6 @@ import usersReferred from './fields/users-referred'
 import totalContents from './fields/total-contents'
 
 const typeDefs = gql`
-  enum SignedUpThrough {
-    CONTENTRE
-    GOOGLE
-  }
-
   type User {
     id: ID!
     email: String!

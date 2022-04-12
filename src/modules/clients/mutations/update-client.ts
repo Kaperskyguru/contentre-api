@@ -17,7 +17,8 @@ export default async (
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
     // Extract fields from the mutation input.
-    const { name, website, profile, amount, paymentType } = input
+    const { name, website, profile, amount, paymentType, status, visibility } =
+      input
 
     // Check for required arguments not provided.
     if (!id || !name) {
@@ -41,7 +42,8 @@ export default async (
     if (amount !== undefined) data.amount = amount
     if (paymentType !== undefined) data.paymentType = paymentType
     if (profile !== undefined) data.profile = profile
-    if (input.visibility !== undefined) data.visibility = input.visibility
+    if (visibility !== undefined) data.visibility = visibility
+    if (status !== undefined) data.status = status
 
     // Finally update the category.
     const updatedClient = await prisma.client.update({

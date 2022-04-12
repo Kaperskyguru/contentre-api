@@ -47,6 +47,7 @@ export default async (
         email: input.email,
         username: input.username,
         name: input.name,
+        signedUpThrough: input.signedUpThrough!,
         portfolio: `${environment.domain}/${input.username}`,
         password: await hashPassword(input.password),
         ...data

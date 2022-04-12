@@ -650,6 +650,7 @@ export type Stat = {
 export type StatusType =
   | 'DELETED'
   | 'DRAFT'
+  | 'INACTIVE'
   | 'PUBLISHED';
 
 export type Tag = {
@@ -679,6 +680,7 @@ export type UpdateClientInput = {
   name?: InputMaybe<Scalars['String']>;
   paymentType?: InputMaybe<PaymentType>;
   profile?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<StatusType>;
   visibility?: InputMaybe<Visibility>;
   website?: InputMaybe<Scalars['String']>;
 };
