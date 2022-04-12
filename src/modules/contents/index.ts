@@ -159,6 +159,16 @@ const typeDefs = gql`
     visibility: String
   }
 
+  type Metadata {
+    title: String!
+    url: String!
+    image: String!
+    excerpt: String!
+    publishedDate: Time
+    tags: [String!]
+    client: Client!
+  }
+
   input ContentFiltersInput {
     terms: String
     sortBy: String

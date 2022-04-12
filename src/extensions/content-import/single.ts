@@ -1,15 +1,8 @@
 import { useErrorParser } from '@/helpers'
 import { logError } from '@/helpers/logger'
+import { Metadata } from '@/types/modules'
 import { ApolloError } from 'apollo-server-errors'
 import urlMetadata from 'url-metadata'
-interface Metadata {
-  title: string
-  url: string
-  image: string
-  excerpt: string
-  tags?: string[]
-  client: Client
-}
 
 interface Client {
   website: string
@@ -55,9 +48,9 @@ const generateURL = (metadata: urlMetadata.Result) => {
 }
 
 const generateDate = (metadata: urlMetadata.Result) => {
-  return (
+  const date =
     metadata['article:published_time'] ?? metadata['og:article:published_time']
-  )
+  return new Date(date!).toISOString() ?? undefined
 }
 
 export default async (url: string): Promise<Metadata> => {
@@ -76,9 +69,12 @@ export default async (url: string): Promise<Metadata> => {
         undefined,
       tags: generateTags(rawMetadata),
       client: {
+        id: '',
         website: rawMetadata.source,
         name: generateName(rawMetadata),
-        icon: generateFavicon(rawMetadata)
+        icon: generateFavicon(rawMetadata),
+        updatedAt: new Date(),
+        createdAt: new Date()
       }
     }
 

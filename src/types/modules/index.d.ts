@@ -234,6 +234,17 @@ export type Meta = {
   total: Scalars['Int'];
 };
 
+export type Metadata = {
+  __typename?: 'Metadata';
+  client: Client;
+  excerpt: Scalars['String'];
+  image: Scalars['String'];
+  publishedDate?: Maybe<Scalars['Time']>;
+  tags?: Maybe<Array<Scalars['String']>>;
+  title: Scalars['String'];
+  url: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   changePassword: User;
@@ -850,6 +861,7 @@ export type ResolversTypes = {
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   LoginUserInput: LoginUserInput;
   Meta: ResolverTypeWrapper<Meta>;
+  Metadata: ResolverTypeWrapper<Metadata>;
   Mutation: ResolverTypeWrapper<{}>;
   OverallStatResponse: ResolverTypeWrapper<OverallStatResponse>;
   OverallStatsResponse: ResolverTypeWrapper<OverallStatsResponse>;
@@ -908,6 +920,7 @@ export type ResolversParentTypes = {
   JSON: Scalars['JSON'];
   LoginUserInput: LoginUserInput;
   Meta: Meta;
+  Metadata: Metadata;
   Mutation: {};
   OverallStatResponse: OverallStatResponse;
   OverallStatsResponse: OverallStatsResponse;
@@ -1033,6 +1046,17 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type MetaResolvers<ContextType = any, ParentType extends ResolversParentTypes['Meta'] = ResolversParentTypes['Meta']> = {
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type MetadataResolvers<ContextType = any, ParentType extends ResolversParentTypes['Metadata'] = ResolversParentTypes['Metadata']> = {
+  client?: Resolver<ResolversTypes['Client'], ParentType, ContextType>;
+  excerpt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  image?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  publishedDate?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>;
+  tags?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1210,6 +1234,7 @@ export type Resolvers<ContextType = any> = {
   IndexMetadataResponse?: IndexMetadataResponseResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   Meta?: MetaResolvers<ContextType>;
+  Metadata?: MetadataResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   OverallStatResponse?: OverallStatResponseResolvers<ContextType>;
   OverallStatsResponse?: OverallStatsResponseResolvers<ContextType>;
