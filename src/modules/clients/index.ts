@@ -66,6 +66,7 @@ const typeDefs = gql`
     amount: Float
     paymentType: PaymentType
     profile: String
+    status: StatusType
     visibility: Visibility
   }
 

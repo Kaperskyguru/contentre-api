@@ -60,7 +60,8 @@ export default async (
         title: importedContent.title,
         excerpt: importedContent.excerpt,
         featuredImage: importedContent.image,
-        tags: importedContent.tags,
+        publishedDate: importedContent.publishedDate,
+        tags: importedContent.tags!,
         user: { connect: { id: user.id } },
         client: { connect: { id: client.id } }
       }

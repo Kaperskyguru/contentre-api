@@ -53,18 +53,18 @@ export default async (
     const contentCountsByJanuary: GrowthValues[] = await prisma.$queryRawUnsafe(
       `
           SELECT
-          AVG("c"."likes") FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "likes",
-          AVG("c"."shares") FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "shares",
-          AVG("c"."comments") FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "comments",
-          SUM(c."likes") FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "currentLikes",
-          SUM(c."comments") FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "currentComments",
-          SUM(c."shares") FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "currentShares",
-          SUM(c."amount") FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "currentAmount",
+          AVG("c"."likes") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "likes",
+          AVG("c"."shares") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "shares",
+          AVG("c"."comments") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "comments",
+          SUM(c."likes") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "currentLikes",
+          SUM(c."comments") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "currentComments",
+          SUM(c."shares") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "currentShares",
+          SUM(c."amount") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "currentAmount",
           
-          SUM(c."shares") FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT) "lastShares",
-          SUM(c."comments") FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT) "lastComments",
-          SUM(c."likes") FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT) "lastLikes",
-          SUM(c."amount") FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT) "lastAmount"
+          SUM(c."shares") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT) "lastShares",
+          SUM(c."comments") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT) "lastComments",
+          SUM(c."likes") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT) "lastLikes",
+          SUM(c."amount") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT) "lastAmount"
           FROM
             "Content" c
           WHERE
@@ -88,7 +88,7 @@ export default async (
                                 , NOW() - interval '1 year' - interval '1 month'
                                 , interval  '1 day')
            ) d(day)
-        LEFT JOIN "Content" c ON TO_CHAR(c."createdAt" , 'YYYY-MM-DD') = TO_CHAR(d.day, 'YYYY-MM-DD')
+        LEFT JOIN "Content" c ON TO_CHAR(c."publishedDate" , 'YYYY-MM-DD') = TO_CHAR(d.day, 'YYYY-MM-DD')
         WHERE (
           c."userId" is null or c."userId" = $1
         )
@@ -109,7 +109,7 @@ export default async (
                               , date_trunc('month', NOW() )
                               , interval  '1 day')
          ) d(day)
-      LEFT JOIN public."Content" c ON TO_CHAR(c."createdAt" , 'YYYY-MM-DD') = TO_CHAR(d.day, 'YYYY-MM-DD')
+      LEFT JOIN public."Content" c ON TO_CHAR(c."publishedDate" , 'YYYY-MM-DD') = TO_CHAR(d.day, 'YYYY-MM-DD')
       where c."userId" = $1 or c."userId" is null
       GROUP BY 1;
 
@@ -120,7 +120,7 @@ export default async (
     //     `
     //   select
 
-    //   TO_CHAR(date_trunc('month', c."createdAt"), 'mon')|| ',' || TO_CHAR(date_trunc('month', c."createdAt"), 'YYYY') as months,
+    //   TO_CHAR(date_trunc('month', c."publishedDate"), 'mon')|| ',' || TO_CHAR(date_trunc('month', c."publishedDate"), 'YYYY') as months,
 
     //   CASE when sum(c.amount) IS NULL THEN 0 ELSE sum(c.amount)::INT END as current_sale,
 

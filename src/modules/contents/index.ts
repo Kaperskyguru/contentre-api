@@ -32,6 +32,7 @@ const typeDefs = gql`
     likes: Int
     status: StatusType
     shares: Int
+    publishedDate: Time
     interactions: Int
     category: Category
     featuredImage: String
@@ -55,6 +56,7 @@ const typeDefs = gql`
     PUBLISHED
     DRAFT
     DELETED
+    INACTIVE
   }
 
   enum ContentType {
@@ -158,6 +160,16 @@ const typeDefs = gql`
     visibility: String
   }
 
+  type Metadata {
+    title: String!
+    url: String!
+    image: String!
+    excerpt: String!
+    publishedDate: Time
+    tags: [String!]
+    client: Client!
+  }
+
   input ContentFiltersInput {
     terms: String
     sortBy: String
@@ -169,6 +181,7 @@ const typeDefs = gql`
     fromAmount: Float
     toAmount: Float
     categories: [String!]
+    clients: [String!]
     fromDate: String
     toDate: String
     topics: [String!]

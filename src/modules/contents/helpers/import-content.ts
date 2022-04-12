@@ -1,24 +1,10 @@
 import { Context } from '@/types'
-import { Content } from '@/types/modules'
+import { Content, Metadata } from '@/types/modules'
 import { ApolloError } from 'apollo-server-errors'
 import importSingleContent from '@/extensions/content-import/single'
 
 interface URLContent {
   url: string
-}
-interface Metadata {
-  title: string
-  url: string
-  image: string
-  excerpt: string
-  tags?: string[]
-  client: Client
-}
-
-interface Client {
-  website: string
-  name: string
-  icon?: string
 }
 export const ImportContent = async (
   { url }: URLContent,
