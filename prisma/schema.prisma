@@ -117,6 +117,7 @@ model Content {
   likes         Int         @default(0)
   shares        Int         @default(0)
   featuredImage String?     @db.VarChar(2048)
+  publishedDate DateTime?   @db.Timestamp(6)
   createdAt     DateTime    @default(now()) @db.Timestamp(6)
   updatedAt     DateTime    @default(now()) @updatedAt @db.Timestamp(6)
   topics        Topic[]     @relation("ContentTopic")

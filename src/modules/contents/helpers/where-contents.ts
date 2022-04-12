@@ -1,5 +1,6 @@
 import { Prisma } from '.prisma/client'
 import { Maybe, User, ContentFiltersInput } from '@modules-types'
+import { endOfMonth, parseISO, startOfMonth } from 'date-fns'
 
 export const whereContents = (
   user: User,
@@ -30,7 +31,49 @@ export const whereContents = (
               }
             ]
           }
-        : {}
+        : {},
+      {
+        category: filters?.categories?.length
+          ? {
+              name: {
+                in: filters.categories
+              }
+            }
+          : undefined
+      },
+
+      {
+        createdAt:
+          filters?.fromDate || filters?.toDate
+            ? {
+                gte: filters?.fromDate
+                  ? startOfMonth(parseISO(filters.fromDate))
+                  : undefined,
+                lt: filters?.toDate
+                  ? endOfMonth(parseISO(filters.toDate))
+                  : undefined
+              }
+            : undefined
+      },
+
+      {
+        amount: filters?.fromAmount
+          ? {
+              gte: filters?.fromAmount ?? 0,
+              lt: filters?.toAmount ?? undefined
+            }
+          : undefined
+      },
+
+      {
+        client: filters?.clients?.length
+          ? {
+              name: {
+                in: filters.clients
+              }
+            }
+          : undefined
+      }
     ]
   }
 }

@@ -170,6 +170,7 @@ const typeDefs = gql`
     fromAmount: Float
     toAmount: Float
     categories: [String!]
+    clients: [String!]
     fromDate: String
     toDate: String
     topics: [String!]

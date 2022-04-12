@@ -54,6 +54,12 @@ const generateURL = (metadata: urlMetadata.Result) => {
   return url
 }
 
+const generateDate = (metadata: urlMetadata.Result) => {
+  return (
+    metadata['article:published_time'] ?? metadata['og:article:published_time']
+  )
+}
+
 export default async (url: string): Promise<Metadata> => {
   try {
     const rawMetadata = await urlMetadata(url)
@@ -62,6 +68,7 @@ export default async (url: string): Promise<Metadata> => {
       url: generateURL(rawMetadata),
       title: rawMetadata.title,
       excerpt: rawMetadata.description,
+      publishedDate: generateDate(rawMetadata),
       image:
         rawMetadata.image ??
         rawMetadata['og:image'] ??

@@ -134,6 +134,7 @@ export type Content = {
 export type ContentFiltersInput = {
   categories?: InputMaybe<Array<Scalars['String']>>;
   categoryIds?: InputMaybe<Array<Scalars['ID']>>;
+  clients?: InputMaybe<Array<Scalars['String']>>;
   daily?: InputMaybe<Scalars['Boolean']>;
   duration?: InputMaybe<Scalars['Int']>;
   fromAmount?: InputMaybe<Scalars['Float']>;
