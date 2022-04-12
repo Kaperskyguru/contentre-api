@@ -57,7 +57,8 @@ export default async (
     // Finally update the category.
     return await prisma.content.update({
       where: { id },
-      data: data
+      data,
+      include: { category: true, client: true }
     })
   } catch (e) {
     logError('updateContent %o', e)

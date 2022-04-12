@@ -21,7 +21,8 @@ export default async (
   try {
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
-    const { url, clientId, content, excerpt, title, tags, category } = input
+    const { url, clientId, content, excerpt, title, tags, category, status } =
+      input
 
     const categoryId =
       (await getOrCreateCategoryId(category, { user, prisma })) ?? undefined
@@ -32,6 +33,7 @@ export default async (
         title,
         excerpt,
         content,
+        status: status ?? 'PUBLISHED',
         category: { connect: { id: categoryId } },
         tags: tags?.length || undefined,
         user: { connect: { id: user.id } },

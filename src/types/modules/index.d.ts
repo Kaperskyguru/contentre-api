@@ -181,6 +181,7 @@ export type CreateContentInput = {
   likes?: InputMaybe<Scalars['Int']>;
   paymentType?: InputMaybe<PaymentType>;
   shares?: InputMaybe<Scalars['Int']>;
+  status?: InputMaybe<StatusType>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   title: Scalars['String'];
   url?: InputMaybe<Scalars['String']>;
@@ -689,7 +690,7 @@ export type UpdateContentInput = {
   likes?: InputMaybe<Scalars['Int']>;
   paymentType?: InputMaybe<Scalars['String']>;
   shares?: InputMaybe<Scalars['Int']>;
-  status?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<StatusType>;
   title?: InputMaybe<Scalars['String']>;
   visibility?: InputMaybe<Scalars['String']>;
 };
