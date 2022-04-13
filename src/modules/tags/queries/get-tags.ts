@@ -1,6 +1,6 @@
 import { useErrorParser } from '@helpers'
 import { logError, logQuery } from '@helpers/logger'
-import { QueryGetTagsArgs, Tag } from '@modules-types'
+import { QueryGetTagsArgs, TagResponse } from '@modules-types'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 
@@ -8,7 +8,7 @@ export default async (
   _parent: unknown,
   { filters, size, skip }: QueryGetTagsArgs,
   { user, sentryId, prisma }: Context & Required<Context>
-): Promise<Tag[]> => {
+): Promise<TagResponse> => {
   logQuery('getTags %o', user)
 
   // User must be logged in before performing the operation.
@@ -19,21 +19,31 @@ export default async (
     if (!filters?.all) {
       where.userId = user.id
     }
+    const tagWithTotal = await prisma.tag.count({
+      where,
+      select: { id: true }
+    })
     if (!filters?.terms) {
-      return await prisma.tag.findMany({
-        where: { ...where },
-        orderBy: [
-          filters?.sortBy
-            ? filters.sortBy === 'name'
-              ? { name: 'desc' }
-              : filters.sortBy === 'createdAt'
-              ? { createdAt: 'desc' }
+      return {
+        tags: await prisma.tag.findMany({
+          where: { ...where },
+          orderBy: [
+            filters?.sortBy
+              ? filters.sortBy === 'name'
+                ? { name: 'desc' }
+                : filters.sortBy === 'createdAt'
+                ? { createdAt: 'desc' }
+                : { name: 'desc' }
               : { name: 'desc' }
-            : { name: 'desc' }
-        ],
-        take: size ?? 30,
-        skip: skip ?? 0
-      })
+          ],
+          take: size ?? 30,
+          skip: skip ?? 0
+        }),
+
+        meta: {
+          total: tagWithTotal.id ?? 0
+        }
+      }
     }
 
     const tagsStartsWith = await prisma.tag.findMany({
@@ -72,7 +82,12 @@ export default async (
       skip: skip ?? 0
     })
 
-    return [...tagsStartsWith, ...tagsContains]
+    return {
+      meta: {
+        total: tagWithTotal.id ?? 0
+      },
+      tags: [...tagsStartsWith, ...tagsContains]
+    }
   } catch (e) {
     logError('getTags %o', e)
 
