@@ -31,7 +31,8 @@ export default async (
               : { name: 'desc' }
             : { name: 'desc' }
         ],
-        take: size ?? 30
+        take: size ?? 30,
+        skip: skip ?? 0
       })
     }
 
@@ -49,7 +50,8 @@ export default async (
             : { name: 'desc' }
           : { name: 'desc' }
       ],
-      take: size ?? 30
+      take: size ?? 30,
+      skip: skip ?? 0
     })
 
     const tagsContains = await prisma.tag.findMany({
@@ -66,7 +68,8 @@ export default async (
             : { name: 'desc' }
           : { name: 'desc' }
       ],
-      take: size ?? 30
+      take: size ?? 30,
+      skip: skip ?? 0
     })
 
     return [...tagsStartsWith, ...tagsContains]
