@@ -119,6 +119,7 @@ export type Content = {
   lastUpdated?: Maybe<Scalars['Time']>;
   likes?: Maybe<Scalars['Int']>;
   paymentType?: Maybe<PaymentType>;
+  publishedDate?: Maybe<Scalars['Time']>;
   shares?: Maybe<Scalars['Int']>;
   status?: Maybe<StatusType>;
   tags?: Maybe<Scalars['JSON']>;
@@ -518,7 +519,7 @@ export type Query = {
   getPortfolios: Array<Portfolio>;
   getTag: Tag;
   getTagStats?: Maybe<OverallStatResponse>;
-  getTags: Array<Tag>;
+  getTags: TagResponse;
   getTopicStats?: Maybe<OverallStatResponse>;
   getUser: User;
   getVersion: Scalars['String'];
@@ -680,6 +681,12 @@ export type TagFiltersInput = {
   all?: InputMaybe<Scalars['Boolean']>;
   sortBy?: InputMaybe<Scalars['String']>;
   terms?: InputMaybe<Scalars['String']>;
+};
+
+export type TagResponse = {
+  __typename?: 'TagResponse';
+  meta: Meta;
+  tags: Array<Tag>;
 };
 
 export type UpdateCategoryInput = {
@@ -881,6 +888,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   Tag: ResolverTypeWrapper<Tag>;
   TagFiltersInput: TagFiltersInput;
+  TagResponse: ResolverTypeWrapper<TagResponse>;
   Time: ResolverTypeWrapper<Scalars['Time']>;
   UpdateCategoryInput: UpdateCategoryInput;
   UpdateClientInput: UpdateClientInput;
@@ -937,6 +945,7 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   Tag: Tag;
   TagFiltersInput: TagFiltersInput;
+  TagResponse: TagResponse;
   Time: Scalars['Time'];
   UpdateCategoryInput: UpdateCategoryInput;
   UpdateClientInput: UpdateClientInput;
@@ -1015,6 +1024,7 @@ export type ContentResolvers<ContextType = any, ParentType extends ResolversPare
   lastUpdated?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>;
   likes?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   paymentType?: Resolver<Maybe<ResolversTypes['PaymentType']>, ParentType, ContextType>;
+  publishedDate?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>;
   shares?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['StatusType']>, ParentType, ContextType>;
   tags?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
@@ -1158,7 +1168,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getPortfolios?: Resolver<Array<ResolversTypes['Portfolio']>, ParentType, ContextType, RequireFields<QueryGetPortfoliosArgs, never>>;
   getTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<QueryGetTagArgs, 'id'>>;
   getTagStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetTagStatsArgs, never>>;
-  getTags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<QueryGetTagsArgs, never>>;
+  getTags?: Resolver<ResolversTypes['TagResponse'], ParentType, ContextType, RequireFields<QueryGetTagsArgs, never>>;
   getTopicStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetTopicStatsArgs, never>>;
   getUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryGetUserArgs, 'uuid'>>;
   getVersion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1190,6 +1200,12 @@ export type TagResolvers<ContextType = any, ParentType extends ResolversParentTy
   totalContents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type TagResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['TagResponse'] = ResolversParentTypes['TagResponse']> = {
+  meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
+  tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1245,6 +1261,7 @@ export type Resolvers<ContextType = any> = {
   RevenueChart?: RevenueChartResolvers<ContextType>;
   Stat?: StatResolvers<ContextType>;
   Tag?: TagResolvers<ContextType>;
+  TagResponse?: TagResponseResolvers<ContextType>;
   Time?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
 };

@@ -34,8 +34,13 @@ const typeDefs = gql`
     all: Boolean
   }
 
+  type TagResponse {
+    meta: Meta!
+    tags: [Tag!]!
+  }
+
   extend type Query {
-    getTags(size: Int, skip: Int, filters: TagFiltersInput): [Tag!]!
+    getTags(size: Int, skip: Int, filters: TagFiltersInput): TagResponse!
     getTag(id: ID!): Tag!
     getTagStats(filters: ContentFiltersInput): OverallStatResponse
   }
