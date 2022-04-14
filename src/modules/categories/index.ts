@@ -6,6 +6,7 @@ import createCategory from './mutations/create-category'
 import totalContents from './fields/total-contents'
 import totalAmount from './fields/total-amount'
 import updateCategory from './mutations/update-category'
+import deleteCategory from './mutations/delete-category'
 
 const typeDefs = gql`
   type Category {
@@ -68,8 +69,8 @@ const resolvers: Resolvers = {
 
   Mutation: {
     createCategory,
-    updateCategory
-    // deleteCategory
+    updateCategory,
+    deleteCategory
   },
 
   Category: {
