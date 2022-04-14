@@ -3,7 +3,7 @@ import { logResolver } from '@helpers/logger'
 import { prisma } from '@/config'
 
 export default async (parent: Tag): Promise<Maybe<number>> => {
-  logResolver('Tag.totalContent')
+  logResolver('Tag.totalAmount')
 
   const tags = await prisma.content.aggregate({
     where: {
@@ -17,6 +17,5 @@ export default async (parent: Tag): Promise<Maybe<number>> => {
       amount: true
     }
   })
-
   return tags?._sum?.amount ?? 0
 }
