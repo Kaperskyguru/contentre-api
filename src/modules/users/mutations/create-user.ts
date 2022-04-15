@@ -54,6 +54,20 @@ export default async (
       }
     })
 
+    // Create billing User
+
+    //Find sub where it's free
+    const sub = await prisma.subscription.findFirst({ where: { name: 'free' } })
+
+    //Update user
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        billingId: 'BillingId',
+        subscriptionId: sub?.id
+      }
+    })
+
     // Send data to Segment.
     const segmentData: Record<string, string | boolean | Date | null> = {
       createdAt: user.createdAt,

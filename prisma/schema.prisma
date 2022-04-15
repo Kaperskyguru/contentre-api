@@ -34,6 +34,11 @@ model User {
   twofactor             TwoFactorType        @default(NONE)
   signedUpThrough       SignedUpThrough      @default(CONTENTRE)
   referrerId            String?              @db.Char(36)
+  subscriptionId        String?              @db.Char(36)
+  subscription          Subscription?        @relation("UserSubscription", fields: [subscriptionId], references: [id])
+  billingId             String?              @db.Char(36)
+  hasTrial              Boolean              @default(false)
+  trialEndDate          DateTime?            @db.Timestamp(6)
   referrer              User?                @relation("UserToUser", fields: [referrerId], references: [id])
   verificationIntents   VerificationIntent[] @relation("UserVerificationIntent")
   clients               Client[]             @relation("UserClient")
@@ -142,6 +147,27 @@ model Portfolio {
   updatedAt   DateTime     @default(now()) @updatedAt @db.Timestamp(6)
 
   @@unique([url], name: "uniqueURL", map: "uniqueURL")
+}
+
+model Subscription {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name      String    @db.VarChar(120)
+  planId    String?   @db.Char(36)
+  expiry    DateTime? @db.Timestamp(6)
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @default(now()) @updatedAt @db.Timestamp(6)
+  User      User[]    @relation("UserSubscription")
+  Feature   Feature[] @relation("SubscriptionFeature")
+}
+
+model Feature {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  subscriptionId String       @db.Char(36)
+  feature        String       @db.VarChar(120)
+  value          String       @db.VarChar(36)
+  createdAt      DateTime     @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime     @default(now()) @updatedAt @db.Timestamp(6)
+  subscription   Subscription @relation("SubscriptionFeature", fields: [subscriptionId], references: [id])
 }
 
 model Template {

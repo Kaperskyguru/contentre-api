@@ -4,6 +4,8 @@ import createPortfolio from './mutations/create-portfolio'
 import getPortfolios from './queries/get-portfolios'
 import deletePortfolio from './mutations/delete-portfolio'
 import getPortfolioContent from './queries/get-portfolio-contents'
+import getPortfolio from './queries/get-portfolio'
+import updatePortfolio from './mutations/update-portfolio'
 
 const typeDefs = gql`
   type Portfolio {
@@ -14,6 +16,14 @@ const typeDefs = gql`
     url: String!
     description: String
     templateId: ID!
+    template: UserTemplate
+    createdAt: Time!
+    updatedAt: Time!
+  }
+
+  type UserTemplate {
+    id: String!
+    content: String
     createdAt: Time!
     updatedAt: Time!
   }
@@ -31,14 +41,13 @@ const typeDefs = gql`
     url: String!
     title: String!
     description: String
-    type: String
     templateId: ID
   }
 
   input UpdatePortfolioInput {
     title: String
     description: String
-    type: String
+    url: String
   }
 
   input PortfolioFiltersInput {
@@ -73,14 +82,14 @@ const typeDefs = gql`
 const resolvers: Resolvers = {
   Query: {
     getPortfolios,
-    // getPortfolio
+    getPortfolio,
     getPortfolioContent
   },
 
   Mutation: {
     createPortfolio,
-    deletePortfolio
-    // updatePortfolio
+    deletePortfolio,
+    updatePortfolio
   }
 }
 

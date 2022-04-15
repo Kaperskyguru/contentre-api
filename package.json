@@ -89,6 +89,7 @@
     "husky": "^7.0.4",
     "prettier": "^2.5.1",
     "prisma": "^3.6.0",
+    "ts-node": "^10.7.0",
     "typescript": "^4.5.4"
   }
 }
