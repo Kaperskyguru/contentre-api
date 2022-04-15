@@ -193,7 +193,6 @@ export type CreatePortfolioInput = {
   description?: InputMaybe<Scalars['String']>;
   templateId?: InputMaybe<Scalars['ID']>;
   title: Scalars['String'];
-  type?: InputMaybe<Scalars['String']>;
   url: Scalars['String'];
 };
 
@@ -216,6 +215,13 @@ export type CreateUserInput = {
   referrer?: InputMaybe<Scalars['String']>;
   signedUpThrough?: InputMaybe<SignedUpThrough>;
   username: Scalars['String'];
+};
+
+export type Feature = {
+  __typename?: 'Feature';
+  feature: Scalars['String'];
+  id: Scalars['ID'];
+  value: Scalars['String'];
 };
 
 export type IndexMetadataResponse = {
@@ -475,6 +481,7 @@ export type Portfolio = {
   createdAt: Scalars['Time'];
   description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  template?: Maybe<UserTemplate>;
   templateId: Scalars['ID'];
   title: Scalars['String'];
   type?: Maybe<Scalars['String']>;
@@ -666,6 +673,15 @@ export type StatusType =
   | 'INACTIVE'
   | 'PUBLISHED';
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  expiry?: Maybe<Scalars['Time']>;
+  features: Array<Feature>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  planId?: Maybe<Scalars['String']>;
+};
+
 export type Tag = {
   __typename?: 'Tag';
   createdAt: Scalars['Time'];
@@ -719,7 +735,7 @@ export type UpdateContentInput = {
 export type UpdatePortfolioInput = {
   description?: InputMaybe<Scalars['String']>;
   title?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<Scalars['String']>;
+  url?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateTagInput = {
@@ -751,20 +767,34 @@ export type User = {
   emailConfirmed: Scalars['Boolean'];
   firstname?: Maybe<Scalars['String']>;
   hasFinishedOnboarding?: Maybe<Scalars['Boolean']>;
+  hasTrial?: Maybe<Scalars['Boolean']>;
   homeAddress?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  isTrial?: Maybe<Scalars['Boolean']>;
   jobTitle?: Maybe<Scalars['String']>;
   lastActivityAt: Scalars['Time'];
   lastname?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  paying?: Maybe<Scalars['Boolean']>;
   phoneCode?: Maybe<Scalars['String']>;
   phoneConfirmed: Scalars['Boolean'];
   phoneNumber?: Maybe<Scalars['String']>;
   portfolio?: Maybe<Scalars['String']>;
+  subscription?: Maybe<Subscription>;
+  subscriptionId?: Maybe<Scalars['ID']>;
   totalContents?: Maybe<Scalars['Int']>;
   totalUsersReferred?: Maybe<Scalars['String']>;
+  trialEndDate?: Maybe<Scalars['Time']>;
   updatedAt: Scalars['Time'];
   username?: Maybe<Scalars['String']>;
+};
+
+export type UserTemplate = {
+  __typename?: 'UserTemplate';
+  content?: Maybe<Scalars['String']>;
+  createdAt: Scalars['Time'];
+  id: Scalars['String'];
+  updatedAt: Scalars['Time'];
 };
 
 export type Visibility =
@@ -861,6 +891,7 @@ export type ResolversTypes = {
   CreateProfileInput: CreateProfileInput;
   CreateTagInput: CreateTagInput;
   CreateUserInput: CreateUserInput;
+  Feature: ResolverTypeWrapper<Feature>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   IndexMetadataResponse: ResolverTypeWrapper<IndexMetadataResponse>;
@@ -886,6 +917,7 @@ export type ResolversTypes = {
   Stat: ResolverTypeWrapper<Stat>;
   StatusType: StatusType;
   String: ResolverTypeWrapper<Scalars['String']>;
+  Subscription: ResolverTypeWrapper<{}>;
   Tag: ResolverTypeWrapper<Tag>;
   TagFiltersInput: TagFiltersInput;
   TagResponse: ResolverTypeWrapper<TagResponse>;
@@ -898,6 +930,7 @@ export type ResolversTypes = {
   UpdateUserInput: UpdateUserInput;
   UploadContentInput: UploadContentInput;
   User: ResolverTypeWrapper<User>;
+  UserTemplate: ResolverTypeWrapper<UserTemplate>;
   Visibility: Visibility;
 };
 
@@ -921,6 +954,7 @@ export type ResolversParentTypes = {
   CreateProfileInput: CreateProfileInput;
   CreateTagInput: CreateTagInput;
   CreateUserInput: CreateUserInput;
+  Feature: Feature;
   Float: Scalars['Float'];
   ID: Scalars['ID'];
   IndexMetadataResponse: IndexMetadataResponse;
@@ -943,6 +977,7 @@ export type ResolversParentTypes = {
   SendSegmentInput: SendSegmentInput;
   Stat: Stat;
   String: Scalars['String'];
+  Subscription: {};
   Tag: Tag;
   TagFiltersInput: TagFiltersInput;
   TagResponse: TagResponse;
@@ -955,6 +990,7 @@ export type ResolversParentTypes = {
   UpdateUserInput: UpdateUserInput;
   UploadContentInput: UploadContentInput;
   User: User;
+  UserTemplate: UserTemplate;
 };
 
 export type BoxStatsResolvers<ContextType = any, ParentType extends ResolversParentTypes['BoxStats'] = ResolversParentTypes['BoxStats']> = {
@@ -1041,6 +1077,13 @@ export type ContentResolvers<ContextType = any, ParentType extends ResolversPare
 export type ContentResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['ContentResponse'] = ResolversParentTypes['ContentResponse']> = {
   contents?: Resolver<Array<ResolversTypes['Content']>, ParentType, ContextType>;
   meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type FeatureResolvers<ContextType = any, ParentType extends ResolversParentTypes['Feature'] = ResolversParentTypes['Feature']> = {
+  feature?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1133,6 +1176,7 @@ export type PortfolioResolvers<ContextType = any, ParentType extends ResolversPa
   createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  template?: Resolver<Maybe<ResolversTypes['UserTemplate']>, ParentType, ContextType>;
   templateId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1192,6 +1236,14 @@ export type StatResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type SubscriptionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = {
+  expiry?: SubscriptionResolver<Maybe<ResolversTypes['Time']>, "expiry", ParentType, ContextType>;
+  features?: SubscriptionResolver<Array<ResolversTypes['Feature']>, "features", ParentType, ContextType>;
+  id?: SubscriptionResolver<ResolversTypes['ID'], "id", ParentType, ContextType>;
+  name?: SubscriptionResolver<ResolversTypes['String'], "name", ParentType, ContextType>;
+  planId?: SubscriptionResolver<Maybe<ResolversTypes['String']>, "planId", ParentType, ContextType>;
+};
+
 export type TagResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tag'] = ResolversParentTypes['Tag']> = {
   createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
@@ -1222,20 +1274,34 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   emailConfirmed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   firstname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   hasFinishedOnboarding?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  hasTrial?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   homeAddress?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isTrial?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   jobTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastActivityAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   lastname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  paying?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   phoneCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   phoneConfirmed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   phoneNumber?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   portfolio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  subscription?: Resolver<Maybe<ResolversTypes['Subscription']>, ParentType, ContextType>;
+  subscriptionId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   totalContents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   totalUsersReferred?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  trialEndDate?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   username?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserTemplateResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserTemplate'] = ResolversParentTypes['UserTemplate']> = {
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1247,6 +1313,7 @@ export type Resolvers<ContextType = any> = {
   ClientResponse?: ClientResponseResolvers<ContextType>;
   Content?: ContentResolvers<ContextType>;
   ContentResponse?: ContentResponseResolvers<ContextType>;
+  Feature?: FeatureResolvers<ContextType>;
   IndexMetadataResponse?: IndexMetadataResponseResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   Meta?: MetaResolvers<ContextType>;
@@ -1260,9 +1327,11 @@ export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   RevenueChart?: RevenueChartResolvers<ContextType>;
   Stat?: StatResolvers<ContextType>;
+  Subscription?: SubscriptionResolvers<ContextType>;
   Tag?: TagResolvers<ContextType>;
   TagResponse?: TagResponseResolvers<ContextType>;
   Time?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
+  UserTemplate?: UserTemplateResolvers<ContextType>;
 };
 

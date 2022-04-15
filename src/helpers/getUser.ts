@@ -1,17 +1,47 @@
-import { User } from '@/types/modules'
+import { Feature, Subscription, User } from '@/types/modules'
 import jwt from 'jsonwebtoken'
 import { environment } from './environment'
 import { prisma } from '@/config'
 
 export const getUser = async (user: User): Promise<User> => {
   //   Get team here
-  //   const users = await prisma.$queryRaw(
-  //     'SELECT * FROM User WHERE id = $1 ORDER BY createdAt DESC',
-  //     user.id
-  //   )
+  const subscription: Subscription[] = await prisma.$queryRawUnsafe(
+    `
+      SELECT 
+        s.* 
+      FROM 
+        "Subscription" AS "s"
+      WHERE 
+        "s"."id" = $1 
+      `,
+    user.subscriptionId
+  )
+
+  const features: Feature[] = await prisma.$queryRawUnsafe(
+    `
+      SELECT 
+        f.*
+      FROM 
+        "Feature" AS "f"
+      WHERE 
+        "f"."subscriptionId" = $1 
+      `,
+    user.subscriptionId
+  )
+
   const { ...authUser } = user
   return {
-    ...authUser
+    ...authUser,
+    subscription: subscription.length
+      ? {
+          ...subscription[0],
+          features: features.map((item) => ({
+            feature: item.feature,
+            value: item.value,
+            id: item.id
+          }))
+        }
+      : undefined
   }
 }
 

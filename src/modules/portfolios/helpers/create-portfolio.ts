@@ -17,7 +17,6 @@ export const createPortfolio = async (
   if (!user) throw new ApolloError('You must be logged in.', '401')
   // Use Template or use Blank
 
-  console.log(url, description, title, templateId)
   let template
   if (templateId !== undefined) {
     template = await prisma.template.findUnique({

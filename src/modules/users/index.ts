@@ -8,6 +8,8 @@ import deleteUser from './mutations/delete-user'
 import getUser from './queries/getUser'
 import usersReferred from './fields/users-referred'
 import totalContents from './fields/total-contents'
+import isPaying from './fields/is-paying'
+import isTrial from './fields/is-trial'
 
 const typeDefs = gql`
   type User {
@@ -21,6 +23,10 @@ const typeDefs = gql`
     portfolio: String
     jobTitle: String
     username: String
+    hasTrial: Boolean
+    trialEndDate: Time
+    subscriptionId: ID
+    subscription: Subscription
     phoneCode: String
     phoneNumber: String
     totalUsersReferred: String
@@ -31,6 +37,8 @@ const typeDefs = gql`
     updatedAt: Time!
     lastActivityAt: Time!
     clients: [Client!]
+    paying: Boolean
+    isTrial: Boolean
   }
 
   input CreateUserInput {
@@ -43,6 +51,20 @@ const typeDefs = gql`
     analyticsSource: String
     analyticsSourceData: String
     signedUpThrough: SignedUpThrough
+  }
+
+  type Subscription {
+    id: ID!
+    name: String!
+    expiry: Time
+    planId: String
+    features: [Feature!]!
+  }
+
+  type Feature {
+    id: ID!
+    feature: String!
+    value: String!
   }
 
   enum SignedUpThrough {
@@ -90,7 +112,9 @@ const resolvers: Resolvers = {
   User: {
     avatarURL: userAvatarURL,
     totalUsersReferred: usersReferred,
-    totalContents: totalContents
+    totalContents: totalContents,
+    paying: isPaying,
+    isTrial: isTrial
   }
 }
 
