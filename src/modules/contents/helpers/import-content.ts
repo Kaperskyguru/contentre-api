@@ -14,14 +14,15 @@ export const ImportContent = async (
 
   if (!user) throw new ApolloError('You must be logged in.', '401')
 
+  let trimmedURL = null
   //preparing URL
   if (url.trim().charAt(url.length - 1) === '/') {
-    url = url.trim().substring(0, url.length - 1)
-  }
+    trimmedURL = url.trim().substring(0, url.length - 1)
+  } else trimmedURL = url
 
   // Checking if content already exists
   const content = await prisma.content.findFirst({
-    where: { url, userId: user.id }
+    where: { url: trimmedURL, userId: user.id }
   })
 
   if (content) throw new ApolloError('duplicate content', '401')
