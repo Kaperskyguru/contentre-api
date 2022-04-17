@@ -49,8 +49,12 @@ const generateURL = (metadata: urlMetadata.Result) => {
 
 const generateDate = (metadata: urlMetadata.Result) => {
   const date =
-    metadata['article:published_time'] ?? metadata['og:article:published_time']
-  return new Date(date!).toISOString() ?? undefined
+    metadata['article:published_time'] ??
+    metadata['og:article:published_time'] ??
+    metadata['jsonld']['datePublished']
+
+  if (!date) return new Date().toISOString()
+  return new Date(date).toISOString()
 }
 
 export default async (url: string): Promise<Metadata> => {
