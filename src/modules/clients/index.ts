@@ -55,6 +55,11 @@ const typeDefs = gql`
     topics: [String!]
   }
 
+  enum Status {
+    ACTIVE
+    INACTIVE
+  }
+
   type ClientResponse {
     meta: Meta!
     clients: [Client!]!
@@ -66,7 +71,7 @@ const typeDefs = gql`
     amount: Float
     paymentType: PaymentType
     profile: String
-    status: StatusType
+    status: Status
     visibility: Visibility
   }
 

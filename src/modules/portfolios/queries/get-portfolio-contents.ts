@@ -1,3 +1,4 @@
+import whereContents from '@/modules/contents/helpers/where-contents'
 import { useErrorParser } from '@helpers'
 import { logError, logQuery } from '@helpers/logger'
 import { PortfolioContent, QueryGetPortfolioContentArgs } from '@modules-types'
@@ -27,7 +28,34 @@ export default async (
     })
 
     // Select Contents
+    const where = whereContents(user, filters)
+
+    const contentWithTotal = await prisma.content.count({
+      where,
+      select: { id: true }
+    })
+
     const contents = await prisma.content.findMany({
+      where,
+      include: { client: true, category: true },
+      skip: skip ?? 0,
+      take: size ?? undefined
+    })
+
+    // Get Public clients
+    const clients = await prisma.client.findMany({
+      where: { userId: user.id, visibility: 'PUBLIC' }
+    })
+    // Get Categories
+    const categories = await prisma.category.findMany({
+      where: { userId: user.id }
+    })
+    // Get Topics
+    // const topics = await prisma.topic.findMany({
+    //   where: { userId: user?.id }
+    // })
+    // Get Tags
+    const tags = await prisma.tag.findMany({
       where: { userId: user?.id }
     })
 
@@ -37,7 +65,15 @@ export default async (
       coverImage: '',
       profileImage: user.avatarURL,
       name: user.name,
-      portfolios: contents
+      contents: {
+        contents,
+        meta: {
+          total: contentWithTotal?.id ?? 0
+        }
+      },
+      categories,
+      tags,
+      clients
     }
   } catch (e) {
     logError('getPortfolioContent %o', e)

@@ -20,7 +20,6 @@ model User {
   jobTitle              String?              @db.VarChar(60)
   homeAddress           String?              @db.VarChar(2048)
   bio                   String?              @db.VarChar(2048)
-  skype                 String?              @db.VarChar(35)
   portfolio             String?              @db.VarChar(2048)
   emailConfirmed        Boolean              @default(false)
   phoneCode             String?              @db.VarChar(5)

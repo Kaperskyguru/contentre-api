@@ -1,9 +1,14 @@
 import { Prisma } from '.prisma/client'
-import { Maybe, User, PortfolioFiltersInput } from '@modules-types'
+import {
+  Maybe,
+  User,
+  PortfolioFiltersInput,
+  PortfolioContentFilters
+} from '@modules-types'
 
-export const whereClients = (
+export const wherePortfolios = (
   user: User,
-  filters?: Maybe<PortfolioFiltersInput>
+  filters?: Maybe<PortfolioFiltersInput & PortfolioContentFilters>
 ): {
   AND: Prisma.PortfolioWhereInput[]
 } => {
@@ -35,4 +40,4 @@ export const whereClients = (
   }
 }
 
-export default whereClients
+export default wherePortfolios
