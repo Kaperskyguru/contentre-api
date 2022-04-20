@@ -34,7 +34,10 @@ const typeDefs = gql`
     coverImage: String
     name: String!
     profileImage: String
-    portfolios: [Content!]
+    contents: ContentResponse
+    clients: [Client!]
+    categories: [Category!]
+    tags: [Tag!]
   }
 
   input CreatePortfolioInput {
@@ -55,8 +58,16 @@ const typeDefs = gql`
   }
 
   input PortfolioContentFilters {
+    terms: String
     username: String!
     url: String
+    clients: [String!]
+    categories: [String!]
+    topics: [String!]
+    tags: [String!]
+    fromDate: Time
+    toDate: Time
+    sortBy: String
   }
 
   extend type Query {

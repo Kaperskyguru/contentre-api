@@ -493,14 +493,25 @@ export type Portfolio = {
 export type PortfolioContent = {
   __typename?: 'PortfolioContent';
   about?: Maybe<Scalars['String']>;
+  categories?: Maybe<Array<Category>>;
+  clients?: Maybe<Array<Client>>;
+  contents?: Maybe<ContentResponse>;
   coverImage?: Maybe<Scalars['String']>;
   html?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  portfolios?: Maybe<Array<Content>>;
   profileImage?: Maybe<Scalars['String']>;
+  tags?: Maybe<Array<Tag>>;
 };
 
 export type PortfolioContentFilters = {
+  categories?: InputMaybe<Array<Scalars['String']>>;
+  clients?: InputMaybe<Array<Scalars['String']>>;
+  fromDate?: InputMaybe<Scalars['Time']>;
+  sortBy?: InputMaybe<Scalars['String']>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  terms?: InputMaybe<Scalars['String']>;
+  toDate?: InputMaybe<Scalars['Time']>;
+  topics?: InputMaybe<Array<Scalars['String']>>;
   url?: InputMaybe<Scalars['String']>;
   username: Scalars['String'];
 };
@@ -667,6 +678,10 @@ export type Stat = {
   totalShares: Scalars['Int'];
 };
 
+export type Status =
+  | 'ACTIVE'
+  | 'INACTIVE';
+
 export type StatusType =
   | 'DELETED'
   | 'DRAFT'
@@ -715,7 +730,7 @@ export type UpdateClientInput = {
   name?: InputMaybe<Scalars['String']>;
   paymentType?: InputMaybe<PaymentType>;
   profile?: InputMaybe<Scalars['String']>;
-  status?: InputMaybe<StatusType>;
+  status?: InputMaybe<Status>;
   visibility?: InputMaybe<Visibility>;
   website?: InputMaybe<Scalars['String']>;
 };
@@ -915,6 +930,7 @@ export type ResolversTypes = {
   SendSegmentInput: SendSegmentInput;
   SignedUpThrough: SignedUpThrough;
   Stat: ResolverTypeWrapper<Stat>;
+  Status: Status;
   StatusType: StatusType;
   String: ResolverTypeWrapper<Scalars['String']>;
   Subscription: ResolverTypeWrapper<{}>;
@@ -1188,11 +1204,14 @@ export type PortfolioResolvers<ContextType = any, ParentType extends ResolversPa
 
 export type PortfolioContentResolvers<ContextType = any, ParentType extends ResolversParentTypes['PortfolioContent'] = ResolversParentTypes['PortfolioContent']> = {
   about?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  categories?: Resolver<Maybe<Array<ResolversTypes['Category']>>, ParentType, ContextType>;
+  clients?: Resolver<Maybe<Array<ResolversTypes['Client']>>, ParentType, ContextType>;
+  contents?: Resolver<Maybe<ResolversTypes['ContentResponse']>, ParentType, ContextType>;
   coverImage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   html?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  portfolios?: Resolver<Maybe<Array<ResolversTypes['Content']>>, ParentType, ContextType>;
   profileImage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  tags?: Resolver<Maybe<Array<ResolversTypes['Tag']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
