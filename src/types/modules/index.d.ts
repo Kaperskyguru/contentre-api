@@ -21,13 +21,15 @@ export type Scalars = {
 
 export type BoxStats = {
   __typename?: 'BoxStats';
-  amountPercent: Scalars['Float'];
-  commentPercent: Scalars['Float'];
-  comments: Scalars['Float'];
-  likePercent: Scalars['Float'];
-  likes: Scalars['Float'];
-  sharePercent: Scalars['Float'];
-  shares: Scalars['Float'];
+  amount?: Maybe<Scalars['Float']>;
+  amountPercent?: Maybe<Scalars['Float']>;
+  amountPercentStat?: Maybe<Scalars['Float']>;
+  clientPercent: Scalars['Float'];
+  contentPercent: Scalars['Float'];
+  currentInteractions: Scalars['Int'];
+  interactionPercent: Scalars['Float'];
+  totalClients: Scalars['Int'];
+  totalContents: Scalars['Int'];
 };
 
 export type Category = {
@@ -522,6 +524,7 @@ export type PortfolioFiltersInput = {
 
 export type Query = {
   __typename?: 'Query';
+  getBoxStats?: Maybe<BoxStats>;
   getCategories: Array<Category>;
   getCategory: Category;
   getCategoryStats?: Maybe<OverallStatResponse>;
@@ -541,6 +544,11 @@ export type Query = {
   getTopicStats?: Maybe<OverallStatResponse>;
   getUser: User;
   getVersion: Scalars['String'];
+};
+
+
+export type QueryGetBoxStatsArgs = {
+  filters?: InputMaybe<ContentFiltersInput>;
 };
 
 
@@ -1010,13 +1018,15 @@ export type ResolversParentTypes = {
 };
 
 export type BoxStatsResolvers<ContextType = any, ParentType extends ResolversParentTypes['BoxStats'] = ResolversParentTypes['BoxStats']> = {
-  amountPercent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  commentPercent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  comments?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  likePercent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  likes?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  sharePercent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  shares?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  amount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  amountPercent?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  amountPercentStat?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  clientPercent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  contentPercent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  currentInteractions?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  interactionPercent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  totalClients?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalContents?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1216,6 +1226,7 @@ export type PortfolioContentResolvers<ContextType = any, ParentType extends Reso
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getBoxStats?: Resolver<Maybe<ResolversTypes['BoxStats']>, ParentType, ContextType, RequireFields<QueryGetBoxStatsArgs, never>>;
   getCategories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<QueryGetCategoriesArgs, never>>;
   getCategory?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<QueryGetCategoryArgs, 'id'>>;
   getCategoryStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetCategoryStatsArgs, never>>;

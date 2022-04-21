@@ -5,6 +5,7 @@ import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 
 import getDateIntervals from '@helpers/get-date-intervals'
+import whereContentRaw from '../helpers/where-contents-raw'
 
 export default async (
   _parent: unknown,
@@ -25,42 +26,34 @@ export default async (
       totalShares: number
     }
     // Get Content by Category
+    const { query, args } = whereContentRaw(user, filters)
     const statsCategory: CategoryStat[] = await prisma.$queryRawUnsafe<
       CategoryStat[]
     >(
       `
           SELECT
-          ca."name",
+          cat."name",
           COUNT(c."id") "totalContents",
           SUM(c."likes") "totalLikes",
           SUM(c."comments") "totalComments",
           SUM(c."shares") "totalShares"
           
           FROM
-            "Category" ca
-            LEFT JOIN "Content" c ON c."categoryId" = ca."id"
+            "Category" cat LEFT JOIN
+            "Content" c ON c."categoryId" = cat."id" LEFT JOIN
+            "Client" cl ON c."categoryId" = cl."id"
           WHERE
   
               c."id" IS NOT NULL
-              AND (
-                ca."userId" = $1 AND c."userId" = $1
-              )
-              AND (
-                CAST($2 AS TEXT) IS NULL OR
-                ca."name" = ANY(STRING_TO_ARRAY($2, ','))
-              )
-              AND (
-                "c"."publishedDate" BETWEEN $3::TIMESTAMP AND $4::TIMESTAMP
-                )
+
+
+                ${query}
             
             GROUP BY 1
             LIMIT 1;
           
         `.clearIndentation(),
-      user.id, //$1
-      filters?.categories?.length ? filters?.categories?.join(',') : null, //$2
-      fromDate, // $3
-      toDate // $4
+      ...args
     )
 
     const categoryStats = statsCategory.map((val) => ({

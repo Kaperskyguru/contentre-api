@@ -4,6 +4,7 @@ import { OverallStatsResponse, QueryGetIndexMetadataArgs } from '@modules-types'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 import getDateIntervals from '@helpers/get-date-intervals'
+import whereContentRaw from '../helpers/where-contents-raw'
 
 export default async (
   _parent: unknown,
@@ -40,11 +41,13 @@ export default async (
     //   toDateMethod = format(endOfMonth(parseISO(filters.toDate)), 'yyyy-MM-dd')
     // }
 
+    const { query, args } = whereContentRaw(user, filters)
+
     const overallStats: StatValues[] = await prisma.$queryRawUnsafe(
       `
               SELECT
-              client."name",
-              client.status,
+              cl."name",
+              cl.status,
               COUNT(c."id") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "totalContents",
               SUM( COALESCE(c."likes",0) + COALESCE(c."comments",0) + COALESCE(c."shares",0) ) FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "total",
               SUM( COALESCE(c."likes",0) + COALESCE(c."comments",0) + COALESCE(c."shares",0) ) FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT)  "lastTotal",
@@ -58,16 +61,17 @@ export default async (
               
           
               FROM
-                "Content" c
-                LEFT JOIN "Client" client ON c."clientId" = client."id"
+                "Content" c LEFT JOIN
+                "Category" cat ON c."categoryId" = cat."id" LEFT JOIN
+                "Client" cl ON c."clientId" = cl."id"
               WHERE
-                (
+                
                   c."userId" = $1
-                ) 
+                ${query}
                 GROUP BY 1,2;
              
             `.clearIndentation(),
-      user.id
+      ...args
     )
 
     const stats = overallStats.map((val) => {

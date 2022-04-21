@@ -37,36 +37,49 @@ export default async (
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
     type GrowthValues = {
-      currentComments: number
-      currentShares: number
-      lastShares: number
-      lastComments: number
-      lastLikes: number
-      currentLikes: number
-      comments: number
-      shares: number
-      likes: number
+      // comments: number
+      // shares: number
+      // likes: number
       currentAmount: number
       lastAmount: number
+      totalContents: number
+      lastContents: number
+
+      totalClients: number
+      lastClients: number
+      currentInteractions: number
+      lastInteractions: number
     }
 
     const contentCountsByJanuary: GrowthValues[] = await prisma.$queryRawUnsafe(
       `
           SELECT
-          AVG("c"."likes") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "likes",
-          AVG("c"."shares") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "shares",
-          AVG("c"."comments") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "comments",
-          SUM(c."likes") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "currentLikes",
-          SUM(c."comments") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "currentComments",
-          SUM(c."shares") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "currentShares",
-          SUM(c."amount") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "currentAmount",
-          
-          SUM(c."shares") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT) "lastShares",
-          SUM(c."comments") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT) "lastComments",
-          SUM(c."likes") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT) "lastLikes",
-          SUM(c."amount") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT) "lastAmount"
+          SUM(COALESCE(c."likes",0) + COALESCE(c."comments",0) + COALESCE(c."shares", 0)) FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "currentInteractions",
+
+          SUM(c."amount") FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "currentAmount",
+          COUNT(c."id") FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "totalContents",
+        
+          SUM(COALESCE(c."likes",0) + COALESCE(c."comments",0) + COALESCE(c."shares", 0)) FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT) "lastInteractions",
+          SUM(c."amount") FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT) "lastAmount",
+          COUNT(c."id") FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT) "lastContents"
           FROM
             "Content" c
+          WHERE
+            (
+              c."userId" = $1
+            )
+         
+        `.clearIndentation(),
+      user.id
+    )
+
+    const clientCountsByJanuary: GrowthValues[] = await prisma.$queryRawUnsafe(
+      `
+          SELECT
+          COUNT(c."id") FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "totalClients",
+          COUNT(c."id") FILTER(WHERE TO_CHAR("c"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT) "lastClients"
+          FROM
+            "Client" c
           WHERE
             (
               c."userId" = $1
@@ -216,28 +229,59 @@ export default async (
     )
 
     const values = contentCountsByJanuary.map((val) => {
-      const subLikes =
-        ((val.currentLikes - val.lastLikes) / val.lastLikes) * 100
-      const subComments =
-        ((val.currentComments - val.lastComments) / val.lastComments) * 100
-      const subShares =
-        ((val.currentShares - val.lastShares) / val.lastShares) * 100
+      const subInteractions =
+        ((val.currentInteractions - val.lastInteractions) /
+          val.lastInteractions) *
+        100
+
       const subAmount =
         ((totalCurrentAmount - totalLastAmount) / totalLastAmount) * 100
+
+      const subAmountStat =
+        ((val.currentAmount - val.lastAmount) / val.lastAmount) * 100
+
+      const subContents =
+        ((val.totalContents - val.lastContents) / val.lastContents) * 100
+
       return {
-        likePercent: !Number.isFinite(subLikes) ? 100 : subLikes,
-        commentPercent: !Number.isFinite(subComments) ? 100 : subComments,
-        sharePercent: !Number.isFinite(subShares) ? 100 : subShares,
         amountPercent: !Number.isFinite(subAmount) ? 100 : subAmount,
-        likes: val.likes,
-        comments: val.comments,
-        shares: val.shares
+        // likes: val.likes,
+        // comments: val.comments,
+        // shares: val.shares,
+
+        interactionPercent: !Number.isFinite(subInteractions)
+          ? 100
+          : subInteractions,
+        currentInteractions: val.currentInteractions,
+        amountPercentStat: !Number.isFinite(subAmountStat)
+          ? 100
+          : subAmountStat,
+        amount: val.currentAmount,
+        totalContents: val.totalContents,
+        contentPercent: !Number.isFinite(subContents) ? 100 : subContents
       }
     })
 
+    const clientValues = clientCountsByJanuary.map((val) => {
+      const subClients =
+        ((val.totalClients - val.lastClients) / val.lastClients) * 100
+
+      return {
+        totalClients: val.totalClients,
+        clientPercent: !Number.isFinite(subClients) ? 100 : subClients
+      }
+    })
+
+    const box = {
+      ...values[0],
+      ...clientValues[0]
+    }
+
+    console.log(box)
+
     const result = {
       revenue: obj,
-      box: values[0]
+      box
     }
 
     return result

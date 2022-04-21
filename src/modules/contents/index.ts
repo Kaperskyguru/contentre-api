@@ -11,6 +11,7 @@ import getIndexMetadata from './queries/get-index-metadata'
 import getOverallStats from './queries/get-overall-stats'
 import getCategoryStats from './queries/get-category-stats'
 import getTopicStats from './queries/get-topic-stats'
+import getBoxStats from './queries/get-box-stats'
 
 const typeDefs = gql`
   type Content {
@@ -82,13 +83,16 @@ const typeDefs = gql`
   }
 
   type BoxStats {
-    likePercent: Float!
-    commentPercent: Float!
-    sharePercent: Float!
-    amountPercent: Float!
-    likes: Float!
-    shares: Float!
-    comments: Float!
+    amountPercent: Float
+    amount: Float
+    totalContents: Int!
+
+    amountPercentStat: Float
+    contentPercent: Float!
+    totalClients: Int!
+    clientPercent: Float!
+    interactionPercent: Float!
+    currentInteractions: Int!
   }
 
   type Stat {
@@ -208,6 +212,7 @@ const typeDefs = gql`
 
     getCategoryStats(filters: ContentFiltersInput): OverallStatResponse
     getTopicStats(filters: ContentFiltersInput): OverallStatResponse
+    getBoxStats(filters: ContentFiltersInput): BoxStats
   }
 
   extend type Mutation {
@@ -225,7 +230,8 @@ const resolvers: Resolvers = {
     getIndexMetadata,
     getOverallStats,
     getCategoryStats,
-    getTopicStats
+    getTopicStats,
+    getBoxStats
   },
 
   Mutation: {
