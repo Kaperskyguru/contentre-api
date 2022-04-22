@@ -1,7 +1,8 @@
 import sendToSegment from '@extensions/segment-service/segment'
 import { Context } from '@/types'
 import { ApolloError } from 'apollo-server-core'
-import { Portfolio } from '@/types/modules'
+import { Portfolio, User } from '@/types/modules'
+import { PrismaClient } from '@prisma/client'
 
 interface PortfolioInput {
   url: string
@@ -12,11 +13,9 @@ interface PortfolioInput {
 
 export const createPortfolio = async (
   { url, description, title, templateId }: PortfolioInput,
-  { prisma, user }: Context & Required<Context>
+  { user, prisma }: { user: User; prisma: PrismaClient }
 ): Promise<Portfolio> => {
-  if (!user) throw new ApolloError('You must be logged in.', '401')
   // Use Template or use Blank
-
   let template
   if (templateId !== undefined) {
     template = await prisma.template.findUnique({

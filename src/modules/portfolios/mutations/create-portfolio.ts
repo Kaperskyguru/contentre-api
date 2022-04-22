@@ -10,7 +10,7 @@ export default async (
   { input }: MutationCreatePortfolioArgs,
   context: Context & Required<Context>
 ): Promise<Portfolio> => {
-  const { user, ipAddress, requestURL, sentryId } = context
+  const { user, ipAddress, requestURL, sentryId, prisma } = context
   logMutation('createPortfolio %o', {
     input,
     user,
@@ -23,7 +23,10 @@ export default async (
     const { url, title } = input
     let description = input.description ?? undefined
     let templateId = input.templateId ?? undefined
-    return createPortfolio({ url, description, title, templateId }, context)
+    return createPortfolio(
+      { url, description, title, templateId },
+      { user, prisma }
+    )
   } catch (e) {
     logError('createPortfolio %o', {
       input,

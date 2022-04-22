@@ -54,6 +54,8 @@ export default async (
       }
     })
 
+    if (!user) throw new ApolloError('User could not be created', '401')
+
     // Create billing User
 
     //Find sub where it's free
@@ -113,11 +115,11 @@ export default async (
     // Create Default portfolio
     createPortfolio(
       {
-        url: `${environment.domain}/${input.username}`,
+        url: user.portfolio!,
         title: 'Default',
         description: 'This is your default portfolio'
       },
-      context
+      { user, prisma }
     )
 
     return getUser(user)
