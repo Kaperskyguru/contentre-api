@@ -107,9 +107,8 @@ const typeDefs = gql`
   }
 
   type Performance {
-    totalShares: Int!
-    totalComments: Int!
-    totalLikes: Int!
+    totalInteractions: Int!
+    totalAmount: Int!
     totalContents: Int!
   }
 
@@ -130,6 +129,10 @@ const typeDefs = gql`
     totalLikes: Int!
     totalComments: Int!
     totalShares: Int!
+
+    totalInteractions: Int!
+    totalAmount: Int!
+    totalClients: Int!
   }
 
   input CreateContentInput {

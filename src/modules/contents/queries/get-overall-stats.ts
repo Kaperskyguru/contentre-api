@@ -3,7 +3,6 @@ import { logError, logQuery } from '@helpers/logger'
 import { OverallStatsResponse, QueryGetIndexMetadataArgs } from '@modules-types'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
-import getDateIntervals from '@helpers/get-date-intervals'
 import whereContentRaw from '../helpers/where-contents-raw'
 
 export default async (
@@ -15,12 +14,10 @@ export default async (
   try {
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
-    const { toDate, fromDate, monthsInterval } = getDateIntervals(filters)
-
     // Growth: compares sum of total_contents, views, clicks, likes, shares, comments with previous duration (year, month, week, day)
     // Interactions: compares sum of views, clicks, likes, shares, comments with previous duration (year, month, week, day)
 
-    type StatValues = {
+    interface StatValues {
       name: string
       status: string
       totalContents: number
@@ -30,16 +27,13 @@ export default async (
       totalComments: number
       totalShares: number
       lastTotalContents: number
+      totalInteractions: number
+      totalAmount: number
+
+      amount: number
+      interactions: number
+      contents: number
     }
-
-    // if (filters?.fromDate && filters?.toDate) {
-    //   fromDateMethod = format(
-    //     startOfMonth(parseISO(filters.fromDate)),
-    //     'yyyy-MM-dd'
-    //   )
-
-    //   toDateMethod = format(endOfMonth(parseISO(filters.toDate)), 'yyyy-MM-dd')
-    // }
 
     const { query, args } = whereContentRaw(user, filters)
 
@@ -66,9 +60,29 @@ export default async (
                 "Client" cl ON c."clientId" = cl."id"
               WHERE
                 
-                  c."userId" = $1
+                c."id" IS NOT NULL
                 ${query}
                 GROUP BY 1,2;
+             
+            `.clearIndentation(),
+      ...args
+    )
+
+    const clientsStats: StatValues[] = await prisma.$queryRawUnsafe(
+      `
+              SELECT
+
+                SUM(c."amount") "totalAmount",
+                SUM(COALESCE(c."likes",0) + COALESCE(c."comments",0) + COALESCE(c."shares", 0)) "totalInteractions",
+                COUNT(c."id") "totalContents"
+              FROM
+                "Content" c LEFT JOIN
+                "Category" cat ON c."categoryId" = cat."id" LEFT JOIN
+                "Client" cl ON c."clientId" = cl."id"
+              WHERE
+                c."id" IS NOT NULL
+                ${query}
+
              
             `.clearIndentation(),
       ...args
@@ -88,19 +102,14 @@ export default async (
         growth: !Number.isFinite(subGrowth) ? 100 : subGrowth,
         name: val.name,
         status: val.status,
-        totalShares: val.totalShares,
-        totalComments: val.totalComments,
-        totalLikes: val.totalLikes,
-        totalContents: val.totalContents
+        totalShares: val.totalShares || 0,
+        totalComments: val.totalComments || 0,
+        totalLikes: val.totalLikes || 0,
+        totalContents: val.totalContents || 0
       }
     })
 
-    const performance = {
-      totalShares: stats[0].totalShares,
-      totalComments: stats[0].totalComments,
-      totalLikes: stats[0].totalLikes,
-      totalContents: stats[0].totalContents
-    }
+    const performance = clientsStats[0]
 
     const result = {
       stats,

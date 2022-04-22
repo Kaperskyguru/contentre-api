@@ -452,8 +452,11 @@ export type MutationVerifyUsernameArgs = {
 export type OverallStatResponse = {
   __typename?: 'OverallStatResponse';
   name: Scalars['String'];
+  totalAmount: Scalars['Int'];
+  totalClients: Scalars['Int'];
   totalComments: Scalars['Int'];
   totalContents: Scalars['Int'];
+  totalInteractions: Scalars['Int'];
   totalLikes: Scalars['Int'];
   totalShares: Scalars['Int'];
 };
@@ -472,10 +475,9 @@ export type PaymentType =
 
 export type Performance = {
   __typename?: 'Performance';
-  totalComments: Scalars['Int'];
+  totalAmount: Scalars['Int'];
   totalContents: Scalars['Int'];
-  totalLikes: Scalars['Int'];
-  totalShares: Scalars['Int'];
+  totalInteractions: Scalars['Int'];
 };
 
 export type Portfolio = {
@@ -1176,8 +1178,11 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type OverallStatResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['OverallStatResponse'] = ResolversParentTypes['OverallStatResponse']> = {
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  totalAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalClients?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   totalComments?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   totalContents?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalInteractions?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   totalLikes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   totalShares?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1191,10 +1196,9 @@ export type OverallStatsResponseResolvers<ContextType = any, ParentType extends 
 };
 
 export type PerformanceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Performance'] = ResolversParentTypes['Performance']> = {
-  totalComments?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   totalContents?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  totalLikes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  totalShares?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalInteractions?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

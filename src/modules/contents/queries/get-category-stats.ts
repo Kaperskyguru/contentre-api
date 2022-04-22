@@ -24,6 +24,10 @@ export default async (
       totalLikes: number
       totalComments: number
       totalShares: number
+
+      totalAmount: number
+      totalInteractions: number
+      totalClients: number
     }
     // Get Content by Category
     const { query, args } = whereContentRaw(user, filters)
@@ -32,36 +36,40 @@ export default async (
     >(
       `
           SELECT
-          cat."name",
-          COUNT(c."id") "totalContents",
-          SUM(c."likes") "totalLikes",
-          SUM(c."comments") "totalComments",
-          SUM(c."shares") "totalShares"
-          
+            COUNT(c."id") "totalContents",
+            SUM(c."likes") "totalLikes",
+            SUM(c."comments") "totalComments",
+            SUM(c."shares") "totalShares",
+
+            SUM(c."amount") "totalAmount",
+            COUNT(cl."id") "totalClients",
+            SUM(COALESCE(c."likes",0) + COALESCE(c."comments",0) + COALESCE(c."shares", 0)) "totalInteractions"  
+
           FROM
             "Category" cat LEFT JOIN
             "Content" c ON c."categoryId" = cat."id" LEFT JOIN
-            "Client" cl ON c."categoryId" = cl."id"
+            "Client" cl ON c."clientId" = cl."id"
           WHERE
   
               c."id" IS NOT NULL
-
-
                 ${query}
-            
-            GROUP BY 1
-            LIMIT 1;
           
         `.clearIndentation(),
       ...args
     )
 
     const categoryStats = statsCategory.map((val) => ({
-      name: val.name,
+      name: filters?.categories?.length
+        ? filters?.categories.join(',')
+        : 'Categories Overview',
       totalShares: val.totalShares ?? 0,
       totalComments: val.totalComments ?? 0,
       totalLikes: val.totalLikes ?? 0,
-      totalContents: val.totalContents ?? 0
+      totalContents: val.totalContents ?? 0,
+
+      totalAmount: val.totalAmount ?? 0,
+      totalClients: val.totalClients ?? 0,
+      totalInteractions: val.totalInteractions ?? 0
     }))
 
     return categoryStats[0]

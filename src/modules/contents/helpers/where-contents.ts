@@ -64,6 +64,14 @@ export const whereContents = (
             }
           : undefined
       },
+      {
+        tags: filters?.tags?.length
+          ? {
+              path: [],
+              array_contains: filters.tags
+            }
+          : undefined
+      },
 
       {
         client: filters?.clients?.length
