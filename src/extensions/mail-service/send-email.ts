@@ -6,6 +6,7 @@ import nodemailer from 'nodemailer'
 import URL from 'url-parse'
 import forgotPassword from '@extensions/mail-service/email-templates/forgot-password'
 import SendGrid from '@sendgrid/mail'
+import verificationEmail from './email-templates/verification-email'
 interface GenerateEmailLink {
   email: string
   token: string
@@ -15,7 +16,7 @@ interface GenerateEmailLink {
 interface SendEmail {
   to: string
   template: string
-  subject: string
+  subject?: string
   variables?: any
 }
 
@@ -36,27 +37,29 @@ const generateEmailLink = ({ email, token, BASE_URL }: GenerateEmailLink) => {
   return URL(url).href
 }
 
-const selectTemplate = ({ template, variables }: SelectTemplate) => {
-  switch (template) {
-    case 'forgot-password':
-      // variables.link = generateEmailLink({
-      //   email: variables.email,
-      //   token: variables.token,
-      //   BASE_URL: variables.BASE_URL
-      // })
-      // variables.code = variables.token
-      return forgotPassword(variables)
-  }
-}
+export default async ({ to, template, variables }: SendEmail) => {
+  let subject = `${process.env.APP_NAME} `
 
-export default async ({ to, subject, template, variables }: SendEmail) => {
+  const selectTemplate = async ({ template, variables }: SelectTemplate) => {
+    switch (template) {
+      case 'forgot-password':
+        subject += `Password Reset`
+        return forgotPassword(variables)
+      case 'email-verification':
+        subject += `Email Verification`
+        return verificationEmail(variables)
+    }
+  }
+
+  const temp = await selectTemplate({ template, variables })
+
   new Promise((resolve, reject) => {
     // create message
     var mailOptions: MailOptions = {
       from: `"${process.env.APP_NAME}" <info@contentre.io>`,
       to,
       subject,
-      html: selectTemplate({ template, variables })
+      html: temp
     }
 
     // if (environment.mail?.type === 'send') {
@@ -92,13 +95,11 @@ export default async ({ to, subject, template, variables }: SendEmail) => {
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.log(error)
         logError('sendEmail %o', { mailOptions, error })
         reject(new ApolloError('try email again later', '500', error))
         return
       }
 
-      console.log(info)
       resolve(info)
     })
     // }

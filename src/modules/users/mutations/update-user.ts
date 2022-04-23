@@ -81,7 +81,8 @@ export default async (
       sendEmailCode(
         _parent,
         {
-          email: updatedUser.email
+          email: updatedUser.email,
+          template: 'email-verification'
         },
         context
       )

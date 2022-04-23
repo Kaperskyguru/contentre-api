@@ -370,6 +370,7 @@ export type MutationResetPasswordArgs = {
 
 export type MutationSendEmailCodeArgs = {
   email: Scalars['String'];
+  template?: InputMaybe<Scalars['String']>;
 };
 
 

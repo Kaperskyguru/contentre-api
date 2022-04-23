@@ -14,7 +14,7 @@ export default async (
   input: MutationSendEmailCodeArgs,
   { user, sentryId, prisma, ipAddress, requestURL, requestOrigin }: Context
 ): Promise<boolean> => {
-  const { email } = input
+  const { email, template } = input
   logMutation('sendEmailCode %o', {
     input,
     user,
@@ -72,8 +72,7 @@ export default async (
     if (!isDevelop) {
       await sendEmail({
         to: user.email,
-        template: 'forgot-password',
-        subject: `${process.env.APP_NAME} Password Reset`,
+        template: template!,
         variables: {
           code: refreshCode,
           email: user.email,

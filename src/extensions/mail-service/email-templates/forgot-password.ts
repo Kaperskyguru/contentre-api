@@ -445,7 +445,7 @@ export default (message: any) => {
             <table class="email-content" width="100%" cellpadding="0" cellspacing="0" role="presentation">
               <tr>
                 <td class="email-masthead">
-                  <a href="https://example.com" class="f-fallback email-masthead_name">
+                  <a href="https://contentre.io?source=verification_email" class="f-fallback email-masthead_name">
                   ${process.env.APP_NAME}
                 </a>
                 </td>
@@ -459,17 +459,19 @@ export default (message: any) => {
                       <td class="content-cell">
                         <div class="f-fallback">
                           <h1>Hi ${message.to_name},</h1>
-                          <p>You recently requested to reset your password for your ${process.env.APP_NAME} account. Use the button below to reset it. <strong>This password reset is only valid for the next 60 minutes.</strong></p>
+                          <p>You recently requested to reset your password for your ${
+                            process.env.APP_NAME
+                          } account. Use the button below to reset it. <strong>This password reset is only valid for the next 60 minutes.</strong></p>
                           <!-- Action -->
                           <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0" role="presentation">
                             <tr>
                               <td align="center">
-                                <!-- Border based button
-             https://litmus.com/blog/a-guide-to-bulletproof-buttons-in-email-design -->
                                 <table width="100%" border="0" cellspacing="0" cellpadding="0" role="presentation">
                                   <tr>
                                     <td align="center">
-                                     <!-- <a href="${message.link}" class="f-fallback button button--green" target="_blank">Reset your password</a> -->
+                                     <!-- <a href="${
+                                       message.link
+                                     }" class="f-fallback button button--green" target="_blank">Reset your password</a> -->
                                      <h3>${message.code}</h3>
                                     </td>
                                   </tr>
@@ -478,17 +480,8 @@ export default (message: any) => {
                             </tr>
                           </table>
                           <p>For security, if you did not request a password reset, please ignore this email or <a href="mailto:support@profaili.com">contact support</a> if you have questions.</p>
-                          <p>Thanks,
+                          <p>Talk soon,
                             <br>The ${process.env.APP_NAME} Team</p>
-                          <!-- Sub copy -->
-                          <!--<table class="body-sub" role="presentation">
-                            <tr>
-                              <td>
-                                <p class="f-fallback sub">If you’re having trouble with the button above, copy and paste the URL below into your web browser.</p>
-                                <p class="f-fallback sub">${message.link}</p>
-                              </td>
-                            </tr>
-                          </table> -->
                         </div>
                       </td>
                     </tr>
@@ -497,18 +490,20 @@ export default (message: any) => {
               </tr>
               <tr>
                 <td>
-                  <table class="email-footer" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation">
-                    <tr>
-                      <td class="content-cell" align="center">
-                        <p class="f-fallback sub align-center">&copy; 2019 ${process.env.APP_NAME}. All rights reserved.</p>
-                        <p class="f-fallback sub align-center">
-                          ${process.env.APP_NAME}
-                          <br>1234 Street Rd.
-                          <br>Suite 1234
-                        </p>
-                      </td>
-                    </tr>
-                  </table>
+                <table class="email-footer" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation">
+                <tr>
+                  <td class="content-cell" align="center">
+                    <p class="f-fallback sub align-center">&copy; ${new Date().getFullYear()} ${
+    process.env.APP_NAME
+  }. All rights reserved.</p>
+                    <p class="f-fallback sub align-center">
+                      ${process.env.APP_NAME}
+                      <br>No. 100 Ogologo Street, Rumuigbo.
+                      <br>Port Harcourt, Rivers, Nigeria
+                    </p>
+                  </td>
+                </tr>
+              </table>
                 </td>
               </tr>
             </table>
