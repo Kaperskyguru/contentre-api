@@ -33,9 +33,6 @@ export default async (
           : { name: 'desc' }
       ],
       where,
-      include: {
-        user: true
-      },
       take: size ?? undefined,
       skip: skip ?? 0
     })
@@ -53,6 +50,8 @@ export default async (
     }
   } catch (e) {
     logError('getClients %o', e)
+
+    console.log(e)
 
     const message = useErrorParser(e)
     throw new ApolloError(message, e.code ?? '500', { sentryId })

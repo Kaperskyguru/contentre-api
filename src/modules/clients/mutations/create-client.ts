@@ -42,8 +42,7 @@ export default async (
           paymentType: paymentType ?? 'ARTICLE',
           profile,
           user: { connect: { id: user.id } }
-        },
-        include: { user: true }
+        }
       }),
       prisma.client.count({
         where: { userId: user.id }

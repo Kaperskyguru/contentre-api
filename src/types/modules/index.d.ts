@@ -60,6 +60,12 @@ export type CategoryFiltersInput = {
   topics?: InputMaybe<Array<Scalars['String']>>;
 };
 
+export type CategoryResponse = {
+  __typename?: 'CategoryResponse';
+  categories: Array<Category>;
+  meta: Meta;
+};
+
 export type Chart = {
   __typename?: 'Chart';
   current: Array<Scalars['Float']>;
@@ -553,7 +559,7 @@ export type PortfolioFiltersInput = {
 export type Query = {
   __typename?: 'Query';
   getBoxStats?: Maybe<BoxStats>;
-  getCategories: Array<Category>;
+  getCategories: CategoryResponse;
   getCategory: Category;
   getCategoryStats?: Maybe<OverallStatResponse>;
   getClient: Client;
@@ -871,7 +877,7 @@ export type User = {
   phoneConfirmed: Scalars['Boolean'];
   phoneNumber?: Maybe<Scalars['String']>;
   portfolio?: Maybe<Scalars['String']>;
-  subscription?: Maybe<Subscription>;
+  subscription: Subscription;
   subscriptionId?: Maybe<Scalars['ID']>;
   totalContents?: Maybe<Scalars['Int']>;
   totalUsersReferred?: Maybe<Scalars['String']>;
@@ -893,6 +899,12 @@ export type Visibility =
   | 'PUBLIC'
   | 'TEAM'
   | 'UNLISTED';
+
+export type SubUser = {
+  __typename?: 'subUser';
+  id: Scalars['ID'];
+  subscriptionId?: Maybe<Scalars['ID']>;
+};
 
 
 
@@ -967,6 +979,7 @@ export type ResolversTypes = {
   BoxStats: ResolverTypeWrapper<BoxStats>;
   Category: ResolverTypeWrapper<Category>;
   CategoryFiltersInput: CategoryFiltersInput;
+  CategoryResponse: ResolverTypeWrapper<CategoryResponse>;
   Chart: ResolverTypeWrapper<Chart>;
   Client: ResolverTypeWrapper<Client>;
   ClientFiltersInput: ClientFiltersInput;
@@ -1029,6 +1042,7 @@ export type ResolversTypes = {
   User: ResolverTypeWrapper<User>;
   UserTemplate: ResolverTypeWrapper<UserTemplate>;
   Visibility: Visibility;
+  subUser: ResolverTypeWrapper<SubUser>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -1037,6 +1051,7 @@ export type ResolversParentTypes = {
   BoxStats: BoxStats;
   Category: Category;
   CategoryFiltersInput: CategoryFiltersInput;
+  CategoryResponse: CategoryResponse;
   Chart: Chart;
   Client: Client;
   ClientFiltersInput: ClientFiltersInput;
@@ -1093,6 +1108,7 @@ export type ResolversParentTypes = {
   UploadContentInput: UploadContentInput;
   User: User;
   UserTemplate: UserTemplate;
+  subUser: SubUser;
 };
 
 export type BoxStatsResolvers<ContextType = any, ParentType extends ResolversParentTypes['BoxStats'] = ResolversParentTypes['BoxStats']> = {
@@ -1117,6 +1133,12 @@ export type CategoryResolvers<ContextType = any, ParentType extends ResolversPar
   totalContents?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CategoryResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['CategoryResponse'] = ResolversParentTypes['CategoryResponse']> = {
+  categories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType>;
+  meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1310,7 +1332,7 @@ export type PortfolioContentResolvers<ContextType = any, ParentType extends Reso
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getBoxStats?: Resolver<Maybe<ResolversTypes['BoxStats']>, ParentType, ContextType, RequireFields<QueryGetBoxStatsArgs, never>>;
-  getCategories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<QueryGetCategoriesArgs, never>>;
+  getCategories?: Resolver<ResolversTypes['CategoryResponse'], ParentType, ContextType, RequireFields<QueryGetCategoriesArgs, never>>;
   getCategory?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<QueryGetCategoryArgs, 'id'>>;
   getCategoryStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetCategoryStatsArgs, never>>;
   getClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<QueryGetClientArgs, 'id'>>;
@@ -1418,7 +1440,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   phoneConfirmed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   phoneNumber?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   portfolio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  subscription?: Resolver<Maybe<ResolversTypes['Subscription']>, ParentType, ContextType>;
+  subscription?: Resolver<ResolversTypes['Subscription'], ParentType, ContextType>;
   subscriptionId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   totalContents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   totalUsersReferred?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1436,9 +1458,16 @@ export type UserTemplateResolvers<ContextType = any, ParentType extends Resolver
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type SubUserResolvers<ContextType = any, ParentType extends ResolversParentTypes['subUser'] = ResolversParentTypes['subUser']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  subscriptionId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = any> = {
   BoxStats?: BoxStatsResolvers<ContextType>;
   Category?: CategoryResolvers<ContextType>;
+  CategoryResponse?: CategoryResponseResolvers<ContextType>;
   Chart?: ChartResolvers<ContextType>;
   Client?: ClientResolvers<ContextType>;
   ClientResponse?: ClientResponseResolvers<ContextType>;
@@ -1466,5 +1495,6 @@ export type Resolvers<ContextType = any> = {
   Time?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
   UserTemplate?: UserTemplateResolvers<ContextType>;
+  subUser?: SubUserResolvers<ContextType>;
 };
 

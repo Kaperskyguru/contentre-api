@@ -88,6 +88,12 @@ export default async (
       ...args
     )
 
+    const performance = clientsStats.map((val) => ({
+      totalContents: val.totalContents ?? 0,
+      totalAmount: val.totalAmount ?? 0,
+      totalInteractions: val.totalInteractions ?? 0
+    }))
+
     const stats = overallStats.map((val) => {
       const totalGrowth = (val.total ?? 0) + (val.totalContents ?? 0)
       const lastTotalGrowth =
@@ -109,11 +115,9 @@ export default async (
       }
     })
 
-    const performance = clientsStats[0]
-
     const result = {
       stats,
-      performance
+      performance: performance[0]
     }
 
     return result

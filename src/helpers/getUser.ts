@@ -1,9 +1,13 @@
-import { Feature, Subscription, User } from '@/types/modules'
+import { Feature, Subscription, User, SubUser } from '@/types/modules'
 import jwt from 'jsonwebtoken'
 import { environment } from './environment'
 import { prisma } from '@/config'
 
-export const getUser = async (user: User): Promise<User> => {
+export const getUser = async (user: SubUser | User): Promise<User> => {
+  const user1 = await prisma.user.findUnique({
+    where: { id: user.id }
+  })
+
   //   Get team here
   const subscription: Subscription[] = await prisma.$queryRawUnsafe(
     `
@@ -13,6 +17,7 @@ export const getUser = async (user: User): Promise<User> => {
         "Subscription" AS "s"
       WHERE 
         "s"."id" = $1 
+        LIMIT 1
       `,
     user.subscriptionId
   )
@@ -29,7 +34,7 @@ export const getUser = async (user: User): Promise<User> => {
     user.subscriptionId
   )
 
-  const { ...authUser } = user
+  const { ...authUser } = user1
   return {
     ...authUser,
     subscription: subscription.length
@@ -65,7 +70,7 @@ export const getUserByToken = async (token: string): Promise<User | null> => {
     })
 
     if (!user) return null
-    return getUser(user)
+    return await getUser({ id: user.id, subscriptionId: user.subscriptionId })
   } catch (e) {
     return null
   }

@@ -252,7 +252,7 @@ export default async (
         interactionPercent: !Number.isFinite(subInteractions)
           ? 100
           : subInteractions,
-        currentInteractions: val.currentInteractions,
+        currentInteractions: val.currentInteractions ?? 0,
         amountPercentStat: !Number.isFinite(subAmountStat)
           ? 100
           : subAmountStat,

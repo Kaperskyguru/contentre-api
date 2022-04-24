@@ -30,6 +30,11 @@ const typeDefs = gql`
     color: String
   }
 
+  type CategoryResponse {
+    meta: Meta!
+    categories: [Category!]!
+  }
+
   input CategoryFiltersInput {
     terms: String
     sortBy: String
@@ -51,7 +56,7 @@ const typeDefs = gql`
       size: Int
       skip: Int
       filters: CategoryFiltersInput
-    ): [Category!]!
+    ): CategoryResponse!
     getCategory(id: ID!): Category!
   }
 
