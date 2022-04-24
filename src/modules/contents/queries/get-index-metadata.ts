@@ -277,8 +277,6 @@ export default async (
       ...clientValues[0]
     }
 
-    console.log(box)
-
     const result = {
       revenue: obj,
       box
