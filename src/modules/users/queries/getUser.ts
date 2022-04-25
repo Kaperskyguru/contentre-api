@@ -18,7 +18,8 @@ export default async (
     if (!uuid) throw new ApolloError('Invalid input', '422')
 
     const userData = await prisma.user.findUnique({
-      where: { id: uuid }
+      where: { id: uuid },
+      include: { subscription: true }
     })
 
     if (!userData) {

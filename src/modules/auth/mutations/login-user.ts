@@ -23,7 +23,8 @@ export default async (
 
   try {
     const user = await prisma.user.findUnique({
-      where: { email }
+      where: { email },
+      include: { subscription: true }
     })
 
     if (!user) throw new Error('authentication failed')
