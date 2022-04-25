@@ -41,34 +41,36 @@ export default async (
       if (referredUser) data.referrerId = referredUser.id
     }
 
+    //Find sub where it's free
+    const sub = await prisma.subscription.findFirst({ where: { name: 'free' } })
+
     // If success, create a new user in our DB.
     user = await prisma.user.create({
       data: {
         email: input.email,
         username: input.username,
+        subscriptionId: sub?.id!,
+        billingId: 'BillingId',
         name: input.name,
         signedUpThrough: input.signedUpThrough!,
         portfolio: `${environment.domain}/${input.username}`,
         password: await hashPassword(input.password),
         ...data
-      }
+      },
+      include: { subscription: true }
     })
 
     if (!user) throw new ApolloError('User could not be created', '401')
 
     // Create billing User
 
-    //Find sub where it's free
-    const sub = await prisma.subscription.findFirst({ where: { name: 'free' } })
+    // //Update user
+    // await prisma.user.update({
+    //   where: { id: user.id },
+    //   data: {
 
-    //Update user
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        billingId: 'BillingId',
-        subscriptionId: sub?.id
-      }
-    })
+    //   }
+    // })
 
     // Send data to Segment.
     const segmentData: Record<string, string | boolean | Date | null> = {

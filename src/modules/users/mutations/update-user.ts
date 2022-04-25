@@ -5,6 +5,7 @@ import sendEmailCode from '@/modules/auth/mutations/send-email-code'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 import sendToSegment from '@/extensions/segment-service/segment'
+import { getUser } from '@/helpers/getUser'
 
 export default async (
   _parent: unknown,
@@ -46,7 +47,8 @@ export default async (
     // Finally update the user.
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
-      data
+      data,
+      include: { subscription: true }
     })
 
     // Send data to Segment
@@ -88,7 +90,7 @@ export default async (
       )
     }
 
-    return updatedUser
+    return getUser(updatedUser)
   } catch (e) {
     logError('updateUser %o', e)
 
