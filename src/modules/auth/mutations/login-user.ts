@@ -8,7 +8,7 @@ import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 import jwt from 'jsonwebtoken'
 import sendEmailCode from './send-email-code'
-import sendPhoneCode from './send-phone-code'
+// import sendPhoneCode from './send-phone-code'
 import sendToSegment from '@/extensions/segment-service/segment'
 
 export default async (
@@ -64,41 +64,37 @@ export default async (
     const updatedUser = await prisma.user.findUnique({
       where: { email }
     })
-    if (!updatedUser) throw new Error('authentication failed')
+    // if (!updatedUser) throw new Error('authentication failed')
 
     // If the user still needs to confirm the phone after authentication.
-    if (
-      updatedUser.twofactor === 'SMS' &&
-      updatedUser.phoneCode &&
-      updatedUser.phoneNumber
-    ) {
-      // Call the mutation to send the phone verification code.
-      sendPhoneCode(
-        _parent,
-        {
-          phoneCode: updatedUser.phoneCode,
-          phoneNumber: updatedUser.phoneNumber
-        },
-        { ...context, user: updatedUser }
-      )
+    // if (user.twofactor === 'SMS' && user.phoneCode && user.phoneNumber) {
+    //   // Call the mutation to send the phone verification code.
+    //   sendPhoneCode(
+    //     _parent,
+    //     {
+    //       phoneCode: user.phoneCode,
+    //       phoneNumber: user.phoneNumber
+    //     },
+    //     { ...context, user: user }
+    //   )
 
-      await prisma.user.update({
-        where: { id: updatedUser.id },
-        data: { phoneConfirmed: false }
-      })
-    }
+    //   await prisma.user.update({
+    //     where: { id: user.id },
+    //     data: { phoneConfirmed: false }
+    //   })
+    // }
 
-    if (updatedUser.twofactor === 'EMAIL' && updatedUser.email) {
+    if (user.twofactor === 'EMAIL' && user.email && !user.emailConfirmed) {
       // Call the mutation to send the email verification code.
       sendEmailCode(
         _parent,
         {
-          email: updatedUser.email
+          email: user.email
         },
         { ...context, user: updatedUser }
       )
       await prisma.user.update({
-        where: { id: updatedUser.id },
+        where: { id: user.id },
         data: { emailConfirmed: false }
       })
     }
@@ -108,22 +104,22 @@ export default async (
     // Send data to Segment
     await sendToSegment({
       operation: 'identify',
-      userId: updatedUser.id,
+      userId: user.id,
       data: {
-        email: updatedUser.email,
-        lastActivityAt: updatedUser.lastActivityAt
+        email: user.email,
+        lastActivityAt: user.lastActivityAt
       }
     })
     await sendToSegment({
       operation: 'track',
       eventName: 'login',
-      userId: updatedUser.id,
+      userId: user.id,
       data: {
-        // companyId: updatedUser.activeCompanyId
+        // companyId: user.activeCompanyId
       }
     })
 
-    return getUser(updatedUser)
+    return getUser(user)
   } catch (error) {
     logError('loginUser %o', { input: data, ipAddress, requestURL, error })
 
