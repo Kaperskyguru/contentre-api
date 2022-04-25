@@ -26,7 +26,7 @@ const typeDefs = gql`
     hasTrial: Boolean
     trialEndDate: Time
     subscriptionId: ID
-    subscription: Subscription!
+    subscription: Subscription
     phoneCode: String
     phoneNumber: String
     totalUsersReferred: String

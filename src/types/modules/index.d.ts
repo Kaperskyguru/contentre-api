@@ -877,7 +877,7 @@ export type User = {
   phoneConfirmed: Scalars['Boolean'];
   phoneNumber?: Maybe<Scalars['String']>;
   portfolio?: Maybe<Scalars['String']>;
-  subscription: Subscription;
+  subscription?: Maybe<Subscription>;
   subscriptionId?: Maybe<Scalars['ID']>;
   totalContents?: Maybe<Scalars['Int']>;
   totalUsersReferred?: Maybe<Scalars['String']>;
@@ -1440,7 +1440,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   phoneConfirmed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   phoneNumber?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   portfolio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  subscription?: Resolver<ResolversTypes['Subscription'], ParentType, ContextType>;
+  subscription?: Resolver<Maybe<ResolversTypes['Subscription']>, ParentType, ContextType>;
   subscriptionId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   totalContents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   totalUsersReferred?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
