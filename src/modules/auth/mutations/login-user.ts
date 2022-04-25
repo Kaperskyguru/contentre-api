@@ -7,7 +7,7 @@ import { MutationLoginUserArgs, User } from '@/types/modules'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 import jwt from 'jsonwebtoken'
-import sendEmailCode from './send-email-code'
+// import sendEmailCode from './send-email-code'
 // import sendPhoneCode from './send-phone-code'
 import sendToSegment from '@/extensions/segment-service/segment'
 
@@ -84,20 +84,20 @@ export default async (
     //   })
     // }
 
-    if (user.twofactor === 'EMAIL' && user.email && !user.emailConfirmed) {
-      // Call the mutation to send the email verification code.
-      sendEmailCode(
-        _parent,
-        {
-          email: user.email
-        },
-        { ...context, user: updatedUser }
-      )
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { emailConfirmed: false }
-      })
-    }
+    // if (user.twofactor === 'EMAIL' && user.email && !user.emailConfirmed) {
+    //   // Call the mutation to send the email verification code.
+    //   sendEmailCode(
+    //     _parent,
+    //     {
+    //       email: user.email
+    //     },
+    //     { ...context, user: updatedUser }
+    //   )
+    //   await prisma.user.update({
+    //     where: { id: user.id },
+    //     data: { emailConfirmed: false }
+    //   })
+    // }
 
     //   await clearLoginAttempts(email, context)
 
