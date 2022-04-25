@@ -25,7 +25,10 @@ export default async (
 
   try {
     // Checking if user already exists, but did not verify email
-    user = await prisma.user.findUnique({ where: { email: input.email } })
+    user = await prisma.user.findUnique({
+      where: { email: input.email },
+      include: { subscription: true }
+    })
 
     if (user && !user.emailConfirmed) {
       setJWT(user, setCookies)

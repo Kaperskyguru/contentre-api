@@ -2,7 +2,7 @@ import sendToSegment from '@extensions/segment-service/segment'
 import { Context } from '@/types'
 import { ApolloError } from 'apollo-server-core'
 import { Portfolio, User } from '@/types/modules'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, User as DBUser } from '@prisma/client'
 
 interface PortfolioInput {
   url: string
@@ -13,7 +13,7 @@ interface PortfolioInput {
 
 export const createPortfolio = async (
   { url, description, title, templateId }: PortfolioInput,
-  { user, prisma }: { user: User; prisma: PrismaClient }
+  { user, prisma }: { user: User | DBUser; prisma: PrismaClient }
 ): Promise<Portfolio> => {
   // Use Template or use Blank
   let template
