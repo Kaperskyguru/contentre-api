@@ -37,16 +37,14 @@ export const getUser = async (user: SubUser | User): Promise<User> => {
   const { ...authUser } = user1
   return {
     ...authUser,
-    subscription: subscription.length
-      ? {
-          ...subscription[0],
-          features: features.map((item) => ({
-            feature: item.feature,
-            value: item.value,
-            id: item.id
-          }))
-        }
-      : undefined
+    subscription: {
+      ...subscription[0],
+      features: features.map((item) => ({
+        feature: item.feature,
+        value: item.value,
+        id: item.id
+      }))
+    }
   }
 }
 
