@@ -36,6 +36,7 @@ export default async (
     const [result, countClients] = await prisma.$transaction([
       prisma.client.create({
         data: {
+          team: { connect: { id: user.activeTeamId! } },
           name,
           website,
           amount: amount ?? 0.0,

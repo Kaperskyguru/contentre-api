@@ -2,13 +2,28 @@ import { Feature, Subscription, User, SubUser } from '@/types/modules'
 import jwt from 'jsonwebtoken'
 import { environment } from './environment'
 import { prisma } from '@/config'
+import { TeamAndRole } from '@/types'
 
-export const getUser = async (user: SubUser | User): Promise<User> => {
-  const user1 = await prisma.user.findUnique({
-    where: { id: user.id }
-  })
-
+export const getUser = async (user: User): Promise<User> => {
   //   Get team here
+  const teams: TeamAndRole[] = await prisma.$queryRaw`
+  SELECT
+    "m"."role" "role",
+    "team"."id" = ${user.activeTeamId ?? ''} "activeTeam",
+    "team"."id" "id",
+    "team"."name" "name",
+    "team"."avatarURL" "avatarURL",
+    "team"."createdAt" "createdAt",
+    "team"."updatedAt" "updatedAt"
+  FROM
+    "Member" AS "m"
+    JOIN "Team" AS "team" ON "team"."id" = "m"."teamId"
+  WHERE
+    "m"."userId" = ${user.id}
+  ORDER BY
+    "team"."createdAt" DESC
+`
+
   const subscription: Subscription[] = await prisma.$queryRawUnsafe(
     `
       SELECT 
@@ -34,9 +49,22 @@ export const getUser = async (user: SubUser | User): Promise<User> => {
     user.subscriptionId
   )
 
-  const { ...authUser } = user1
+  const activeTeam = teams.find((team) => team.activeTeam)
+  const { ...authUser } = user
+  // const userData = await prisma.user.findFirst({ where: { id: authUser.id } })
+
   return {
     ...authUser,
+    activeTeam: activeTeam
+      ? {
+          createdAt: activeTeam.createdAt,
+          id: activeTeam.id,
+          name: activeTeam.name,
+          updatedAt: activeTeam.updatedAt,
+          avatarURL: activeTeam.avatarURL
+        }
+      : null,
+    activeRole: activeTeam?.role ?? null,
     subscription: {
       ...subscription[0],
       features: features.map((item) => ({
@@ -68,7 +96,7 @@ export const getUserByToken = async (token: string): Promise<User | null> => {
     })
 
     if (!user) return null
-    return await getUser({ id: user.id, subscriptionId: user.subscriptionId })
+    return await getUser(user)
   } catch (e) {
     return null
   }

@@ -37,7 +37,8 @@ export default async (
         category: { connect: { id: categoryId } },
         tags: tags?.length || undefined,
         user: { connect: { id: user.id } },
-        client: { connect: { id: clientId } }
+        client: { connect: { id: clientId } },
+        team: { connect: { id: user.activeTeamId! } }
       }
     })
 

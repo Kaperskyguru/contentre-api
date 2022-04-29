@@ -38,7 +38,8 @@ export default async (
         name,
         link,
         icon,
-        user: { connect: { id: user.id } }
+        user: { connect: { id: user.id } },
+        team: { connect: { id: user.activeTeamId! } }
       }
     })
   } catch (e) {

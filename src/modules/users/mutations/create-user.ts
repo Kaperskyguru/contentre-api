@@ -47,20 +47,55 @@ export default async (
     //Find sub where it's free
     const sub = await prisma.subscription.findFirst({ where: { name: 'free' } })
 
+    // Create a Personal team
+    const team = await prisma.team.create({
+      data: {
+        name: 'Personal'
+      }
+    })
+
     // If success, create a new user in our DB.
     user = await prisma.user.create({
       data: {
+        activeTeamId: team.id,
         email: input.email,
         username: input.username,
         subscriptionId: sub?.id!,
         billingId: 'BillingId',
         name: input.name,
         signedUpThrough: input.signedUpThrough!,
-        portfolio: `${environment.domain}/${input.username}`,
+        portfolioURL: `${environment.domain}/${input.username}`,
         password: await hashPassword(input.password),
         ...data
       },
       include: { subscription: true }
+    })
+
+    // const updateUer = prisma.user.update({
+    //   where: { id: user.id },
+    //   data: {
+    //     activeTeam: {
+    //       create: {
+    //         role: 'ADMIN',
+    //         user: {
+    //           connect: { id: user?.id }
+    //         },
+    //         team: {
+    //           create: {
+    //             name: 'Personal'
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // })
+
+    await prisma.member.create({
+      data: {
+        userId: user.id,
+        teamId: team.id,
+        role: 'ADMIN'
+      }
     })
 
     if (!user) throw new ApolloError('User could not be created', '401')
@@ -120,7 +155,7 @@ export default async (
     // Create Default portfolio
     createPortfolio(
       {
-        url: user.portfolio!,
+        url: user.portfolioURL!,
         title: 'Default',
         description: 'This is your default portfolio'
       },

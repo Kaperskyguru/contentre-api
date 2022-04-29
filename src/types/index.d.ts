@@ -284,16 +284,12 @@ export enum SCA_METHODS_TYPES {
   PUSH_OTP
 }
 
-export interface CompanyAndRole {
+export interface TeamAndRole {
   role: MemberRole
-  activeCompany: boolean
+  activeTeam: boolean
   id: string
   name: string
-  websiteURL: string
   avatarURL?: string | null
-  registeredName: string
-  countryCode: string
-  countryName: string
   createdAt: string
   updatedAt: string
 }

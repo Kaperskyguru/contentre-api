@@ -20,7 +20,7 @@ const typeDefs = gql`
     lastname: String
     bio: String
     homeAddress: String
-    portfolio: String
+    portfolioURL: String
     jobTitle: String
     username: String
     hasTrial: Boolean
@@ -75,6 +75,22 @@ const typeDefs = gql`
   enum SignedUpThrough {
     CONTENTRE
     GOOGLE
+  }
+
+  input UserInput {
+    avatarURL: String
+    email: String
+    name: String
+    phoneCode: String
+    phoneNumber: String
+  }
+
+  extend input TeamInput {
+    members: [TeamMembersRelation!]
+  }
+
+  extend input TeamMembersRelation {
+    create: [UserInput]
   }
 
   input UpdateUserInput {

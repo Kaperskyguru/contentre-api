@@ -36,7 +36,8 @@ export default async (
           name: importedContent.client.name,
           website: importedContent.client.website,
           icon: importedContent.client.icon,
-          user: { connect: { id: user.id } }
+          user: { connect: { id: user.id } },
+          team: { connect: { id: user.activeTeamId! } }
         }
       })
 
@@ -63,7 +64,8 @@ export default async (
         publishedDate: importedContent.publishedDate,
         tags: importedContent.tags!,
         user: { connect: { id: user.id } },
-        client: { connect: { id: client.id } }
+        client: { connect: { id: client.id } },
+        team: { connect: { id: user.activeTeamId! } }
       }
     })
 
