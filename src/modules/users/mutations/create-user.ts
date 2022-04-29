@@ -48,16 +48,15 @@ export default async (
     const sub = await prisma.subscription.findFirst({ where: { name: 'free' } })
 
     // Create a Personal team
-    const team = await prisma.team.create({
-      data: {
-        name: 'Personal'
-      }
-    })
+    // const team = await prisma.team.create({
+    //   data: {
+    //     name: 'Personal'
+    //   }
+    // })
 
     // If success, create a new user in our DB.
     user = await prisma.user.create({
       data: {
-        activeTeamId: team.id,
         email: input.email,
         username: input.username,
         subscriptionId: sub?.id!,
@@ -71,34 +70,34 @@ export default async (
       include: { subscription: true }
     })
 
-    // const updateUer = prisma.user.update({
-    //   where: { id: user.id },
-    //   data: {
-    //     activeTeam: {
-    //       create: {
-    //         role: 'ADMIN',
-    //         user: {
-    //           connect: { id: user?.id }
-    //         },
-    //         team: {
-    //           create: {
-    //             name: 'Personal'
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
-    // })
-
-    await prisma.member.create({
+    const updateUser = await prisma.user.update({
+      where: { id: user.id },
       data: {
-        userId: user.id,
-        teamId: team.id,
-        role: 'ADMIN'
+        activeTeam: {
+          create: {
+            role: 'ADMIN',
+            user: {
+              connect: { id: user?.id }
+            },
+            team: {
+              create: {
+                name: 'Personal'
+              }
+            }
+          }
+        }
       }
     })
 
-    if (!user) throw new ApolloError('User could not be created', '401')
+    // await prisma.member.create({
+    //   data: {
+    //     userId: user.id,
+    //     teamId: team.id,
+    //     role: 'ADMIN'
+    //   }
+    // })
+
+    if (!updateUser) throw new ApolloError('User could not be created', '401')
 
     // Create billing User
 
@@ -112,11 +111,11 @@ export default async (
 
     // Send data to Segment.
     const segmentData: Record<string, string | boolean | Date | null> = {
-      createdAt: user.createdAt,
-      email: user.email,
-      name: user.name,
-      hasFinishedOnboarding: user.hasFinishedOnboarding,
-      lastActivityAt: user.lastActivityAt
+      createdAt: updateUser.createdAt,
+      email: updateUser.email,
+      name: updateUser.name,
+      hasFinishedOnboarding: updateUser.hasFinishedOnboarding,
+      lastActivityAt: updateUser.lastActivityAt
     }
 
     if (input.language) {
@@ -143,26 +142,26 @@ export default async (
     await sendToSegment({
       operation: 'track',
       eventName: 'user_created',
-      userId: user.id,
+      userId: updateUser.id,
       data: {
         ...segmentData,
         signedUpThrough: input.signedUpThrough
       }
     })
 
-    setJWT(user, setCookies)
+    setJWT(updateUser, setCookies)
 
     // Create Default portfolio
     createPortfolio(
       {
-        url: user.portfolioURL!,
+        url: updateUser.portfolioURL!,
         title: 'Default',
         description: 'This is your default portfolio'
       },
       { user, prisma }
     )
 
-    return getUser(user)
+    return getUser(updateUser)
   } catch (e) {
     logError('createUser %o', {
       input,
