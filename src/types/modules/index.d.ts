@@ -839,7 +839,7 @@ export type StatusType =
 export type Subscription = {
   __typename?: 'Subscription';
   expiry?: Maybe<Scalars['Time']>;
-  features: Array<Feature>;
+  features?: Maybe<Array<Feature>>;
   id: Scalars['ID'];
   name: Scalars['String'];
   planId?: Maybe<Scalars['String']>;
@@ -975,7 +975,7 @@ export type User = {
   phoneCode?: Maybe<Scalars['String']>;
   phoneConfirmed: Scalars['Boolean'];
   phoneNumber?: Maybe<Scalars['String']>;
-  portfolio?: Maybe<Scalars['String']>;
+  portfolioURL?: Maybe<Scalars['String']>;
   subscription?: Maybe<Subscription>;
   subscriptionId?: Maybe<Scalars['ID']>;
   teams?: Maybe<Array<Team>>;
@@ -1565,7 +1565,7 @@ export type StatResolvers<ContextType = any, ParentType extends ResolversParentT
 
 export type SubscriptionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = {
   expiry?: SubscriptionResolver<Maybe<ResolversTypes['Time']>, "expiry", ParentType, ContextType>;
-  features?: SubscriptionResolver<Array<ResolversTypes['Feature']>, "features", ParentType, ContextType>;
+  features?: SubscriptionResolver<Maybe<Array<ResolversTypes['Feature']>>, "features", ParentType, ContextType>;
   id?: SubscriptionResolver<ResolversTypes['ID'], "id", ParentType, ContextType>;
   name?: SubscriptionResolver<ResolversTypes['String'], "name", ParentType, ContextType>;
   planId?: SubscriptionResolver<Maybe<ResolversTypes['String']>, "planId", ParentType, ContextType>;
@@ -1625,7 +1625,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   phoneCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   phoneConfirmed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   phoneNumber?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  portfolio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  portfolioURL?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   subscription?: Resolver<Maybe<ResolversTypes['Subscription']>, ParentType, ContextType>;
   subscriptionId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   teams?: Resolver<Maybe<Array<ResolversTypes['Team']>>, ParentType, ContextType>;

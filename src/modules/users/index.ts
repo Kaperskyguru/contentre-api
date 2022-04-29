@@ -63,7 +63,7 @@ const typeDefs = gql`
     name: String!
     expiry: Time
     planId: String
-    features: [Feature!]!
+    features: [Feature!]
   }
 
   type Feature {
