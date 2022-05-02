@@ -40,7 +40,7 @@ export default async (
       subject: 'Password changed',
       template: 'password_changed',
       variables: {
-        FIRST_NAME: user.name as string
+        to_name: user.name
       }
     })
 

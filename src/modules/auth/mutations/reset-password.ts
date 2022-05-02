@@ -38,9 +38,9 @@ export default async (
       await sendEmail({
         to: user.email,
         subject: 'Password changed',
-        template: 'password_changed',
+        template: 'password-changed',
         variables: {
-          FIRST_NAME: user.name as string
+          to_name: user.name
         }
       })
     }
@@ -52,14 +52,14 @@ export default async (
       updatedUser.phoneNumber
     ) {
       // Call the mutation to send the phone verification code.
-      await sendPhoneCode(
-        _parent,
-        {
-          phoneCode: updatedUser.phoneCode,
-          phoneNumber: updatedUser.phoneNumber
-        },
-        context
-      )
+      // await sendPhoneCode(
+      //   _parent,
+      //   {
+      //     phoneCode: updatedUser.phoneCode,
+      //     phoneNumber: updatedUser.phoneNumber
+      //   },
+      //   context
+      // )
     }
 
     return getUser(updatedUser)

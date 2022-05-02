@@ -445,8 +445,8 @@ export default (message: any) => {
             <table class="email-content" width="100%" cellpadding="0" cellspacing="0" role="presentation">
               <tr>
                 <td class="email-masthead">
-                  <a href="https://contentre.io?source=verification_email" class="f-fallback email-masthead_name">
-                  ${process.env.APP_NAME}
+                  <a href="https://contentre.io?source=forgot_password_email" class="f-fallback email-masthead_name">
+                  <img src="https://res.cloudinary.com/kaperskydisk/image/upload/v1651487559/contentre/b5dcf065-761f-9e84-39b1-e27ec6b9b563.jpg" alt="Contentre">
                 </a>
                 </td>
               </tr>

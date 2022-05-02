@@ -44,15 +44,9 @@ export default async (
       if (referredUser) data.referrerId = referredUser.id
     }
 
+    // Create billing User
     //Find sub where it's free
     const sub = await prisma.subscription.findFirst({ where: { name: 'free' } })
-
-    // Create a Personal team
-    // const team = await prisma.team.create({
-    //   data: {
-    //     name: 'Personal'
-    //   }
-    // })
 
     // If success, create a new user in our DB.
     user = await prisma.user.create({
@@ -89,25 +83,7 @@ export default async (
       }
     })
 
-    // await prisma.member.create({
-    //   data: {
-    //     userId: user.id,
-    //     teamId: team.id,
-    //     role: 'ADMIN'
-    //   }
-    // })
-
     if (!updateUser) throw new ApolloError('User could not be created', '401')
-
-    // Create billing User
-
-    // //Update user
-    // await prisma.user.update({
-    //   where: { id: user.id },
-    //   data: {
-
-    //   }
-    // })
 
     // Send data to Segment.
     const segmentData: Record<string, string | boolean | Date | null> = {

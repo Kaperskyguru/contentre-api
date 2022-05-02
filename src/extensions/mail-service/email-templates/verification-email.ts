@@ -438,7 +438,7 @@ export default (message: any) => {
       <![endif]-->
       </head>
       <body>
-        <span class="preheader">Use this link to reset your password. The link is only valid for 24 hours.</span>
+        <span class="preheader">Use this code to verify your email address. The code is only valid for 24 hours.</span>
         <table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0" role="presentation">
           <tr>
             <td align="center">
@@ -446,7 +446,7 @@ export default (message: any) => {
                 <tr>
                   <td class="email-masthead">
                     <a href="https://contentre.io?source=verification_email" class="f-fallback email-masthead_name">
-                    ${process.env.APP_NAME}
+                    <img src="https://res.cloudinary.com/kaperskydisk/image/upload/v1651487559/contentre/b5dcf065-761f-9e84-39b1-e27ec6b9b563.jpg" alt="Contentre">
                   </a>
                   </td>
                 </tr>

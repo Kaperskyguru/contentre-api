@@ -5,6 +5,8 @@ import { ApolloError } from 'apollo-server-core'
 import nodemailer from 'nodemailer'
 import URL from 'url-parse'
 import forgotPassword from '@extensions/mail-service/email-templates/forgot-password'
+import passwordChanged from '@extensions/mail-service/email-templates/password-changed'
+import welcome from '@extensions/mail-service/email-templates/welcome'
 import SendGrid from '@sendgrid/mail'
 import verificationEmail from './email-templates/verification-email'
 interface GenerateEmailLink {
@@ -38,7 +40,7 @@ const generateEmailLink = ({ email, token, BASE_URL }: GenerateEmailLink) => {
 }
 
 export default async ({ to, template, variables }: SendEmail) => {
-  let subject = `${process.env.APP_NAME} `
+  let subject = ``
 
   const selectTemplate = async ({ template, variables }: SelectTemplate) => {
     switch (template) {
@@ -48,6 +50,12 @@ export default async ({ to, template, variables }: SendEmail) => {
       case 'email-verification':
         subject += `Email Verification`
         return verificationEmail(variables)
+      case 'password-changed':
+        subject += `Password Changed`
+        return passwordChanged(variables)
+      case 'welcome':
+        subject += `Welcome to Contentre!`
+        return welcome(variables)
     }
   }
 
