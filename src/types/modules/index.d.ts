@@ -597,6 +597,7 @@ export type PortfolioContent = {
   contents?: Maybe<ContentResponse>;
   coverImage?: Maybe<Scalars['String']>;
   html?: Maybe<Scalars['String']>;
+  job?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   profileImage?: Maybe<Scalars['String']>;
   tags?: Maybe<Array<Tag>>;
@@ -1496,6 +1497,7 @@ export type PortfolioContentResolvers<ContextType = any, ParentType extends Reso
   contents?: Resolver<Maybe<ResolversTypes['ContentResponse']>, ParentType, ContextType>;
   coverImage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   html?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  job?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   profileImage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tags?: Resolver<Maybe<Array<ResolversTypes['Tag']>>, ParentType, ContextType>;

@@ -31,6 +31,7 @@ const typeDefs = gql`
   type PortfolioContent {
     html: String
     about: String
+    job: String
     coverImage: String
     name: String!
     profileImage: String
