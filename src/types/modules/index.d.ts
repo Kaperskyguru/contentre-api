@@ -212,7 +212,7 @@ export type CreatePortfolioInput = {
   description?: InputMaybe<Scalars['String']>;
   templateId?: InputMaybe<Scalars['ID']>;
   title: Scalars['String'];
-  url: Scalars['String'];
+  url?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateProfileInput = {

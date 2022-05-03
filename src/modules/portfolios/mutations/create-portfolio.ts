@@ -1,4 +1,5 @@
 import { useErrorParser } from '@/helpers'
+import { environment } from '@/helpers/environment'
 import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
 import { Portfolio, MutationCreatePortfolioArgs } from '@/types/modules'
@@ -20,9 +21,26 @@ export default async (
   try {
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
-    const { url, title } = input
+    const { title } = input
     let description = input.description ?? undefined
     let templateId = input.templateId ?? undefined
+
+    //Generate URL
+    let url = `${environment.domain}/${user.username}/${String(
+      Math.floor(100000 + Math.random() * 900000)
+    )}`
+
+    //Check for existing portfolio
+    const portfolio = await prisma.portfolio.findFirst({
+      where: { userId: user.id, url: url }
+    })
+
+    if (portfolio) {
+      url = `${environment.domain}/${user.username}/${String(
+        Math.floor(100000 + Math.random() * 900000)
+      )}`
+    }
+
     return createPortfolio(
       { url, description, title, templateId },
       { user, prisma }

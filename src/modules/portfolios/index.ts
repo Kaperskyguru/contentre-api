@@ -42,7 +42,7 @@ const typeDefs = gql`
   }
 
   input CreatePortfolioInput {
-    url: String!
+    url: String
     title: String!
     description: String
     templateId: ID

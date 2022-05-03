@@ -42,10 +42,10 @@ export default async (
       where: { id }
     })
 
-    const [deleteTemplateResult, deletePortfolioResult, countPortfolios] =
+    const [deletePortfolioResult, deleteTemplateResult, countPortfolios] =
       await prisma.$transaction([
-        deleteTemplate,
         deletePortfolio,
+        deleteTemplate,
         prisma.portfolio.count({
           where: { userId: user.id }
         })
