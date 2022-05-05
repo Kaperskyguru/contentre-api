@@ -10,8 +10,28 @@ const seedTemplates = async () => {
       username: 'admin',
       password: '$2b$10$cKsE9uzk.TTgtl.kgk15UeV5Adto8NVYTp3Wt3o2YxK9ZrSnx.sEi',
       email: 'test@test.com',
+      portfolioURL: `http://localhost:3000/admin`,
       subscriptionId: sub?.id!,
       emailConfirmed: true
+    }
+  })
+
+  const updateUser = await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      activeTeam: {
+        create: {
+          role: 'ADMIN',
+          user: {
+            connect: { id: user?.id }
+          },
+          team: {
+            create: {
+              name: 'Personal'
+            }
+          }
+        }
+      }
     }
   })
 
@@ -20,7 +40,7 @@ const seedTemplates = async () => {
       {
         title: 'Blank',
         content: '<h1>Blank</h1>',
-        userId: user.id,
+        userId: updateUser.id,
         visibility: 'PUBLIC'
       }
     ],

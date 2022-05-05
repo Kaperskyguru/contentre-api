@@ -61,6 +61,7 @@ const typeDefs = gql`
   input PortfolioContentFilters {
     terms: String
     username: String!
+    code: String
     url: String
     clients: [String!]
     categories: [String!]

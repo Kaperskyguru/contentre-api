@@ -27,6 +27,10 @@ export default async (
       include: { template: true }
     })
 
+    if (!portfolio) {
+      throw new ApolloError('Portfolio not found', '404')
+    }
+
     // Select Contents
     const where = whereContents(user, filters)
 

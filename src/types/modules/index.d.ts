@@ -606,6 +606,7 @@ export type PortfolioContent = {
 export type PortfolioContentFilters = {
   categories?: InputMaybe<Array<Scalars['String']>>;
   clients?: InputMaybe<Array<Scalars['String']>>;
+  code?: InputMaybe<Scalars['String']>;
   fromDate?: InputMaybe<Scalars['Time']>;
   sortBy?: InputMaybe<Scalars['String']>;
   tags?: InputMaybe<Array<Scalars['String']>>;
