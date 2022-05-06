@@ -209,7 +209,10 @@ export type CreateContentInput = {
 };
 
 export type CreatePortfolioInput = {
+  categoryId?: InputMaybe<Scalars['ID']>;
+  clientId?: InputMaybe<Scalars['ID']>;
   description?: InputMaybe<Scalars['String']>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
   templateId?: InputMaybe<Scalars['ID']>;
   title: Scalars['String'];
   url?: InputMaybe<Scalars['String']>;

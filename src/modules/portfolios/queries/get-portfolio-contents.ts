@@ -31,6 +31,93 @@ export default async (
       throw new ApolloError('Portfolio not found', '404')
     }
 
+    if (filters?.code) {
+      const where = whereContents(user, filters)
+
+      const contentWithTotal = await prisma.content.count({
+        where: {
+          ...where,
+          OR: [
+            { clientId: portfolio?.clientId! },
+            { categoryId: portfolio.categoryId },
+            {
+              tags: {
+                path: [],
+                array_contains: portfolio.tags
+              }
+            }
+          ]
+        },
+        select: { id: true }
+      })
+
+      const contents = await prisma.content.findMany({
+        where: {
+          ...where,
+          OR: [
+            { clientId: portfolio?.clientId! },
+            { categoryId: portfolio.categoryId },
+            {
+              tags: {
+                path: [],
+                array_contains: portfolio.tags
+              }
+            }
+          ]
+        },
+        include: { client: true, category: true },
+        skip: skip ?? 0,
+        take: size ?? undefined
+      })
+
+      // Get Public clients
+      const clients = await prisma.client.findMany({
+        where: {
+          userId: user.id,
+          visibility: 'PUBLIC',
+          id: portfolio?.clientId!
+        }
+      })
+      // Get Categories
+      const categories = await prisma.category.findMany({
+        where: { userId: user.id, id: portfolio?.categoryId! }
+      })
+      // Get Topics
+      // const topics = await prisma.topic.findMany({
+      //   where: { userId: user?.id }
+      // })
+      // Get Tags
+      const tags = await prisma.tag.findMany({
+        where: {
+          userId: user?.id,
+          AND: {
+            name: {
+              in: portfolio.tags?.toString().split(' '),
+              mode: 'insensitive'
+            }
+          }
+        }
+      })
+
+      return {
+        html: portfolio?.template?.content,
+        about: user.bio,
+        job: user.jobTitle,
+        coverImage: '',
+        profileImage: user.avatarURL,
+        name: user.name,
+        contents: {
+          contents,
+          meta: {
+            total: contentWithTotal?.id ?? 0
+          }
+        },
+        categories,
+        tags,
+        clients
+      }
+    }
+
     // Select Contents
     const where = whereContents(user, filters)
 

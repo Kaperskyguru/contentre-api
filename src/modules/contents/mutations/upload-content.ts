@@ -70,12 +70,28 @@ export default async (
     })
 
     if (importedContent.tags) {
-      const tags = importedContent.tags.map((name) => ({
-        name,
-        userId: user.id
-      }))
+      const data: any = []
+
+      const promiseTags = importedContent.tags.map(async (name) => {
+        const tag = await prisma.tag.findFirst({
+          where: { name, userId: user.id, teamId: user.activeTeamId }
+        })
+
+        if (!tag) {
+          data.push({
+            name,
+            userId: user.id,
+            teamId: user.activeTeamId!
+          })
+        }
+        return data
+      })
+
+      await Promise.all(promiseTags)
+
       await prisma.tag.createMany({
-        data: tags
+        data,
+        skipDuplicates: true
       })
 
       await sendToSegment({

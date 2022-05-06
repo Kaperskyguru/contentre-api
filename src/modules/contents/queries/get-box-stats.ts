@@ -68,6 +68,8 @@ export default async (
       ...args
     )
 
+    console.log(clientCountsByJanuary)
+
     const values = contentCountsByJanuary.map((val) => {
       const subInteractions =
         ((val.currentInteractions - val.lastInteractions) /

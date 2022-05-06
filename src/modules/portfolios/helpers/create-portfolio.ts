@@ -9,10 +9,21 @@ interface PortfolioInput {
   description?: string
   title: string
   templateId?: string
+  clientId?: string
+  categoryId?: string
+  tags?: Array<string>
 }
 
 export const createPortfolio = async (
-  { url, description, title, templateId }: PortfolioInput,
+  {
+    url,
+    description,
+    title,
+    templateId,
+    clientId,
+    categoryId,
+    tags
+  }: PortfolioInput,
   { user, prisma }: { user: User | DBUser; prisma: PrismaClient }
 ): Promise<Portfolio> => {
   // Use Template or use Blank
@@ -33,6 +44,13 @@ export const createPortfolio = async (
       content: template?.content!
     }
   })
+
+  const data: Record<string, unknown> = {}
+
+  if (categoryId !== undefined) data.category = { connect: { id: categoryId } }
+  if (clientId !== undefined) data.client = { connect: { id: clientId } }
+  if (tags !== undefined) data.tags = tags
+
   const [result, countPortfolios] = await prisma.$transaction([
     prisma.portfolio.create({
       data: {
@@ -40,7 +58,8 @@ export const createPortfolio = async (
         title,
         template: { connect: { id: userTemplate.id } },
         description,
-        user: { connect: { id: user.id } }
+        user: { connect: { id: user.id } },
+        ...data
       }
     }),
 

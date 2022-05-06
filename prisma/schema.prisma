@@ -152,6 +152,7 @@ model Client {
   createdAt   DateTime    @default(now()) @db.Timestamp(6)
   updatedAt   DateTime    @default(now()) @updatedAt @db.Timestamp(6)
   contents    Content[]   @relation("ClientContent")
+  portfolios  Portfolio[] @relation("ClientPortfolio")
 }
 
 enum Status {
@@ -201,6 +202,11 @@ model Portfolio {
   user        User         @relation("UserPortfolio", fields: [userId], references: [id])
   url         String       @db.VarChar(2048)
   description String?      @db.Text
+  clientId    String?      @db.Char(36)
+  client      Client?      @relation("ClientPortfolio", fields: [clientId], references: [id])
+  category    Category?    @relation("CategoryPortfolio", fields: [categoryId], references: [id])
+  categoryId  String?      @db.Char(36)
+  tags        Json?        @db.Json
   type        String?      @db.VarChar(36)
   template    UserTemplate @relation("UserTemplatePortfolio", fields: [templateId], references: [id])
   templateId  String       @db.Char(36)
@@ -291,16 +297,17 @@ model Tag {
 }
 
 model Category {
-  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  name      String    @db.VarChar(120)
-  color     String?   @db.Char(6)
-  userId    String?   @db.Char(36)
-  user      User?     @relation("UserCategory", fields: [userId], references: [id])
-  teamId    String?   @db.Char(36)
-  team      Team?     @relation("TeamCategory", fields: [teamId], references: [id])
-  createdAt DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt DateTime  @default(now()) @updatedAt @db.Timestamp(6)
-  contents  Content[] @relation("ContentCategory")
+  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name       String      @db.VarChar(120)
+  color      String?     @db.Char(6)
+  userId     String?     @db.Char(36)
+  user       User?       @relation("UserCategory", fields: [userId], references: [id])
+  teamId     String?     @db.Char(36)
+  team       Team?       @relation("TeamCategory", fields: [teamId], references: [id])
+  createdAt  DateTime    @default(now()) @db.Timestamp(6)
+  updatedAt  DateTime    @default(now()) @updatedAt @db.Timestamp(6)
+  contents   Content[]   @relation("ContentCategory")
+  portfolios Portfolio[] @relation("CategoryPortfolio")
 }
 
 model Topic {

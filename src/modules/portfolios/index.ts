@@ -46,6 +46,9 @@ const typeDefs = gql`
     title: String!
     description: String
     templateId: ID
+    clientId: ID
+    categoryId: ID
+    tags: [String!]
   }
 
   input UpdatePortfolioInput {
