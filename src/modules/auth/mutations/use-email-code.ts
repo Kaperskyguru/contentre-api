@@ -7,6 +7,7 @@ import setJWT from '@/helpers/setJWT'
 import { Context } from '@/types'
 import { MutationUseEmailCodeArgs, User } from '@/types/modules'
 import sendEmail from '@extensions/mail-service/send-email'
+import mailchimp from '@extensions/mailchimp'
 import { ApolloError } from 'apollo-server-core'
 
 export default async (
@@ -72,6 +73,13 @@ export default async (
       !environment.mail && ['LOCAL', 'DEVELOP'].includes(environment.context)
 
     if (!isDevelop) {
+      //Subscribe mailchimp
+      await mailchimp({
+        name: updatedUser.name,
+        email: updatedUser.email,
+        tags: ['contentre_welcome_signup']
+      })
+
       await sendEmail({
         to: updatedUser.email,
         subject: 'Welcome to Contentre!',

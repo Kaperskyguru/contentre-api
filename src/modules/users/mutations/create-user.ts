@@ -10,7 +10,6 @@ import { ApolloError } from 'apollo-server-errors'
 import sendToSegment from '@/extensions/segment-service/segment'
 import { environment } from '@/helpers/environment'
 import { createPortfolio } from '@/modules/portfolios/helpers/create-portfolio'
-import mailchimp from '@extensions/mailchimp'
 
 export default async (
   _parent: unknown,
@@ -85,13 +84,6 @@ export default async (
     })
 
     if (!updateUser) throw new ApolloError('User could not be created', '401')
-
-    //Subscribe mailchimp
-    await mailchimp({
-      name: updateUser.name,
-      email: updateUser.email,
-      tags: ['contentre_welcome_signup']
-    })
 
     // Send data to Segment.
     const segmentData: Record<string, string | boolean | Date | null> = {
