@@ -246,6 +246,7 @@ export type CreateUserInput = {
   password: Scalars['String'];
   referrer?: InputMaybe<Scalars['String']>;
   signedUpThrough?: InputMaybe<SignedUpThrough>;
+  source?: InputMaybe<Scalars['String']>;
   username: Scalars['String'];
 };
 

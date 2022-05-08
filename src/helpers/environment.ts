@@ -10,23 +10,17 @@ export interface Environment {
     introspection: boolean
     playground: boolean
   }
+  mailchimp: {
+    key: string
+    server: string
+    id: string
+  }
   database: {
     url: string
   }
   auth: {
     saltRounds: number
     tokenSecret: string
-  }
-  yapily: {
-    url: string
-    key: string
-    secret: string
-  }
-  veryfi: {
-    clientId: string
-    clientSecret: string
-    username: string
-    apiKey: string
   }
   mail: {
     type: string
@@ -90,6 +84,11 @@ export const environment: Environment = {
     introspection: ['LOCAL', 'DEVELOP'].includes(context),
     playground: ['LOCAL', 'DEVELOP'].includes(context)
   },
+  mailchimp: {
+    key: process.env.MAILCHIMP_KEY as string,
+    server: process.env.MAILCHIMP_SERVER as string,
+    id: process.env.MAILCHIMP_LIST_ID as string
+  },
   database: {
     url: process.env.DATABASE_URL as string
   },
@@ -97,17 +96,7 @@ export const environment: Environment = {
     saltRounds: Number(process.env.AUTH_SALT_ROUNDS) || 10,
     tokenSecret: process.env.AUTH_TOKEN_SECRET as string
   },
-  yapily: {
-    url: process.env.YAPILY_BASE_URL as string,
-    key: process.env.YAPILY_APPLICATION_KEY as string,
-    secret: process.env.YAPILY_APPLICATION_SECRET as string
-  },
-  veryfi: {
-    clientId: process.env.VERYFI_CLIENT_ID as string,
-    clientSecret: process.env.VERYFI_CLIENT_SECRET as string,
-    username: process.env.VERYFI_USERNAME as string,
-    apiKey: process.env.VERYFI_API_KEY as string
-  },
+
   mail:
     process.env.MAIL_TYPE === 'send'
       ? {

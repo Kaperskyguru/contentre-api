@@ -55,6 +55,7 @@ const typeDefs = gql`
     language: String
     analyticsSource: String
     analyticsSourceData: String
+    source: String
     signedUpThrough: SignedUpThrough
   }
 
