@@ -139,13 +139,14 @@ const typeDefs = gql`
     url: String
     content: String
     title: String!
-    excerpt: String!
-    clientId: ID!
+    excerpt: String
+    clientId: ID
     tags: [String!]
     category: String
     amount: Float
     status: StatusType
     comments: Int
+    visibility: Visibility
     likes: Int
     shares: Int
     paymentType: PaymentType
@@ -158,11 +159,17 @@ const typeDefs = gql`
   input UpdateContentInput {
     title: String
     comments: Int
+    excerpt: String
+    content: String
+    url: String
+    featuredImage: String
     likes: Int
     shares: Int
     status: StatusType
     paymentType: String
     amount: Float
+    tags: [String!]
+    clientId: ID
     category: String
     visibility: String
   }

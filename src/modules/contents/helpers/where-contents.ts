@@ -73,15 +73,19 @@ export const whereContents = (
           : undefined
       },
 
-      {
-        client: filters?.clients?.length
-          ? {
-              name: {
-                in: filters.clients
-              }
-            }
-          : undefined
-      }
+      filters?.clients?.length && filters?.clients.includes('Personal')
+        ? {
+            clientId: null
+          }
+        : {
+            client: filters?.clients?.length
+              ? {
+                  name: {
+                    in: filters.clients
+                  }
+                }
+              : undefined
+          }
     ]
   }
 }

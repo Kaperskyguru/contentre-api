@@ -4,6 +4,7 @@ import { logError, logMutation } from '@helpers/logger'
 import { Content, MutationUpdateContentArgs } from '@modules-types'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
+import sendToSegment from '@extensions/segment-service/segment'
 
 interface UpdateData {
   title?: string
@@ -29,7 +30,15 @@ export default async (
     const data: Record<string, unknown> = {}
 
     if (input.comments !== undefined) data.comments = input.comments
+    if (input.title !== undefined) data.title = input.title
+    if (input.visibility !== undefined) data.visibility = input.visibility
     if (input.likes !== undefined) data.likes = input.likes
+    if (input.featuredImage !== undefined)
+      data.featuredImage = input.featuredImage
+    if (input.tags !== undefined) data.tags = input.tags
+    if (input.url !== undefined) data.url = input.url
+    if (input.excerpt !== undefined) data.excerpt = input.excerpt
+    if (input.content !== undefined) data.content = input.content
     if (input.shares !== undefined) data.shares = input.shares
     if (input.paymentType !== undefined) data.paymentType = input.paymentType
     if (input.category !== undefined)
@@ -37,6 +46,9 @@ export default async (
         user,
         prisma
       })
+    if (input.clientId !== undefined)
+      data.client = { connect: { id: input.clientId } }
+
     if (input.visibility !== undefined) data.visibility = input.visibility
     if (input.status !== undefined) data.status = input.status
     if (input.amount !== undefined) data.amount = input.amount
@@ -55,11 +67,36 @@ export default async (
     }
 
     // Finally update the category.
-    return await prisma.content.update({
+    const updatedContent = await prisma.content.update({
       where: { id },
       data,
       include: { category: true, client: true }
     })
+
+    if (input.tags?.length) {
+      const tagNames = Object.values(input.tags).map((name: any) => ({
+        name,
+        userId: user.id,
+        // teamId: user.activeTeamId! ?? undefined,
+        team: { connect: { id: user.activeTeamId! } }
+      }))
+
+      await prisma.tag.createMany({
+        data: tagNames
+      })
+
+      await sendToSegment({
+        operation: 'track',
+        eventName: 'bulk_create_new_tag',
+        userId: user.id,
+        data: {
+          userEmail: user.email,
+          tags: input.tags
+        }
+      })
+    }
+
+    return updatedContent
   } catch (e) {
     logError('updateContent %o', e)
 

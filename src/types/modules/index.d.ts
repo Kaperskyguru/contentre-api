@@ -195,10 +195,10 @@ export type CreateClientInput = {
 export type CreateContentInput = {
   amount?: InputMaybe<Scalars['Float']>;
   category?: InputMaybe<Scalars['String']>;
-  clientId: Scalars['ID'];
+  clientId?: InputMaybe<Scalars['ID']>;
   comments?: InputMaybe<Scalars['Int']>;
   content?: InputMaybe<Scalars['String']>;
-  excerpt: Scalars['String'];
+  excerpt?: InputMaybe<Scalars['String']>;
   likes?: InputMaybe<Scalars['Int']>;
   paymentType?: InputMaybe<PaymentType>;
   shares?: InputMaybe<Scalars['Int']>;
@@ -206,6 +206,7 @@ export type CreateContentInput = {
   tags?: InputMaybe<Array<Scalars['String']>>;
   title: Scalars['String'];
   url?: InputMaybe<Scalars['String']>;
+  visibility?: InputMaybe<Visibility>;
 };
 
 export type CreatePortfolioInput = {
@@ -918,12 +919,18 @@ export type UpdateClientInput = {
 export type UpdateContentInput = {
   amount?: InputMaybe<Scalars['Float']>;
   category?: InputMaybe<Scalars['String']>;
+  clientId?: InputMaybe<Scalars['ID']>;
   comments?: InputMaybe<Scalars['Int']>;
+  content?: InputMaybe<Scalars['String']>;
+  excerpt?: InputMaybe<Scalars['String']>;
+  featuredImage?: InputMaybe<Scalars['String']>;
   likes?: InputMaybe<Scalars['Int']>;
   paymentType?: InputMaybe<Scalars['String']>;
   shares?: InputMaybe<Scalars['Int']>;
   status?: InputMaybe<StatusType>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
   title?: InputMaybe<Scalars['String']>;
+  url?: InputMaybe<Scalars['String']>;
   visibility?: InputMaybe<Scalars['String']>;
 };
 

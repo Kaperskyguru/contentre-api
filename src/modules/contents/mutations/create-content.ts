@@ -21,31 +21,53 @@ export default async (
   try {
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
-    const { url, clientId, content, excerpt, title, tags, category, status } =
-      input
+    const {
+      url,
+      clientId,
+      visibility,
+      content,
+      excerpt,
+      title,
+      tags,
+      category,
+      status
+    } = input
 
     const categoryId =
       (await getOrCreateCategoryId(category, { user, prisma })) ?? undefined
+
+    const data: Record<string, unknown> = {}
+    if (clientId !== undefined) {
+      data.client = { connect: { id: clientId } }
+    }
+    //Generate excerpt
+    let defaultExcerpt: string | null = null
+    if (excerpt === undefined) {
+      defaultExcerpt = content?.substring(0, 140) ?? ''
+    } else defaultExcerpt = excerpt
 
     const newContent = await prisma.content.create({
       data: {
         url,
         title,
-        excerpt,
+        excerpt: defaultExcerpt!,
         content,
+        visibility: visibility ?? 'PRIVATE',
         status: status ?? 'PUBLISHED',
         category: { connect: { id: categoryId } },
         tags: tags?.length ? tags : undefined,
         user: { connect: { id: user.id } },
-        client: { connect: { id: clientId } },
-        team: { connect: { id: user.activeTeamId! } }
+        team: { connect: { id: user.activeTeamId! } },
+        ...data
       }
     })
 
     if (tags?.length) {
       const tagNames = Object.values(tags).map((name: any) => ({
         name,
-        userId: user.id
+        userId: user.id,
+        teamId: user.activeTeamId! ?? undefined,
+        team: { connect: { id: user.activeTeamId! } }
       }))
 
       await prisma.tag.createMany({
@@ -87,6 +109,8 @@ export default async (
     })
 
     const message = useErrorParser(e)
+
+    console.log(e)
 
     throw new ApolloError(message, e.code ?? '500', { sentryId })
   }

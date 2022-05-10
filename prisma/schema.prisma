@@ -163,8 +163,8 @@ enum Status {
 model Content {
   id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
   title         String      @db.VarChar(2048)
-  clientId      String      @db.Char(36)
-  client        Client      @relation("ClientContent", fields: [clientId], references: [id])
+  clientId      String?     @db.Char(36)
+  client        Client?     @relation("ClientContent", fields: [clientId], references: [id])
   userId        String      @db.Char(36)
   user          User        @relation("UserContent", fields: [userId], references: [id])
   team          Team?       @relation("TeamContent", fields: [teamId], references: [id])
@@ -192,7 +192,7 @@ model Content {
   tags          Json?       @db.Json
   category      Category?   @relation("ContentCategory", fields: [categoryId], references: [id])
 
-  @@index([clientId, userId, teamId])
+  @@index([userId, teamId])
 }
 
 model Portfolio {
