@@ -6,6 +6,7 @@ import updateContent from './mutations/update-content'
 import getContent from './queries/get-content'
 import getContents from './queries/get-contents'
 import uploadContent from './mutations/upload-content'
+import uploadMultipleContent from './mutations/upload-multiple-contents'
 import interactions from './fields/interactions'
 import getIndexMetadata from './queries/get-index-metadata'
 import getOverallStats from './queries/get-overall-stats'
@@ -156,6 +157,10 @@ const typeDefs = gql`
     url: String!
   }
 
+  input UploadMultipleContentInput {
+    urls: [String!]!
+  }
+
   input UpdateContentInput {
     title: String
     comments: Int
@@ -228,6 +233,7 @@ const typeDefs = gql`
   extend type Mutation {
     createContent(input: CreateContentInput!): Content
     uploadContent(input: UploadContentInput!): Content!
+    uploadMultipleContent(input: UploadMultipleContentInput!): [Content!]!
     deleteContent(id: ID!): Boolean!
     updateContent(id: ID!, input: UpdateContentInput!): Content!
   }
@@ -248,7 +254,8 @@ const resolvers: Resolvers = {
     createContent,
     uploadContent,
     deleteContent,
-    updateContent
+    updateContent,
+    uploadMultipleContent
   },
 
   Content: {

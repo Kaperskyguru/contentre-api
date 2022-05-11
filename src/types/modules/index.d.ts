@@ -346,6 +346,7 @@ export type Mutation = {
   updateTag: Tag;
   updateUser: User;
   uploadContent: Content;
+  uploadMultipleContent: Array<Content>;
   useEmailCode: User;
   usePasswordResetCode: User;
   usePhoneCode: User;
@@ -526,6 +527,11 @@ export type MutationUpdateUserArgs = {
 
 export type MutationUploadContentArgs = {
   input: UploadContentInput;
+};
+
+
+export type MutationUploadMultipleContentArgs = {
+  input: UploadMultipleContentInput;
 };
 
 
@@ -963,6 +969,10 @@ export type UploadContentInput = {
   url: Scalars['String'];
 };
 
+export type UploadMultipleContentInput = {
+  urls: Array<Scalars['String']>;
+};
+
 export type User = {
   __typename?: 'User';
   activeRole?: Maybe<MemberRole>;
@@ -1184,6 +1194,7 @@ export type ResolversTypes = {
   UpdateTagInput: UpdateTagInput;
   UpdateUserInput: UpdateUserInput;
   UploadContentInput: UploadContentInput;
+  UploadMultipleContentInput: UploadMultipleContentInput;
   User: ResolverTypeWrapper<User>;
   UserActiveTeamRelation: UserActiveTeamRelation;
   UserInput: UserInput;
@@ -1263,6 +1274,7 @@ export type ResolversParentTypes = {
   UpdateTagInput: UpdateTagInput;
   UpdateUserInput: UpdateUserInput;
   UploadContentInput: UploadContentInput;
+  UploadMultipleContentInput: UploadMultipleContentInput;
   User: User;
   UserActiveTeamRelation: UserActiveTeamRelation;
   UserInput: UserInput;
@@ -1455,6 +1467,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<MutationUpdateTagArgs, 'id' | 'input'>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'input'>>;
   uploadContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<MutationUploadContentArgs, 'input'>>;
+  uploadMultipleContent?: Resolver<Array<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<MutationUploadMultipleContentArgs, 'input'>>;
   useEmailCode?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUseEmailCodeArgs, 'code'>>;
   usePasswordResetCode?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUsePasswordResetCodeArgs, 'code' | 'email'>>;
   usePhoneCode?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUsePhoneCodeArgs, 'code'>>;
