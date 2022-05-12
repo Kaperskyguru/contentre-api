@@ -51,9 +51,13 @@ export default async (
     const createdContents = importedContent
       .map((i) => i)
       .map(async (content) => {
-        // Checking if content already exists
+        // Checking if client already exists
         let client = await prisma.client.findFirst({
-          where: { name: content.client.name, userId: user.id }
+          where: {
+            name: content.client.name,
+            userId: user.id,
+            website: content.client.website
+          }
         })
 
         if (!client) {
