@@ -4,6 +4,7 @@ import createPortfolio from './mutations/create-portfolio'
 import getPortfolios from './queries/get-portfolios'
 import deletePortfolio from './mutations/delete-portfolio'
 import getPortfolioContent from './queries/get-portfolio-contents'
+import getPortfolioDetail from './queries/get-portfolio-details'
 import getPortfolio from './queries/get-portfolio'
 import updatePortfolio from './mutations/update-portfolio'
 
@@ -29,16 +30,19 @@ const typeDefs = gql`
   }
 
   type PortfolioContent {
+    contents: ContentResponse
+    clients: [Client!]
+    categories: [Category!]
+    tags: [Tag!]
+  }
+
+  type PortfolioDetail {
     html: String
     about: String
     job: String
     coverImage: String
     name: String!
     profileImage: String
-    contents: ContentResponse
-    clients: [Client!]
-    categories: [Category!]
-    tags: [Tag!]
   }
 
   input CreatePortfolioInput {
@@ -87,6 +91,7 @@ const typeDefs = gql`
       skip: Int
       filters: PortfolioContentFilters!
     ): PortfolioContent
+    getPortfolioDetail(filters: PortfolioContentFilters!): PortfolioDetail!
   }
 
   extend type Mutation {
@@ -99,7 +104,8 @@ const resolvers: Resolvers = {
   Query: {
     getPortfolios,
     getPortfolio,
-    getPortfolioContent
+    getPortfolioContent,
+    getPortfolioDetail
   },
 
   Mutation: {

@@ -75,6 +75,7 @@ model Team {
   Category       Category[] @relation("TeamCategory")
   Tag            Tag[]      @relation("TeamTag")
   // ConnectedApp   ConnectedApp[] @relation("TeamConnectedApp")
+  Media          Media[]    @relation("TeamMedia")
 }
 
 model Member {
@@ -317,6 +318,23 @@ model Topic {
   contentId String?  @db.Char(36)
   createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(6)
+}
+
+model Media {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  teamId    String    @db.Char(36)
+  team      Team      @relation("TeamMedia", fields: [teamId], references: [id])
+  title     String?   @db.VarChar(2048)
+  type      MediaType @default(IMAGE)
+  url       String    @db.VarChar(2048)
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @default(now()) @updatedAt @db.Timestamp(6)
+}
+
+enum MediaType {
+  VIDEO
+  IMAGE
+  AUDIO
 }
 
 model Social {

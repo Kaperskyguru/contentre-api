@@ -33,8 +33,15 @@ export default async (
     if (input.title !== undefined) data.title = input.title
     if (input.visibility !== undefined) data.visibility = input.visibility
     if (input.likes !== undefined) data.likes = input.likes
-    if (input.featuredImage !== undefined)
+    if (input.featuredImage !== undefined) {
+      await prisma.media.create({
+        data: {
+          team: { connect: { id: user.activeTeamId! } },
+          url: input.featuredImage!
+        }
+      })
       data.featuredImage = input.featuredImage
+    }
     if (input.tags !== undefined) data.tags = input.tags
     if (input.url !== undefined) data.url = input.url
     if (input.excerpt !== undefined) data.excerpt = input.excerpt

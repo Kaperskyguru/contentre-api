@@ -102,12 +102,6 @@ export default async (
       })
 
       return {
-        html: portfolio?.template?.content,
-        about: user.bio,
-        job: user.jobTitle,
-        coverImage: '',
-        profileImage: user.avatarURL,
-        name: user.name,
         contents: {
           contents,
           meta: {
@@ -153,12 +147,6 @@ export default async (
     })
 
     return {
-      html: portfolio?.template?.content,
-      about: user.bio,
-      job: user.jobTitle,
-      coverImage: '',
-      profileImage: user.avatarURL,
-      name: user.name,
       contents: {
         contents,
         meta: {
