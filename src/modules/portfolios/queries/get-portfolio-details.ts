@@ -15,8 +15,6 @@ export default async (
       where: { username: filters.username }
     })
 
-    console.log(filters)
-
     if (!user) {
       throw new ApolloError('User not found', '404')
     }
