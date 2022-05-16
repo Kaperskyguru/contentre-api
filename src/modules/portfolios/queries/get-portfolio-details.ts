@@ -14,6 +14,7 @@ export default async (
     const user = await prisma.user.findFirst({
       where: { username: filters.username }
     })
+    console.log(filters)
 
     if (!user) {
       throw new ApolloError('User not found', '404')

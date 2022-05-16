@@ -698,6 +698,12 @@ export type PortfolioDetail = {
   profileImage?: Maybe<Scalars['String']>;
 };
 
+export type PortfolioDetailsFilters = {
+  code?: InputMaybe<Scalars['String']>;
+  url?: InputMaybe<Scalars['String']>;
+  username: Scalars['String'];
+};
+
 export type PortfolioFiltersInput = {
   terms?: InputMaybe<Scalars['String']>;
 };
@@ -820,7 +826,7 @@ export type QueryGetPortfolioContentArgs = {
 
 
 export type QueryGetPortfolioDetailArgs = {
-  filters: PortfolioContentFilters;
+  filters: PortfolioDetailsFilters;
 };
 
 
@@ -1265,6 +1271,7 @@ export type ResolversTypes = {
   PortfolioContent: ResolverTypeWrapper<PortfolioContent>;
   PortfolioContentFilters: PortfolioContentFilters;
   PortfolioDetail: ResolverTypeWrapper<PortfolioDetail>;
+  PortfolioDetailsFilters: PortfolioDetailsFilters;
   PortfolioFiltersInput: PortfolioFiltersInput;
   Query: ResolverTypeWrapper<{}>;
   RegisterUserInput: RegisterUserInput;
@@ -1355,6 +1362,7 @@ export type ResolversParentTypes = {
   PortfolioContent: PortfolioContent;
   PortfolioContentFilters: PortfolioContentFilters;
   PortfolioDetail: PortfolioDetail;
+  PortfolioDetailsFilters: PortfolioDetailsFilters;
   PortfolioFiltersInput: PortfolioFiltersInput;
   Query: {};
   RegisterUserInput: RegisterUserInput;

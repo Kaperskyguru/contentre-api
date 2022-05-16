@@ -79,6 +79,12 @@ const typeDefs = gql`
     sortBy: String
   }
 
+  input PortfolioDetailsFilters {
+    username: String!
+    code: String
+    url: String
+  }
+
   extend type Query {
     getPortfolios(
       size: Int
@@ -91,7 +97,7 @@ const typeDefs = gql`
       skip: Int
       filters: PortfolioContentFilters!
     ): PortfolioContent
-    getPortfolioDetail(filters: PortfolioContentFilters!): PortfolioDetail!
+    getPortfolioDetail(filters: PortfolioDetailsFilters!): PortfolioDetail!
   }
 
   extend type Mutation {
