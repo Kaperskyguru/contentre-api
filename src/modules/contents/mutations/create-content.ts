@@ -1,10 +1,11 @@
 import { useErrorParser } from '@/helpers'
 import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
-import { Content, MutationCreateContentArgs, Tag } from '@/types/modules'
+import { Content, MutationCreateContentArgs } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
 import getOrCreateCategoryId from '../helpers/getOrCreateCategory'
 import sendToSegment from '@extensions/segment-service/segment'
+import Plugins from '@/helpers/plugins'
 
 export default async (
   _parent: unknown,
@@ -30,7 +31,8 @@ export default async (
       title,
       tags,
       category,
-      status
+      status,
+      apps
     } = input
 
     const categoryId =
@@ -74,6 +76,17 @@ export default async (
         data: tagNames
       })
 
+      // Share to App
+      if (apps !== undefined) {
+        if (apps?.medium) {
+          apps.medium.title = newContent.title
+          apps.medium.content = newContent?.content ?? newContent.excerpt
+          apps.medium.tags = input.tags
+        }
+
+        await Plugins(apps, { user, prisma })
+      }
+
       await sendToSegment({
         operation: 'track',
         eventName: 'bulk_create_new_tag',
@@ -93,8 +106,8 @@ export default async (
       data: {
         userEmail: user.email,
         clientId: clientId,
-        url
-        // companyId: user.activeCompanyId,
+        url,
+        teamId: user.activeTeamId
       }
     })
 

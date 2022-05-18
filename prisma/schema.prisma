@@ -54,28 +54,28 @@ model User {
 }
 
 model Team {
-  id             String     @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  name           String     @db.VarChar(100)
-  address        String?    @db.VarChar(2048)
-  portfolio      String?    @db.VarChar(2048)
-  avatarURL      String?    @db.VarChar(2048)
-  createdAt      DateTime   @default(now()) @db.Timestamp(6)
-  updatedAt      DateTime   @default(now()) @updatedAt @db.Timestamp(6)
-  subscriptionId String?    @db.Char(36)
+  id             String         @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name           String         @db.VarChar(100)
+  address        String?        @db.VarChar(2048)
+  portfolio      String?        @db.VarChar(2048)
+  avatarURL      String?        @db.VarChar(2048)
+  createdAt      DateTime       @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime       @default(now()) @updatedAt @db.Timestamp(6)
+  subscriptionId String?        @db.Char(36)
   // subscription          Subscription         @relation("UserSubscription", fields: [subscriptionId], references: [id])
-  billingId      String?    @db.Char(36)
-  hasTrial       Boolean    @default(false)
-  trialEndDate   DateTime?  @db.Timestamp(6)
-  members        Member[]   @relation("TeamMember")
-  clients        Client[]   @relation("TeamClient")
-  contents       Content[]  @relation("TeamContent")
-  socials        Social[]   @relation("TeamSocial")
+  billingId      String?        @db.Char(36)
+  hasTrial       Boolean        @default(false)
+  trialEndDate   DateTime?      @db.Timestamp(6)
+  members        Member[]       @relation("TeamMember")
+  clients        Client[]       @relation("TeamClient")
+  contents       Content[]      @relation("TeamContent")
+  socials        Social[]       @relation("TeamSocial")
   // Portfolio             Portfolio[]          @relation("UserPortfolio")
   // Template              Template[]           @relation("UserTemplate")
-  Category       Category[] @relation("TeamCategory")
-  Tag            Tag[]      @relation("TeamTag")
-  // ConnectedApp   ConnectedApp[] @relation("TeamConnectedApp")
-  Media          Media[]    @relation("TeamMedia")
+  Category       Category[]     @relation("TeamCategory")
+  Tag            Tag[]          @relation("TeamTag")
+  ConnectedApp   ConnectedApp[] @relation("TeamConnectedApp")
+  Media          Media[]        @relation("TeamMedia")
 }
 
 model Member {
@@ -123,18 +123,33 @@ enum VerificationIntentType {
   PHONE
 }
 
-// model ConnectedApp {
-//   id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-//   name        String   @db.VarChar(60)
-//   slug        String   @db.VarChar(60)
-//   token       String?  @db.VarChar(2048)
-//   secret      String?  @db.VarChar(2048)
-//   isActivated Boolean  @default(false)
-//   teamId      String   @db.Char(36)
-//   team        Team     @relation("TeamConnectedApp", fields: [teamId], references: [id])
-//   createdAt   DateTime @default(now()) @db.Timestamp(6)
-//   updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp(6)
-// }
+model App {
+  id           String         @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  icon         String?        @db.VarChar(2048)
+  name         String         @db.VarChar(60)
+  description  String?        @db.VarChar(2048)
+  website      String?        @db.VarChar(2048)
+  createdAt    DateTime       @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime       @default(now()) @updatedAt @db.Timestamp(6)
+  connectedApp ConnectedApp[] @relation("AppConnectedApp")
+
+  @@unique([name], name: "uniqueName", map: "uniqueName")
+}
+
+model ConnectedApp {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name        String   @db.VarChar(60)
+  slug        String   @db.VarChar(60)
+  token       String?  @db.VarChar(2048)
+  secret      String?  @db.VarChar(2048)
+  isActivated Boolean  @default(false)
+  teamId      String   @db.Char(36)
+  team        Team     @relation("TeamConnectedApp", fields: [teamId], references: [id])
+  appId       String   @db.Char(36)
+  app         App      @relation("AppConnectedApp", fields: [appId], references: [id])
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp(6)
+}
 
 model Client {
   id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)

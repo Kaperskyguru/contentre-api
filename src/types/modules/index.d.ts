@@ -19,6 +19,38 @@ export type Scalars = {
   Time: any;
 };
 
+export type App = {
+  __typename?: 'App';
+  app?: Maybe<Integration>;
+  createdAt: Scalars['Time'];
+  id: Scalars['ID'];
+  isActivated?: Maybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+  secret?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+  token?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['Time'];
+};
+
+export type AppFiltersInput = {
+  terms?: InputMaybe<Scalars['String']>;
+};
+
+export type AppResponse = {
+  __typename?: 'AppResponse';
+  apps: Array<App>;
+  meta: Meta;
+};
+
+export type AppStatus =
+  | 'DRAFT'
+  | 'PUBLIC'
+  | 'UNLISTED';
+
+export type Apps = {
+  medium?: InputMaybe<Medium>;
+};
+
 export type BoxStats = {
   __typename?: 'BoxStats';
   amount?: Maybe<Scalars['Float']>;
@@ -179,6 +211,12 @@ export type CountryInput = {
   name?: InputMaybe<Scalars['String']>;
 };
 
+export type CreateAppInput = {
+  key?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  token?: InputMaybe<Scalars['String']>;
+};
+
 export type CreateCategoryInput = {
   color?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
@@ -194,6 +232,7 @@ export type CreateClientInput = {
 
 export type CreateContentInput = {
   amount?: InputMaybe<Scalars['Float']>;
+  apps?: InputMaybe<Apps>;
   category?: InputMaybe<Scalars['String']>;
   clientId?: InputMaybe<Scalars['ID']>;
   comments?: InputMaybe<Scalars['Int']>;
@@ -267,10 +306,24 @@ export type Feature = {
   value: Scalars['String'];
 };
 
+export type Format =
+  | 'HTML'
+  | 'MARKDOWN';
+
 export type IndexMetadataResponse = {
   __typename?: 'IndexMetadataResponse';
   box?: Maybe<BoxStats>;
   revenue?: Maybe<RevenueChart>;
+};
+
+export type Integration = {
+  __typename?: 'Integration';
+  createdAt: Scalars['Time'];
+  description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['Time'];
 };
 
 export type LegalEntityInput = {
@@ -316,6 +369,16 @@ export type MediaResponse = {
   meta: Meta;
 };
 
+export type Medium = {
+  canonicalUrl?: InputMaybe<Scalars['String']>;
+  content?: InputMaybe<Scalars['String']>;
+  contentFormat?: InputMaybe<Format>;
+  notifyFollowers?: InputMaybe<Scalars['Boolean']>;
+  publishedStatus?: InputMaybe<AppStatus>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  title?: InputMaybe<Scalars['String']>;
+};
+
 export type Member = {
   __typename?: 'Member';
   avatarURL?: Maybe<Scalars['String']>;
@@ -354,6 +417,7 @@ export type Metadata = {
 export type Mutation = {
   __typename?: 'Mutation';
   changePassword: User;
+  createApp?: Maybe<App>;
   createCategory: Category;
   createClient: Client;
   createContent?: Maybe<Content>;
@@ -364,6 +428,7 @@ export type Mutation = {
   createTag?: Maybe<Tag>;
   createTeam: Team;
   createUser: User;
+  deleteApp: Scalars['Boolean'];
   deleteCategory: Scalars['Boolean'];
   deleteClient: Scalars['Boolean'];
   deleteContent: Scalars['Boolean'];
@@ -382,6 +447,7 @@ export type Mutation = {
   sendSegment: Scalars['Boolean'];
   switchTeam: Team;
   updateActiveTeam: Team;
+  updateApp: App;
   updateCategory: Category;
   updateClient: Client;
   updateContent: Content;
@@ -403,6 +469,11 @@ export type Mutation = {
 export type MutationChangePasswordArgs = {
   newPassword: Scalars['String'];
   oldPassword: Scalars['String'];
+};
+
+
+export type MutationCreateAppArgs = {
+  input: CreateAppInput;
 };
 
 
@@ -453,6 +524,11 @@ export type MutationCreateTeamArgs = {
 
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
+};
+
+
+export type MutationDeleteAppArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -541,6 +617,12 @@ export type MutationSwitchTeamArgs = {
 
 export type MutationUpdateActiveTeamArgs = {
   input: TeamInput;
+};
+
+
+export type MutationUpdateAppArgs = {
+  id: Scalars['ID'];
+  input: UpdateAppInput;
 };
 
 
@@ -710,6 +792,8 @@ export type PortfolioFiltersInput = {
 
 export type Query = {
   __typename?: 'Query';
+  getApp: App;
+  getApps: AppResponse;
   getBoxStats?: Maybe<BoxStats>;
   getCategories: CategoryResponse;
   getCategory: Category;
@@ -737,6 +821,18 @@ export type Query = {
   getTopicStats?: Maybe<OverallStatResponse>;
   getUser: User;
   getVersion: Scalars['String'];
+};
+
+
+export type QueryGetAppArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryGetAppsArgs = {
+  filters?: InputMaybe<AppFiltersInput>;
+  size?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1003,6 +1099,13 @@ export type TeamMembersRelation = {
   disconnect?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
+export type UpdateAppInput = {
+  isActivated?: InputMaybe<Scalars['Boolean']>;
+  key?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  token?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdateCategoryInput = {
   color?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
@@ -1020,6 +1123,7 @@ export type UpdateClientInput = {
 
 export type UpdateContentInput = {
   amount?: InputMaybe<Scalars['Float']>;
+  apps?: InputMaybe<Apps>;
   category?: InputMaybe<Scalars['String']>;
   clientId?: InputMaybe<Scalars['ID']>;
   comments?: InputMaybe<Scalars['Int']>;
@@ -1221,6 +1325,11 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  App: ResolverTypeWrapper<App>;
+  AppFiltersInput: AppFiltersInput;
+  AppResponse: ResolverTypeWrapper<AppResponse>;
+  AppStatus: AppStatus;
+  Apps: Apps;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   BoxStats: ResolverTypeWrapper<BoxStats>;
   Category: ResolverTypeWrapper<Category>;
@@ -1236,6 +1345,7 @@ export type ResolversTypes = {
   ContentType: ContentType;
   Country: ResolverTypeWrapper<Country>;
   CountryInput: CountryInput;
+  CreateAppInput: CreateAppInput;
   CreateCategoryInput: CreateCategoryInput;
   CreateClientInput: CreateClientInput;
   CreateContentInput: CreateContentInput;
@@ -1249,15 +1359,18 @@ export type ResolversTypes = {
   CreateUserInput: CreateUserInput;
   Feature: ResolverTypeWrapper<Feature>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
+  Format: Format;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   IndexMetadataResponse: ResolverTypeWrapper<IndexMetadataResponse>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  Integration: ResolverTypeWrapper<Integration>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   LegalEntityInput: LegalEntityInput;
   LoginUserInput: LoginUserInput;
   Media: ResolverTypeWrapper<Media>;
   MediaFiltersInput: MediaFiltersInput;
   MediaResponse: ResolverTypeWrapper<MediaResponse>;
+  Medium: Medium;
   Member: ResolverTypeWrapper<Member>;
   MemberRole: MemberRole;
   Meta: ResolverTypeWrapper<Meta>;
@@ -1294,6 +1407,7 @@ export type ResolversTypes = {
   TeamInput: TeamInput;
   TeamMembersRelation: TeamMembersRelation;
   Time: ResolverTypeWrapper<Scalars['Time']>;
+  UpdateAppInput: UpdateAppInput;
   UpdateCategoryInput: UpdateCategoryInput;
   UpdateClientInput: UpdateClientInput;
   UpdateContentInput: UpdateContentInput;
@@ -1315,6 +1429,10 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  App: App;
+  AppFiltersInput: AppFiltersInput;
+  AppResponse: AppResponse;
+  Apps: Apps;
   Boolean: Scalars['Boolean'];
   BoxStats: BoxStats;
   Category: Category;
@@ -1329,6 +1447,7 @@ export type ResolversParentTypes = {
   ContentResponse: ContentResponse;
   Country: Country;
   CountryInput: CountryInput;
+  CreateAppInput: CreateAppInput;
   CreateCategoryInput: CreateCategoryInput;
   CreateClientInput: CreateClientInput;
   CreateContentInput: CreateContentInput;
@@ -1345,12 +1464,14 @@ export type ResolversParentTypes = {
   ID: Scalars['ID'];
   IndexMetadataResponse: IndexMetadataResponse;
   Int: Scalars['Int'];
+  Integration: Integration;
   JSON: Scalars['JSON'];
   LegalEntityInput: LegalEntityInput;
   LoginUserInput: LoginUserInput;
   Media: Media;
   MediaFiltersInput: MediaFiltersInput;
   MediaResponse: MediaResponse;
+  Medium: Medium;
   Member: Member;
   Meta: Meta;
   Metadata: Metadata;
@@ -1382,6 +1503,7 @@ export type ResolversParentTypes = {
   TeamInput: TeamInput;
   TeamMembersRelation: TeamMembersRelation;
   Time: Scalars['Time'];
+  UpdateAppInput: UpdateAppInput;
   UpdateCategoryInput: UpdateCategoryInput;
   UpdateClientInput: UpdateClientInput;
   UpdateContentInput: UpdateContentInput;
@@ -1398,6 +1520,25 @@ export type ResolversParentTypes = {
   UserTeamsRelation: UserTeamsRelation;
   UserTemplate: UserTemplate;
   subUser: SubUser;
+};
+
+export type AppResolvers<ContextType = any, ParentType extends ResolversParentTypes['App'] = ResolversParentTypes['App']> = {
+  app?: Resolver<Maybe<ResolversTypes['Integration']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isActivated?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  secret?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AppResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['AppResponse'] = ResolversParentTypes['AppResponse']> = {
+  apps?: Resolver<Array<ResolversTypes['App']>, ParentType, ContextType>;
+  meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type BoxStatsResolvers<ContextType = any, ParentType extends ResolversParentTypes['BoxStats'] = ResolversParentTypes['BoxStats']> = {
@@ -1514,6 +1655,16 @@ export type IndexMetadataResponseResolvers<ContextType = any, ParentType extends
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type IntegrationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Integration'] = ResolversParentTypes['Integration']> = {
+  createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
   name: 'JSON';
 }
@@ -1566,6 +1717,7 @@ export type MetadataResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   changePassword?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'oldPassword'>>;
+  createApp?: Resolver<Maybe<ResolversTypes['App']>, ParentType, ContextType, RequireFields<MutationCreateAppArgs, 'input'>>;
   createCategory?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<MutationCreateCategoryArgs, 'input'>>;
   createClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationCreateClientArgs, 'input'>>;
   createContent?: Resolver<Maybe<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<MutationCreateContentArgs, 'input'>>;
@@ -1576,6 +1728,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createTag?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<MutationCreateTagArgs, 'input'>>;
   createTeam?: Resolver<ResolversTypes['Team'], ParentType, ContextType, RequireFields<MutationCreateTeamArgs, 'input'>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'input'>>;
+  deleteApp?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteAppArgs, 'id'>>;
   deleteCategory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, 'id'>>;
   deleteClient?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteClientArgs, 'id'>>;
   deleteContent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteContentArgs, 'id'>>;
@@ -1594,6 +1747,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   sendSegment?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendSegmentArgs, 'input'>>;
   switchTeam?: Resolver<ResolversTypes['Team'], ParentType, ContextType, RequireFields<MutationSwitchTeamArgs, 'id'>>;
   updateActiveTeam?: Resolver<ResolversTypes['Team'], ParentType, ContextType, RequireFields<MutationUpdateActiveTeamArgs, 'input'>>;
+  updateApp?: Resolver<ResolversTypes['App'], ParentType, ContextType, RequireFields<MutationUpdateAppArgs, 'id' | 'input'>>;
   updateCategory?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<MutationUpdateCategoryArgs, 'id' | 'input'>>;
   updateClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationUpdateClientArgs, 'id' | 'input'>>;
   updateContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<MutationUpdateContentArgs, 'id' | 'input'>>;
@@ -1670,6 +1824,8 @@ export type PortfolioDetailResolvers<ContextType = any, ParentType extends Resol
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getApp?: Resolver<ResolversTypes['App'], ParentType, ContextType, RequireFields<QueryGetAppArgs, 'id'>>;
+  getApps?: Resolver<ResolversTypes['AppResponse'], ParentType, ContextType, RequireFields<QueryGetAppsArgs, never>>;
   getBoxStats?: Resolver<Maybe<ResolversTypes['BoxStats']>, ParentType, ContextType, RequireFields<QueryGetBoxStatsArgs, never>>;
   getCategories?: Resolver<ResolversTypes['CategoryResponse'], ParentType, ContextType, RequireFields<QueryGetCategoriesArgs, never>>;
   getCategory?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<QueryGetCategoryArgs, 'id'>>;
@@ -1822,6 +1978,8 @@ export type SubUserResolvers<ContextType = any, ParentType extends ResolversPare
 };
 
 export type Resolvers<ContextType = any> = {
+  App?: AppResolvers<ContextType>;
+  AppResponse?: AppResponseResolvers<ContextType>;
   BoxStats?: BoxStatsResolvers<ContextType>;
   Category?: CategoryResolvers<ContextType>;
   CategoryResponse?: CategoryResponseResolvers<ContextType>;
@@ -1833,6 +1991,7 @@ export type Resolvers<ContextType = any> = {
   Country?: CountryResolvers<ContextType>;
   Feature?: FeatureResolvers<ContextType>;
   IndexMetadataResponse?: IndexMetadataResponseResolvers<ContextType>;
+  Integration?: IntegrationResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   Media?: MediaResolvers<ContextType>;
   MediaResponse?: MediaResponseResolvers<ContextType>;

@@ -14,6 +14,7 @@ import tags from './tags'
 import socials from './socials'
 import teams from './teams'
 import media from './media'
+import apps from './apps'
 
 const typeDefs = gql`
   scalar Time
@@ -58,8 +59,8 @@ const schema = makeExecutableSchema({
     teams.typeDefs,
     media.typeDefs,
     //   admin.typeDefs,
-    segment.typeDefs
-    //   invoices.typeDefs
+    segment.typeDefs,
+    apps.typeDefs
   ],
   resolvers: [
     resolvers,
@@ -76,8 +77,8 @@ const schema = makeExecutableSchema({
     teams.resolvers,
     media.resolvers,
     //   admin.resolvers,
-    segment.resolvers
-    //   invoices.resolvers
+    segment.resolvers,
+    apps.resolvers
   ]
 })
 

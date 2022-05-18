@@ -20,6 +20,8 @@ export default async (
       throw new ApolloError('User not found', '404')
     }
 
+    // Remove www from URL and / at the end
+
     const portfolio = await prisma.portfolio.findFirst({
       where: { userId: user.id, url: filters?.url! },
       include: { template: true }

@@ -150,6 +150,7 @@ const typeDefs = gql`
     visibility: Visibility
     likes: Int
     shares: Int
+    apps: Apps
     paymentType: PaymentType
   }
 
@@ -174,6 +175,7 @@ const typeDefs = gql`
     paymentType: String
     amount: Float
     tags: [String!]
+    apps: Apps
     clientId: ID
     category: String
     visibility: String

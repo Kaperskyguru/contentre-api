@@ -15,6 +15,9 @@ export interface Environment {
     server: string
     id: string
   }
+  medium: {
+    BASE_URL: string
+  }
   database: {
     url: string
   }
@@ -88,6 +91,9 @@ export const environment: Environment = {
     key: process.env.MAILCHIMP_KEY as string,
     server: process.env.MAILCHIMP_SERVER as string,
     id: process.env.MAILCHIMP_LIST_ID as string
+  },
+  medium: {
+    BASE_URL: process.env.MEDIUM_BASE_URL as string
   },
   database: {
     url: process.env.DATABASE_URL as string
