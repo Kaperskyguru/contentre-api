@@ -5,6 +5,7 @@ import { Content, MutationUpdateContentArgs } from '@modules-types'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 import sendToSegment from '@extensions/segment-service/segment'
+import Plugins from '@/helpers/plugins'
 
 interface UpdateData {
   title?: string
@@ -101,6 +102,18 @@ export default async (
           tags: input.tags
         }
       })
+    }
+
+    // Share to App
+    if (input.apps !== undefined) {
+      if (input.apps?.medium) {
+        input.apps.medium.title = updatedContent.title
+        input.apps.medium.content =
+          updatedContent?.content ?? updatedContent.excerpt
+        input.apps.medium.tags = input.tags
+      }
+
+      await Plugins(input.apps, { user, prisma })
     }
 
     return updatedContent

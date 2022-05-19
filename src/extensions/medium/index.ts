@@ -45,8 +45,12 @@ class Medium {
       throw new ApolloError('User not found', '404')
     }
 
-    const res = await this.axios.post(`/users/${userInfo.id}/posts`, data)
-    return res.data.data
+    try {
+      const res = await this.axios.post(`/users/${userInfo.id}/posts`, data)
+      return res.data.data
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   async publish(publicationId: string, data: Post | null): Promise<boolean> {

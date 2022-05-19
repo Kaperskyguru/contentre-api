@@ -1,9 +1,11 @@
+import whereClientRaw from '@/modules/clients/helpers/where-clients-raw'
 import { useErrorParser } from '@helpers'
 import { logError, logQuery } from '@helpers/logger'
 import { BoxStats, QueryGetIndexMetadataArgs } from '@modules-types'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 import whereContentRaw from '../helpers/where-contents-raw'
+// import whereClientRaw from 'clients/helpers/where-clients-raw'
 
 export default async (
   _parent: unknown,
@@ -42,7 +44,7 @@ export default async (
               "Content" c LEFT JOIN
               "Category" cat ON c."categoryId" = cat."id" LEFT JOIN
              
-              "Client" cl ON c."categoryId" = cl."id"
+              "Client" cl ON c."clientId" = cl."id"
             WHERE
                 c."id" IS NOT NULL
                 ${query}
@@ -51,24 +53,25 @@ export default async (
       ...args
     )
 
+    const { query: clientQuery, args: clientArgs } = whereClientRaw(
+      user,
+      filters
+    )
     const clientCountsByJanuary: GrowthValues[] = await prisma.$queryRawUnsafe(
       `
             SELECT
-            COUNT(cl."id") FILTER(WHERE TO_CHAR("cl"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "totalClients",
-            COUNT(cl."id") FILTER(WHERE TO_CHAR("cl"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT) "lastClients"
+              COUNT(cl."id") FILTER(WHERE TO_CHAR("cl"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "totalClients",
+              COUNT(cl."id") FILTER(WHERE TO_CHAR("cl"."createdAt", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT) "lastClients"
             FROM
-              "Client" cl LEFT JOIN
-              "Content" c ON cl."id" = c."clientId" LEFT JOIN
-              "Category" cat ON c."categoryId" = cat."id"
+              "Client" cl
+            WHERE (
+                  cl."id" IS NOT NULL
+                  ${clientQuery}
+                )
               
-            WHERE
-                cl."id" IS NOT NULL
-                ${query}
           `.clearIndentation(),
-      ...args
+      ...clientArgs
     )
-
-    console.log(clientCountsByJanuary)
 
     const values = contentCountsByJanuary.map((val) => {
       const subInteractions =
