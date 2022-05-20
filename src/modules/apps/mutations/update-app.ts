@@ -40,7 +40,7 @@ export default async (
     if (isActivated !== undefined) data.isActivated = isActivated
 
     // Finally update the category.
-    return await prisma.category.update({
+    return await prisma.connectedApp.update({
       where: { id },
       data
     })
