@@ -7,11 +7,6 @@ import { ApolloError } from 'apollo-server-errors'
 import sendToSegment from '@extensions/segment-service/segment'
 import Plugins from '@/helpers/plugins'
 
-interface UpdateData {
-  title?: string
-  clientId?: string
-}
-
 export default async (
   _parent: unknown,
   { id, input }: MutationUpdateContentArgs,
@@ -85,7 +80,6 @@ export default async (
       const tagNames = Object.values(input.tags).map((name: any) => ({
         name,
         userId: user.id,
-        // teamId: user.activeTeamId! ?? undefined,
         team: { connect: { id: user.activeTeamId! } }
       }))
 
@@ -109,7 +103,9 @@ export default async (
       if (input.apps?.medium) {
         input.apps.medium.title = updatedContent.title
         input.apps.medium.content =
-          updatedContent?.content ?? updatedContent.excerpt
+          !updatedContent?.content || updatedContent?.content === ''
+            ? updatedContent.excerpt
+            : updatedContent?.content
         input.apps.medium.tags = input.tags
       }
 

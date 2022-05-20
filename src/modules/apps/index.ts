@@ -64,14 +64,14 @@ const typeDefs = gql`
   }
 
   enum Format {
-    HTML
-    MARKDOWN
+    html
+    markdown
   }
 
   enum AppStatus {
-    PUBLIC
-    DRAFT
-    UNLISTED
+    public
+    draft
+    unlisted
   }
 
   extend type Query {

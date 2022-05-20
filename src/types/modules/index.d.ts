@@ -43,9 +43,9 @@ export type AppResponse = {
 };
 
 export type AppStatus =
-  | 'DRAFT'
-  | 'PUBLIC'
-  | 'UNLISTED';
+  | 'draft'
+  | 'public'
+  | 'unlisted';
 
 export type Apps = {
   medium?: InputMaybe<Medium>;
@@ -307,8 +307,8 @@ export type Feature = {
 };
 
 export type Format =
-  | 'HTML'
-  | 'MARKDOWN';
+  | 'html'
+  | 'markdown';
 
 export type IndexMetadataResponse = {
   __typename?: 'IndexMetadataResponse';
