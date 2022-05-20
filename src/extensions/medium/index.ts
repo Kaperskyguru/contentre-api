@@ -75,7 +75,7 @@ class Medium {
     if (!this.axios) {
       throw new ApolloError('')
     }
-    const res = await this.axios.get('/v1/me')
+    const res = await this.axios.get('/me')
     return res.data.data
   }
 
