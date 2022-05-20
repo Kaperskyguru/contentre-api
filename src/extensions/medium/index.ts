@@ -26,7 +26,7 @@ class Medium {
   axios: any
   constructor(medium: ConnectedApp) {
     this.axios = axios.create({
-      baseURL: environment.medium.BASE_URL ?? 'https://api.medium.com',
+      baseURL: environment.medium.BASE_URL ?? 'https://api.medium.com/v1',
       headers: {
         Authorization: `Bearer ${medium.token}`,
         'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ class Medium {
   }
 
   async create(data: Post | null): Promise<Post | undefined> {
-    if (environment.context !== 'PRODUCTION') return
+    // if (environment.context !== 'PRODUCTION') return
 
     // Get User
     const userInfo = await this.user()
