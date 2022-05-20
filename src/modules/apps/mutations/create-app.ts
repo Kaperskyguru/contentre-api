@@ -50,7 +50,7 @@ export default async (
         slug,
         app: { connect: { id: integration?.id! } },
         secret: key,
-        isActivated: true,
+        isActivated: false,
         team: { connect: { id: user.activeTeamId! } }
       }
     })
