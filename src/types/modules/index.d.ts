@@ -326,6 +326,10 @@ export type Integration = {
   updatedAt: Scalars['Time'];
 };
 
+export type InviteFriendsInput = {
+  emails: Array<Scalars['String']>;
+};
+
 export type LegalEntityInput = {
   countryCode?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
@@ -438,6 +442,7 @@ export type Mutation = {
   deleteTag: Scalars['Boolean'];
   deleteTeam: User;
   deleteUser: Scalars['Boolean'];
+  inviteFriends: Scalars['Boolean'];
   loginUser: User;
   logoutUser: Scalars['Boolean'];
   resetPassword: User;
@@ -575,6 +580,11 @@ export type MutationDeleteTeamArgs = {
 export type MutationDeleteUserArgs = {
   feedback?: InputMaybe<Scalars['String']>;
   oldPassword: Scalars['String'];
+};
+
+
+export type MutationInviteFriendsArgs = {
+  data: InviteFriendsInput;
 };
 
 
@@ -1364,6 +1374,7 @@ export type ResolversTypes = {
   IndexMetadataResponse: ResolverTypeWrapper<IndexMetadataResponse>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Integration: ResolverTypeWrapper<Integration>;
+  InviteFriendsInput: InviteFriendsInput;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   LegalEntityInput: LegalEntityInput;
   LoginUserInput: LoginUserInput;
@@ -1465,6 +1476,7 @@ export type ResolversParentTypes = {
   IndexMetadataResponse: IndexMetadataResponse;
   Int: Scalars['Int'];
   Integration: Integration;
+  InviteFriendsInput: InviteFriendsInput;
   JSON: Scalars['JSON'];
   LegalEntityInput: LegalEntityInput;
   LoginUserInput: LoginUserInput;
@@ -1738,6 +1750,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteTag?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteTagArgs, 'id'>>;
   deleteTeam?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationDeleteTeamArgs, 'id'>>;
   deleteUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'oldPassword'>>;
+  inviteFriends?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationInviteFriendsArgs, 'data'>>;
   loginUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'data'>>;
   logoutUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   resetPassword?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'newPassword'>>;

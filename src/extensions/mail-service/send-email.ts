@@ -1,6 +1,5 @@
 import { environment } from '@/helpers/environment'
 import { logError } from '@/helpers/logger'
-import { User } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
 import nodemailer from 'nodemailer'
 import URL from 'url-parse'
@@ -9,6 +8,7 @@ import passwordChanged from '@extensions/mail-service/email-templates/password-c
 import welcome from '@extensions/mail-service/email-templates/welcome'
 import SendGrid from '@sendgrid/mail'
 import verificationEmail from './email-templates/verification-email'
+import inviteFriends from './email-templates/invite-friends'
 interface GenerateEmailLink {
   email: string
   token: string
@@ -56,6 +56,9 @@ export default async ({ to, template, variables }: SendEmail) => {
       case 'welcome':
         subject += `Welcome to Contentre!`
         return welcome(variables)
+      case 'invite-friends':
+        subject += `Invitation to join Contentre!`
+        return inviteFriends(variables)
     }
   }
 
