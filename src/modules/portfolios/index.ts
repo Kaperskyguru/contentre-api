@@ -7,6 +7,7 @@ import getPortfolioContent from './queries/get-portfolio-contents'
 import getPortfolioDetail from './queries/get-portfolio-details'
 import getPortfolio from './queries/get-portfolio'
 import updatePortfolio from './mutations/update-portfolio'
+import getTemplates from './queries/get-templates'
 
 const typeDefs = gql`
   type Portfolio {
@@ -20,6 +21,12 @@ const typeDefs = gql`
     template: UserTemplate
     createdAt: Time!
     updatedAt: Time!
+  }
+
+  type Template {
+    id: ID!
+    title: String!
+    slug: String!
   }
 
   type UserTemplate {
@@ -39,6 +46,8 @@ const typeDefs = gql`
   type PortfolioDetail {
     html: String
     about: String
+    templateSlug: String!
+    templateType: TemplateType!
     job: String
     coverImage: String
     name: String!
@@ -55,6 +64,11 @@ const typeDefs = gql`
     tags: [String!]
   }
 
+  enum TemplateType {
+    TEMPLATE
+    CUSTOMIZED
+  }
+
   input UpdatePortfolioInput {
     title: String
     description: String
@@ -62,6 +76,10 @@ const typeDefs = gql`
   }
 
   input PortfolioFiltersInput {
+    terms: String
+  }
+
+  input TemplateFiltersInput {
     terms: String
   }
 
@@ -91,6 +109,13 @@ const typeDefs = gql`
       skip: Int
       filters: PortfolioFiltersInput
     ): [Portfolio!]!
+
+    getTemplates(
+      size: Int
+      skip: Int
+      filters: TemplateFiltersInput
+    ): [Template!]!
+
     getPortfolio(id: ID!): Portfolio!
     getPortfolioContent(
       size: Int
@@ -111,7 +136,8 @@ const resolvers: Resolvers = {
     getPortfolios,
     getPortfolio,
     getPortfolioContent,
-    getPortfolioDetail
+    getPortfolioDetail,
+    getTemplates
   },
 
   Mutation: {

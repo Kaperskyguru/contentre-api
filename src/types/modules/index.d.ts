@@ -788,6 +788,8 @@ export type PortfolioDetail = {
   job?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   profileImage?: Maybe<Scalars['String']>;
+  templateSlug: Scalars['String'];
+  templateType: TemplateType;
 };
 
 export type PortfolioDetailsFilters = {
@@ -828,6 +830,7 @@ export type Query = {
   getTagStats?: Maybe<OverallStatResponse>;
   getTags: TagResponse;
   getTeams: Array<Team>;
+  getTemplates: Array<Template>;
   getTopicStats?: Maybe<OverallStatResponse>;
   getUser: User;
   getVersion: Scalars['String'];
@@ -972,6 +975,13 @@ export type QueryGetTagsArgs = {
 };
 
 
+export type QueryGetTemplatesArgs = {
+  filters?: InputMaybe<TemplateFiltersInput>;
+  size?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryGetTopicStatsArgs = {
   filters?: InputMaybe<ContentFiltersInput>;
 };
@@ -1108,6 +1118,21 @@ export type TeamMembersRelation = {
   create?: InputMaybe<Array<InputMaybe<UserInput>>>;
   disconnect?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
+
+export type Template = {
+  __typename?: 'Template';
+  id: Scalars['ID'];
+  slug: Scalars['String'];
+  title: Scalars['String'];
+};
+
+export type TemplateFiltersInput = {
+  terms?: InputMaybe<Scalars['String']>;
+};
+
+export type TemplateType =
+  | 'CUSTOMIZED'
+  | 'TEMPLATE';
 
 export type UpdateAppInput = {
   isActivated?: InputMaybe<Scalars['Boolean']>;
@@ -1417,6 +1442,9 @@ export type ResolversTypes = {
   TeamAdminsRelation: TeamAdminsRelation;
   TeamInput: TeamInput;
   TeamMembersRelation: TeamMembersRelation;
+  Template: ResolverTypeWrapper<Template>;
+  TemplateFiltersInput: TemplateFiltersInput;
+  TemplateType: TemplateType;
   Time: ResolverTypeWrapper<Scalars['Time']>;
   UpdateAppInput: UpdateAppInput;
   UpdateCategoryInput: UpdateCategoryInput;
@@ -1514,6 +1542,8 @@ export type ResolversParentTypes = {
   TeamAdminsRelation: TeamAdminsRelation;
   TeamInput: TeamInput;
   TeamMembersRelation: TeamMembersRelation;
+  Template: Template;
+  TemplateFiltersInput: TemplateFiltersInput;
   Time: Scalars['Time'];
   UpdateAppInput: UpdateAppInput;
   UpdateCategoryInput: UpdateCategoryInput;
@@ -1833,6 +1863,8 @@ export type PortfolioDetailResolvers<ContextType = any, ParentType extends Resol
   job?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   profileImage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  templateSlug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  templateType?: Resolver<ResolversTypes['TemplateType'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1863,6 +1895,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getTagStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetTagStatsArgs, never>>;
   getTags?: Resolver<ResolversTypes['TagResponse'], ParentType, ContextType, RequireFields<QueryGetTagsArgs, never>>;
   getTeams?: Resolver<Array<ResolversTypes['Team']>, ParentType, ContextType>;
+  getTemplates?: Resolver<Array<ResolversTypes['Template']>, ParentType, ContextType, RequireFields<QueryGetTemplatesArgs, never>>;
   getTopicStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetTopicStatsArgs, never>>;
   getUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryGetUserArgs, 'uuid'>>;
   getVersion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1933,6 +1966,13 @@ export type TeamResolvers<ContextType = any, ParentType extends ResolversParentT
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type TemplateResolvers<ContextType = any, ParentType extends ResolversParentTypes['Template'] = ResolversParentTypes['Template']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2027,6 +2067,7 @@ export type Resolvers<ContextType = any> = {
   Tag?: TagResolvers<ContextType>;
   TagResponse?: TagResponseResolvers<ContextType>;
   Team?: TeamResolvers<ContextType>;
+  Template?: TemplateResolvers<ContextType>;
   Time?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
   UserTemplate?: UserTemplateResolvers<ContextType>;

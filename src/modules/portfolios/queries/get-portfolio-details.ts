@@ -14,7 +14,6 @@ export default async (
     const user = await prisma.user.findFirst({
       where: { username: filters.username }
     })
-    console.log(filters)
 
     if (!user) {
       throw new ApolloError('User not found', '404')
@@ -24,15 +23,18 @@ export default async (
 
     const portfolio = await prisma.portfolio.findFirst({
       where: { userId: user.id, url: filters?.url! },
-      include: { template: true }
+      include: { template: { include: { template: true } } }
     })
 
     if (!portfolio) {
       throw new ApolloError('Portfolio not found', '404')
     }
 
+    const template = portfolio?.template.template
     return {
       html: portfolio?.template?.content,
+      templateType: template?.type,
+      templateSlug: template?.slug,
       about: user.bio,
       job: user.jobTitle,
       coverImage: '',

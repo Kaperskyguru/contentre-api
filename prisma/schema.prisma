@@ -253,9 +253,16 @@ model Feature {
   subscription   Subscription @relation("SubscriptionFeature", fields: [subscriptionId], references: [id])
 }
 
+enum TemplateType {
+  TEMPLATE
+  CUSTOMIZED
+}
+
 model Template {
   id           String         @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
   title        String         @db.VarChar(2048)
+  slug         String         @default("Default") @db.VarChar(2048)
+  type         TemplateType   @default(TEMPLATE)
   userId       String?        @db.Char(36)
   user         User?          @relation("UserTemplate", fields: [userId], references: [id])
   content      String         @db.Text
@@ -263,6 +270,8 @@ model Template {
   createdAt    DateTime       @default(now()) @db.Timestamp(6)
   updatedAt    DateTime       @default(now()) @updatedAt @db.Timestamp(6)
   UserTemplate UserTemplate[] @relation("TemplateUserTemplate")
+
+  @@unique([slug], name: "uniqueSlug", map: "uniqueSlug")
 }
 
 model UserTemplate {

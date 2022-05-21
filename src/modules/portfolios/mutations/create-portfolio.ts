@@ -33,6 +33,16 @@ export default async (
       Math.floor(100000 + Math.random() * 900000)
     )}`
 
+    /**
+     *
+     * When creating Templates, Generate Slug in this format
+     *
+     * Name: Light Green
+     *
+     * Slug: LightGreen_[rand]
+     *
+     */
+
     //Check for existing portfolio
     const portfolio = await prisma.portfolio.findFirst({
       where: { userId: user.id, url: url }

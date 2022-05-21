@@ -35,16 +35,15 @@ const seedTemplates = async () => {
     }
   })
 
-  await prisma.template.createMany({
-    data: [
-      {
-        title: 'Blank',
-        content: '<h1>Blank</h1>',
-        userId: updateUser.id,
-        visibility: 'PUBLIC'
-      }
-    ],
-    skipDuplicates: true
+  await prisma.template.upsert({
+    where: { slug: 'Default' },
+    create: {
+      title: 'Blank',
+      content: '<h1>Blank</h1>',
+      userId: updateUser.id,
+      visibility: 'PUBLIC'
+    },
+    update: {}
   })
 }
 
