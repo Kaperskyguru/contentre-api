@@ -48,16 +48,18 @@ export default async (
     //Find sub where it's free
     const sub = await prisma.subscription.findFirst({ where: { name: 'free' } })
 
+    const lowerCasedUsername = input.username.toLocaleLowerCase()
+
     // If success, create a new user in our DB.
     user = await prisma.user.create({
       data: {
         email: input.email,
-        username: input.username,
+        username: lowerCasedUsername,
         subscriptionId: sub?.id!,
         billingId: 'BillingId',
         name: input.name,
         signedUpThrough: input.signedUpThrough!,
-        portfolioURL: `${environment.domain}/${input.username}`,
+        portfolioURL: `${environment.domain}/${lowerCasedUsername}`,
         password: await hashPassword(input.password),
         ...data
       },

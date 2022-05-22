@@ -20,8 +20,8 @@ export default async (
   logMutation('loginUser %o', { input: data, ipAddress, requestURL })
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { email },
+    const user = await prisma.user.findFirst({
+      where: { email: { equals: email, mode: 'insensitive' } },
       include: { subscription: true }
     })
 

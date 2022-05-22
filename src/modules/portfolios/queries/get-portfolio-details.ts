@@ -12,17 +12,23 @@ export default async (
   logQuery('getPortfolioDetail %o', filters)
   try {
     const user = await prisma.user.findFirst({
-      where: { username: filters.username }
+      where: { username: { equals: filters.username, mode: 'insensitive' } }
     })
 
     if (!user) {
       throw new ApolloError('User not found', '404')
     }
 
-    // Remove www from URL and / at the end
+    if (!filters?.url) {
+      throw new ApolloError('URL not found', '404')
+    }
+    const formattedURL = filters?.url.replace(/\/$/, '').trim()
 
     const portfolio = await prisma.portfolio.findFirst({
-      where: { userId: user.id, url: filters?.url! },
+      where: {
+        userId: user.id,
+        url: { equals: formattedURL, mode: 'insensitive' }
+      },
       include: { template: { include: { template: true } } }
     })
 
