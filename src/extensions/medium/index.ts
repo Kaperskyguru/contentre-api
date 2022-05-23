@@ -21,7 +21,6 @@ interface MediumUser {
   imageUrl: string
 }
 
-// 2d70de98a4a6c0318f6c049945d120890f460fe93de781e095afc5192e692ba64
 class Medium {
   axios: any
   constructor(medium: ConnectedApp) {
@@ -37,7 +36,7 @@ class Medium {
   }
 
   async create(data: Post | null): Promise<Post | undefined> {
-    // if (environment.context !== 'PRODUCTION') return
+    if (environment.context !== 'PRODUCTION') return
 
     // Get User
     const userInfo = await this.user()

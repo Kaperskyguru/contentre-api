@@ -3,6 +3,7 @@ const defaultPort = 9000
 export interface Environment {
   context: 'LOCAL' | 'DEVELOP' | 'STAGING' | 'PRODUCTION'
   apiURL: string
+  appName: string
   domain: string
   port: number | string
   debug?: string
@@ -25,18 +26,16 @@ export interface Environment {
     saltRounds: number
     tokenSecret: string
   }
+  mailjet: {
+    apiKey: string
+    apiSecret: string
+  }
   mail: {
-    type: string
-    sendAPIKey: string
     host: string
     port: number
     username: string
     password: string
-  } | null
-  twilio: {
-    sid: string
-    token: string
-    phone: string
+    sender: string
   } | null
   sentry: {
     dsn: string
@@ -55,12 +54,6 @@ export interface Environment {
   }
   adminToken?: string
   segment: string
-  heronData: {
-    username: string
-    password: string
-    url: string
-    signature: string
-  }
   pusher: {
     appId: string
     key: string
@@ -81,6 +74,7 @@ export const environment: Environment = {
   context,
   port: process.env.PORT || defaultPort,
   apiURL: process.env.API_URL as string,
+  appName: process.env.APP_NAME as string,
   domain: process.env.FE_URL as string,
   debug: process.env.DEBUG,
   apollo: {
@@ -102,34 +96,17 @@ export const environment: Environment = {
     saltRounds: Number(process.env.AUTH_SALT_ROUNDS) || 10,
     tokenSecret: process.env.AUTH_TOKEN_SECRET as string
   },
-
-  mail:
-    process.env.MAIL_TYPE === 'send'
-      ? {
-          sendAPIKey: process.env.SEND_API_KEY as string,
-          type: process.env.MAIL_TYPE as string,
-          host: process.env.MAIL_HOST as string,
-          port: Number(process.env.MAIL_PORT) || 2525,
-          username: process.env.MAIL_USERNAME as string,
-          password: process.env.MAIL_PASSWORD as string
-        }
-      : process.env.MAIL_HOST || process.env.MAIL_PORT
-      ? {
-          host: process.env.MAIL_HOST as string,
-          type: process.env.MAIL_TYPE as string,
-          sendAPIKey: process.env.SEND_API_KEY as string,
-          port: Number(process.env.MAIL_PORT) || 2525,
-          username: process.env.MAIL_USERNAME as string,
-          password: process.env.MAIL_PASSWORD as string
-        }
-      : null,
-  twilio: process.env.TWILIO_ACCOUNT_SID
-    ? {
-        sid: process.env.TWILIO_ACCOUNT_SID as string,
-        token: process.env.TWILIO_AUTH_TOKEN as string,
-        phone: process.env.TWILIO_PHONE_NUMBER as string
-      }
-    : null,
+  mailjet: {
+    apiKey: process.env.MAILJET_KEY as string,
+    apiSecret: process.env.MAILJET_SECRET as string
+  },
+  mail: {
+    host: process.env.MAIL_HOST as string,
+    port: Number(process.env.MAIL_PORT) || 2525,
+    username: process.env.MAIL_USERNAME as string,
+    password: process.env.MAIL_PASSWORD as string,
+    sender: process.env.MAIL_SENDER as string
+  },
   sentry: {
     dsn: process.env.SENTRY_DSN as string
   },
@@ -147,12 +124,6 @@ export const environment: Environment = {
   },
   adminToken: process.env.ADMIN_TOKEN,
   segment: process.env.SEGMENT_KEY as string,
-  heronData: {
-    username: process.env.HERON_DATA_USERNAME as string,
-    password: process.env.HERON_DATA_PASSWORD as string,
-    url: process.env.HERON_DATA_BASE_URL as string,
-    signature: process.env.HERON_DATA_SIGNATURE as string
-  },
   pusher: {
     appId: process.env.PUSHER_APPID!,
     key: process.env.PUSHER_KEY!,
