@@ -45,7 +45,12 @@ export default async (
       job: user.jobTitle,
       coverImage: '',
       profileImage: user.avatarURL,
-      name: user.name
+      name: user.name,
+      contact: {
+        email: user.email,
+        phone: user.phoneNumber,
+        address: user.homeAddress
+      }
     }
   } catch (e) {
     logError('getPortfolioDetail %o', e)

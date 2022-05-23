@@ -47,8 +47,8 @@ export default async (
         where: {
           ...where,
           OR: [
-            { clientId: portfolio?.clientId! },
-            { categoryId: portfolio.categoryId },
+            { clientId: portfolio?.clientId! ?? undefined },
+            { categoryId: portfolio?.categoryId ?? undefined },
             {
               tags: {
                 path: [],
@@ -64,7 +64,7 @@ export default async (
         where: {
           ...where,
           OR: [
-            { clientId: portfolio?.clientId! },
+            { clientId: portfolio?.clientId! ?? undefined },
             { categoryId: portfolio.categoryId },
             {
               tags: {
@@ -84,12 +84,12 @@ export default async (
         where: {
           userId: user.id,
           visibility: 'PUBLIC',
-          id: portfolio?.clientId!
+          id: portfolio?.clientId! ?? undefined
         }
       })
       // Get Categories
       const categories = await prisma.category.findMany({
-        where: { userId: user.id, id: portfolio?.categoryId! }
+        where: { userId: user.id, id: portfolio?.categoryId! ?? undefined }
       })
       // Get Topics
       // const topics = await prisma.topic.findMany({

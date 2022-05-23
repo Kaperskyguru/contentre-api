@@ -144,6 +144,13 @@ export type ClientResponse = {
   meta: Meta;
 };
 
+export type Contact = {
+  __typename?: 'Contact';
+  address?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+};
+
 export type Content = {
   __typename?: 'Content';
   amount?: Maybe<Scalars['Float']>;
@@ -783,6 +790,7 @@ export type PortfolioContentFilters = {
 export type PortfolioDetail = {
   __typename?: 'PortfolioDetail';
   about?: Maybe<Scalars['String']>;
+  contact?: Maybe<Contact>;
   coverImage?: Maybe<Scalars['String']>;
   html?: Maybe<Scalars['String']>;
   job?: Maybe<Scalars['String']>;
@@ -1374,6 +1382,7 @@ export type ResolversTypes = {
   Client: ResolverTypeWrapper<Client>;
   ClientFiltersInput: ClientFiltersInput;
   ClientResponse: ResolverTypeWrapper<ClientResponse>;
+  Contact: ResolverTypeWrapper<Contact>;
   Content: ResolverTypeWrapper<Content>;
   ContentFiltersInput: ContentFiltersInput;
   ContentResponse: ResolverTypeWrapper<ContentResponse>;
@@ -1481,6 +1490,7 @@ export type ResolversParentTypes = {
   Client: Client;
   ClientFiltersInput: ClientFiltersInput;
   ClientResponse: ClientResponse;
+  Contact: Contact;
   Content: Content;
   ContentFiltersInput: ContentFiltersInput;
   ContentResponse: ContentResponse;
@@ -1641,6 +1651,13 @@ export type ClientResolvers<ContextType = any, ParentType extends ResolversParen
 export type ClientResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['ClientResponse'] = ResolversParentTypes['ClientResponse']> = {
   clients?: Resolver<Array<ResolversTypes['Client']>, ParentType, ContextType>;
   meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ContactResolvers<ContextType = any, ParentType extends ResolversParentTypes['Contact'] = ResolversParentTypes['Contact']> = {
+  address?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  phone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1858,6 +1875,7 @@ export type PortfolioContentResolvers<ContextType = any, ParentType extends Reso
 
 export type PortfolioDetailResolvers<ContextType = any, ParentType extends ResolversParentTypes['PortfolioDetail'] = ResolversParentTypes['PortfolioDetail']> = {
   about?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  contact?: Resolver<Maybe<ResolversTypes['Contact']>, ParentType, ContextType>;
   coverImage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   html?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   job?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2039,6 +2057,7 @@ export type Resolvers<ContextType = any> = {
   Chart?: ChartResolvers<ContextType>;
   Client?: ClientResolvers<ContextType>;
   ClientResponse?: ClientResponseResolvers<ContextType>;
+  Contact?: ContactResolvers<ContextType>;
   Content?: ContentResolvers<ContextType>;
   ContentResponse?: ContentResponseResolvers<ContextType>;
   Country?: CountryResolvers<ContextType>;

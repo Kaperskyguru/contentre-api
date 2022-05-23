@@ -52,6 +52,13 @@ const typeDefs = gql`
     coverImage: String
     name: String!
     profileImage: String
+    contact: Contact
+  }
+
+  type Contact {
+    phone: String
+    email: String
+    address: String
   }
 
   input CreatePortfolioInput {
