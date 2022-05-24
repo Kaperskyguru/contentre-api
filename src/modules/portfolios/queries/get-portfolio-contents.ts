@@ -45,6 +45,7 @@ export default async (
 
       const contentWithTotal = await prisma.content.count({
         where: {
+          visibility: 'PUBLIC',
           ...where,
           OR: [
             { clientId: portfolio?.clientId! ?? undefined },
@@ -62,6 +63,7 @@ export default async (
 
       const contents = await prisma.content.findMany({
         where: {
+          visibility: 'PUBLIC',
           ...where,
           OR: [
             { clientId: portfolio?.clientId! ?? undefined },
@@ -125,12 +127,12 @@ export default async (
     const where = whereContents(user, filters)
 
     const contentWithTotal = await prisma.content.count({
-      where,
+      where: { ...where, visibility: 'PUBLIC' },
       select: { id: true }
     })
 
     const contents = await prisma.content.findMany({
-      where,
+      where: { ...where, visibility: 'PUBLIC' },
       include: { client: true, category: true },
       skip: skip ?? 0,
       take: size ?? undefined
