@@ -266,7 +266,8 @@ model Template {
   userId       String?        @db.Char(36)
   user         User?          @relation("UserTemplate", fields: [userId], references: [id])
   content      String         @db.Text
-  visibility   Visibility     @default(PRIVATE)
+  css          String?        @db.Text
+  visibility   Visibility     @default(PUBLIC)
   createdAt    DateTime       @default(now()) @db.Timestamp(6)
   updatedAt    DateTime       @default(now()) @updatedAt @db.Timestamp(6)
   UserTemplate UserTemplate[] @relation("TemplateUserTemplate")
@@ -280,6 +281,7 @@ model UserTemplate {
   templateId String      @db.Char(36)
   template   Template    @relation("TemplateUserTemplate", fields: [templateId], references: [id])
   portfolio  Portfolio[] @relation("UserTemplatePortfolio")
+  css        String?     @db.Text
   createdAt  DateTime    @default(now()) @db.Timestamp(6)
   updatedAt  DateTime    @default(now()) @updatedAt @db.Timestamp(6)
 }

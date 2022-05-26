@@ -138,7 +138,8 @@ export default async (
       {
         url: updateUser.portfolioURL!,
         title: 'Default',
-        description: 'This is your default portfolio'
+        description: 'This is your default portfolio',
+        shouldCustomize: false
       },
       { user, prisma }
     )

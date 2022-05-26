@@ -12,6 +12,7 @@ interface PortfolioInput {
   clientId?: string
   categoryId?: string
   tags?: Array<string>
+  shouldCustomize: boolean
 }
 
 export const createPortfolio = async (
@@ -22,21 +23,28 @@ export const createPortfolio = async (
     templateId,
     clientId,
     categoryId,
-    tags
+    tags,
+    shouldCustomize
   }: PortfolioInput,
   { user, prisma }: { user: User | DBUser; prisma: PrismaClient }
 ): Promise<Portfolio> => {
   // Use Template or use Blank
   let template
-  if (templateId !== undefined) {
-    template = await prisma.template.findUnique({
-      where: { id: templateId! }
-    })
-  } else
-    template = await prisma.template.findFirst({
-      where: { title: { equals: 'BLANK', mode: 'insensitive' } }
-    })
 
+  if (shouldCustomize) {
+    template = await prisma.template.findFirst({
+      where: { title: { equals: 'CUSTOMIZE', mode: 'insensitive' } }
+    })
+  } else {
+    if (templateId !== undefined) {
+      template = await prisma.template.findUnique({
+        where: { id: templateId! }
+      })
+    } else
+      template = await prisma.template.findFirst({
+        where: { title: { equals: 'BLANK', mode: 'insensitive' } }
+      })
+  }
   // Create UserTemplate incase of editing
   const userTemplate = await prisma.userTemplate.create({
     data: {

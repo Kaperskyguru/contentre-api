@@ -27,6 +27,7 @@ export default async (
     let clientId = input.clientId ?? undefined
     let categoryId = input.categoryId ?? undefined
     let tags = input.tags ?? undefined
+    let shouldCustomize = input.shouldCustomize ?? false
 
     //Generate URL
     let url = `${environment.domain}/${user.username}/${String(
@@ -55,7 +56,16 @@ export default async (
     }
 
     return createPortfolio(
-      { url, description, title, templateId, clientId, categoryId, tags },
+      {
+        url,
+        description,
+        title,
+        templateId,
+        clientId,
+        categoryId,
+        tags,
+        shouldCustomize
+      },
       { user, prisma }
     )
   } catch (e) {

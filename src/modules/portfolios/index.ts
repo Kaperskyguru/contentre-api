@@ -8,6 +8,7 @@ import getPortfolioDetail from './queries/get-portfolio-details'
 import getPortfolio from './queries/get-portfolio'
 import updatePortfolio from './mutations/update-portfolio'
 import getTemplates from './queries/get-templates'
+import updateUserTemplate from './mutations/update-user-template'
 
 const typeDefs = gql`
   type Portfolio {
@@ -27,11 +28,14 @@ const typeDefs = gql`
     id: ID!
     title: String!
     slug: String!
+    type: TemplateType
   }
 
   type UserTemplate {
-    id: String!
+    id: ID!
     content: String
+    css: String
+    template: Template
     createdAt: Time!
     updatedAt: Time!
   }
@@ -45,6 +49,7 @@ const typeDefs = gql`
 
   type PortfolioDetail {
     html: String
+    css: String
     about: String
     templateSlug: String!
     templateType: TemplateType!
@@ -69,6 +74,17 @@ const typeDefs = gql`
     clientId: ID
     categoryId: ID
     tags: [String!]
+    shouldCustomize: Boolean
+  }
+
+  input CreateUserTemplateInput {
+    url: String
+    title: String!
+    description: String
+    templateId: ID
+    clientId: ID
+    categoryId: ID
+    tags: [String!]
   }
 
   enum TemplateType {
@@ -80,6 +96,11 @@ const typeDefs = gql`
     title: String
     description: String
     url: String
+  }
+
+  input UpdateUserTemplateInput {
+    content: String
+    css: String
   }
 
   input PortfolioFiltersInput {
@@ -136,6 +157,7 @@ const typeDefs = gql`
     createPortfolio(input: CreatePortfolioInput!): Portfolio
     deletePortfolio(id: ID!): Boolean!
     updatePortfolio(id: ID!, input: UpdatePortfolioInput!): Portfolio!
+    updateUserTemplate(id: ID!, input: UpdateUserTemplateInput!): UserTemplate!
   }
 `
 const resolvers: Resolvers = {
@@ -150,7 +172,8 @@ const resolvers: Resolvers = {
   Mutation: {
     createPortfolio,
     deletePortfolio,
-    updatePortfolio
+    updatePortfolio,
+    updateUserTemplate
   }
 }
 

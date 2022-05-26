@@ -39,6 +39,7 @@ export default async (
     const template = portfolio?.template.template
     return {
       html: portfolio?.template?.content,
+      css: portfolio?.template?.css,
       templateType: template?.type,
       templateSlug: template?.slug,
       about: user.bio,

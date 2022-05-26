@@ -268,6 +268,7 @@ export type CreatePortfolioInput = {
   categoryId?: InputMaybe<Scalars['ID']>;
   clientId?: InputMaybe<Scalars['ID']>;
   description?: InputMaybe<Scalars['String']>;
+  shouldCustomize?: InputMaybe<Scalars['Boolean']>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   templateId?: InputMaybe<Scalars['ID']>;
   title: Scalars['String'];
@@ -304,6 +305,16 @@ export type CreateUserInput = {
   signedUpThrough?: InputMaybe<SignedUpThrough>;
   source?: InputMaybe<Scalars['String']>;
   username: Scalars['String'];
+};
+
+export type CreateUserTemplateInput = {
+  categoryId?: InputMaybe<Scalars['ID']>;
+  clientId?: InputMaybe<Scalars['ID']>;
+  description?: InputMaybe<Scalars['String']>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  templateId?: InputMaybe<Scalars['ID']>;
+  title: Scalars['String'];
+  url?: InputMaybe<Scalars['String']>;
 };
 
 export type Feature = {
@@ -468,6 +479,7 @@ export type Mutation = {
   updateSocial: Social;
   updateTag: Tag;
   updateUser: User;
+  updateUserTemplate: UserTemplate;
   uploadContent: Content;
   uploadMultipleContent: Array<Content>;
   useEmailCode: User;
@@ -690,6 +702,12 @@ export type MutationUpdateUserArgs = {
 };
 
 
+export type MutationUpdateUserTemplateArgs = {
+  id: Scalars['ID'];
+  input: UpdateUserTemplateInput;
+};
+
+
 export type MutationUploadContentArgs = {
   input: UploadContentInput;
 };
@@ -792,6 +810,7 @@ export type PortfolioDetail = {
   about?: Maybe<Scalars['String']>;
   contact?: Maybe<Contact>;
   coverImage?: Maybe<Scalars['String']>;
+  css?: Maybe<Scalars['String']>;
   html?: Maybe<Scalars['String']>;
   job?: Maybe<Scalars['String']>;
   name: Scalars['String'];
@@ -1132,6 +1151,7 @@ export type Template = {
   id: Scalars['ID'];
   slug: Scalars['String'];
   title: Scalars['String'];
+  type?: Maybe<TemplateType>;
 };
 
 export type TemplateFiltersInput = {
@@ -1213,6 +1233,11 @@ export type UpdateUserInput = {
   portfolio?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateUserTemplateInput = {
+  content?: InputMaybe<Scalars['String']>;
+  css?: InputMaybe<Scalars['String']>;
+};
+
 export type UploadContentInput = {
   url: Scalars['String'];
 };
@@ -1283,7 +1308,9 @@ export type UserTemplate = {
   __typename?: 'UserTemplate';
   content?: Maybe<Scalars['String']>;
   createdAt: Scalars['Time'];
-  id: Scalars['String'];
+  css?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  template?: Maybe<Template>;
   updatedAt: Scalars['Time'];
 };
 
@@ -1401,6 +1428,7 @@ export type ResolversTypes = {
   CreateTagInput: CreateTagInput;
   CreateTeamInput: CreateTeamInput;
   CreateUserInput: CreateUserInput;
+  CreateUserTemplateInput: CreateUserTemplateInput;
   Feature: ResolverTypeWrapper<Feature>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Format: Format;
@@ -1464,6 +1492,7 @@ export type ResolversTypes = {
   UpdateSocialInput: UpdateSocialInput;
   UpdateTagInput: UpdateTagInput;
   UpdateUserInput: UpdateUserInput;
+  UpdateUserTemplateInput: UpdateUserTemplateInput;
   UploadContentInput: UploadContentInput;
   UploadMultipleContentInput: UploadMultipleContentInput;
   User: ResolverTypeWrapper<User>;
@@ -1508,6 +1537,7 @@ export type ResolversParentTypes = {
   CreateTagInput: CreateTagInput;
   CreateTeamInput: CreateTeamInput;
   CreateUserInput: CreateUserInput;
+  CreateUserTemplateInput: CreateUserTemplateInput;
   Feature: Feature;
   Float: Scalars['Float'];
   ID: Scalars['ID'];
@@ -1564,6 +1594,7 @@ export type ResolversParentTypes = {
   UpdateSocialInput: UpdateSocialInput;
   UpdateTagInput: UpdateTagInput;
   UpdateUserInput: UpdateUserInput;
+  UpdateUserTemplateInput: UpdateUserTemplateInput;
   UploadContentInput: UploadContentInput;
   UploadMultipleContentInput: UploadMultipleContentInput;
   User: User;
@@ -1816,6 +1847,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateSocial?: Resolver<ResolversTypes['Social'], ParentType, ContextType, RequireFields<MutationUpdateSocialArgs, 'id' | 'input'>>;
   updateTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<MutationUpdateTagArgs, 'id' | 'input'>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'input'>>;
+  updateUserTemplate?: Resolver<ResolversTypes['UserTemplate'], ParentType, ContextType, RequireFields<MutationUpdateUserTemplateArgs, 'id' | 'input'>>;
   uploadContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<MutationUploadContentArgs, 'input'>>;
   uploadMultipleContent?: Resolver<Array<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<MutationUploadMultipleContentArgs, 'input'>>;
   useEmailCode?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUseEmailCodeArgs, 'code'>>;
@@ -1877,6 +1909,7 @@ export type PortfolioDetailResolvers<ContextType = any, ParentType extends Resol
   about?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   contact?: Resolver<Maybe<ResolversTypes['Contact']>, ParentType, ContextType>;
   coverImage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  css?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   html?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   job?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1991,6 +2024,7 @@ export type TemplateResolvers<ContextType = any, ParentType extends ResolversPar
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<Maybe<ResolversTypes['TemplateType']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2037,7 +2071,9 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 export type UserTemplateResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserTemplate'] = ResolversParentTypes['UserTemplate']> = {
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  css?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  template?: Resolver<Maybe<ResolversTypes['Template']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
