@@ -14,7 +14,7 @@ import { gql } from 'apollo-server-express'
 // import getTeams from './queries/get-Teams'
 // import getLegalEntities from './queries/get-legalEntities'
 // import getLegalEntity from './queries/get-legalEntity'
-// import getMembers from './queries/get-members'
+import getMembers from './queries/get-members'
 
 const typeDefs = gql`
   type Team {
@@ -29,7 +29,7 @@ const typeDefs = gql`
     id: ID!
     email: String!
     name: String
-    phoneCode: String
+    username: String
     phoneNumber: String
     avatarURL: String
     createdAt: Time!
@@ -118,22 +118,22 @@ const typeDefs = gql`
 `
 // union MemberOrInvite = Member | Invite
 const resolvers: Resolvers = {
-  //   Query: {
-  //     getTeams,
-  //     getLegalEntities,
-  //     getLegalEntity,
-  //     getMembers
-  //   },
-  //   Mutation: {
-  //     createTeam,
-  //     createLegalEntity,
-  //     deleteTeam,
-  //     deleteLegalEntity,
-  //     switchTeam,
-  //     switchLegalEntity,
-  //     updateActiveTeam,
-  //     updateLegalEntity
-  //   },
+  Query: {
+    //     getTeams,
+    //     getLegalEntities,
+    //     getLegalEntity,
+    getMembers
+  },
+  Mutation: {
+    //     createTeam,
+    //     createLegalEntity,
+    //     deleteTeam,
+    //     deleteLegalEntity,
+    //     switchTeam,
+    //     switchLegalEntity,
+    //     updateActiveTeam,
+    //     updateLegalEntity
+  }
   //   Team: {
   //     avatarURL: TeamAvatarURL,
   //     contact: TeamContact
