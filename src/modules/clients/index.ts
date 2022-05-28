@@ -7,6 +7,7 @@ import getClients from './queries/get-clients'
 import deleteClient from './mutations/delete-client'
 import totalContents from './fields/total-contents'
 import totalAmount from './fields/total-amount'
+import deleteBulkClient from './mutations/delete-bulk-client'
 
 const typeDefs = gql`
   type Client {
@@ -65,6 +66,10 @@ const typeDefs = gql`
     clients: [Client!]!
   }
 
+  input DeleteBulkClientInput {
+    ids: [ID!]!
+  }
+
   input UpdateClientInput {
     name: String
     website: String
@@ -88,6 +93,7 @@ const typeDefs = gql`
     createClient(input: CreateClientInput!): Client!
     updateClient(id: ID!, input: UpdateClientInput!): Client!
     deleteClient(id: ID!): Boolean!
+    deleteBulkClient(input: DeleteBulkClientInput!): Boolean!
   }
 `
 const resolvers: Resolvers = {
@@ -99,7 +105,8 @@ const resolvers: Resolvers = {
   Mutation: {
     createClient,
     updateClient,
-    deleteClient
+    deleteClient,
+    deleteBulkClient
   },
 
   Client: {

@@ -7,6 +7,7 @@ import totalContents from './fields/total-contents'
 import totalAmount from './fields/total-amount'
 import updateCategory from './mutations/update-category'
 import deleteCategory from './mutations/delete-category'
+import deleteBulkCategory from './mutations/delete-bulk-category'
 
 const typeDefs = gql`
   type Category {
@@ -23,6 +24,10 @@ const typeDefs = gql`
   input CreateCategoryInput {
     name: String!
     color: String
+  }
+
+  input DeleteBulkCategoryInput {
+    ids: [ID!]!
   }
 
   input UpdateCategoryInput {
@@ -64,6 +69,7 @@ const typeDefs = gql`
     createCategory(input: CreateCategoryInput!): Category!
     updateCategory(id: ID!, input: UpdateCategoryInput!): Category!
     deleteCategory(id: ID!): Boolean!
+    deleteBulkCategory(input: DeleteBulkCategoryInput!): Boolean!
   }
 `
 const resolvers: Resolvers = {
@@ -75,7 +81,8 @@ const resolvers: Resolvers = {
   Mutation: {
     createCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    deleteBulkCategory
   },
 
   Category: {

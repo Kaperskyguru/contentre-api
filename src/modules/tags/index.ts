@@ -8,6 +8,7 @@ import updateTag from './mutations/update-tag'
 import totalAmount from './fields/total-amount'
 import totalContents from './fields/total-contents'
 import getTagStats from './queries/get-tag-stats'
+import deleteBulkTag from './mutations/delete-bulk-tag'
 
 const typeDefs = gql`
   type Tag {
@@ -26,6 +27,10 @@ const typeDefs = gql`
 
   input UpdateTagInput {
     name: String
+  }
+
+  input DeleteBulkTagInput {
+    ids: [ID!]!
   }
 
   input TagFiltersInput {
@@ -49,6 +54,7 @@ const typeDefs = gql`
     createTag(input: CreateTagInput!): Tag
     deleteTag(id: ID!): Boolean!
     updateTag(id: ID!, input: UpdateTagInput!): Tag!
+    deleteBulkTag(input: DeleteBulkTagInput!): Boolean!
   }
 `
 
@@ -61,7 +67,8 @@ const resolvers: Resolvers = {
   Mutation: {
     createTag,
     deleteTag,
-    updateTag
+    updateTag,
+    deleteBulkTag
   },
 
   Tag: {

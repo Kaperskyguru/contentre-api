@@ -13,6 +13,7 @@ import getOverallStats from './queries/get-overall-stats'
 import getCategoryStats from './queries/get-category-stats'
 import getTopicStats from './queries/get-topic-stats'
 import getBoxStats from './queries/get-box-stats'
+import deleteBulkContent from './mutations/delete-bulk-content'
 
 const typeDefs = gql`
   type Content {
@@ -162,6 +163,10 @@ const typeDefs = gql`
     urls: [String!]!
   }
 
+  input DeleteBulkContentInput {
+    ids: [ID!]!
+  }
+
   input UpdateContentInput {
     title: String
     comments: Int
@@ -237,6 +242,7 @@ const typeDefs = gql`
     uploadContent(input: UploadContentInput!): Content!
     uploadMultipleContent(input: UploadMultipleContentInput!): [Content!]!
     deleteContent(id: ID!): Boolean!
+    deleteBulkContent(input: DeleteBulkContentInput!): Boolean!
     updateContent(id: ID!, input: UpdateContentInput!): Content!
   }
 `
@@ -257,6 +263,7 @@ const resolvers: Resolvers = {
     uploadContent,
     deleteContent,
     updateContent,
+    deleteBulkContent,
     uploadMultipleContent
   },
 

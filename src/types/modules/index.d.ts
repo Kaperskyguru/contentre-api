@@ -317,6 +317,22 @@ export type CreateUserTemplateInput = {
   url?: InputMaybe<Scalars['String']>;
 };
 
+export type DeleteBulkCategoryInput = {
+  ids: Array<Scalars['ID']>;
+};
+
+export type DeleteBulkClientInput = {
+  ids: Array<Scalars['ID']>;
+};
+
+export type DeleteBulkContentInput = {
+  ids: Array<Scalars['ID']>;
+};
+
+export type DeleteBulkTagInput = {
+  ids: Array<Scalars['ID']>;
+};
+
 export type Feature = {
   __typename?: 'Feature';
   feature: Scalars['String'];
@@ -451,6 +467,10 @@ export type Mutation = {
   createTeam: Team;
   createUser: User;
   deleteApp: Scalars['Boolean'];
+  deleteBulkCategory: Scalars['Boolean'];
+  deleteBulkClient: Scalars['Boolean'];
+  deleteBulkContent: Scalars['Boolean'];
+  deleteBulkTag: Scalars['Boolean'];
   deleteCategory: Scalars['Boolean'];
   deleteClient: Scalars['Boolean'];
   deleteContent: Scalars['Boolean'];
@@ -553,6 +573,26 @@ export type MutationCreateUserArgs = {
 
 export type MutationDeleteAppArgs = {
   id: Scalars['ID'];
+};
+
+
+export type MutationDeleteBulkCategoryArgs = {
+  input: DeleteBulkCategoryInput;
+};
+
+
+export type MutationDeleteBulkClientArgs = {
+  input: DeleteBulkClientInput;
+};
+
+
+export type MutationDeleteBulkContentArgs = {
+  input: DeleteBulkContentInput;
+};
+
+
+export type MutationDeleteBulkTagArgs = {
+  input: DeleteBulkTagInput;
 };
 
 
@@ -1429,6 +1469,10 @@ export type ResolversTypes = {
   CreateTeamInput: CreateTeamInput;
   CreateUserInput: CreateUserInput;
   CreateUserTemplateInput: CreateUserTemplateInput;
+  DeleteBulkCategoryInput: DeleteBulkCategoryInput;
+  DeleteBulkClientInput: DeleteBulkClientInput;
+  DeleteBulkContentInput: DeleteBulkContentInput;
+  DeleteBulkTagInput: DeleteBulkTagInput;
   Feature: ResolverTypeWrapper<Feature>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Format: Format;
@@ -1538,6 +1582,10 @@ export type ResolversParentTypes = {
   CreateTeamInput: CreateTeamInput;
   CreateUserInput: CreateUserInput;
   CreateUserTemplateInput: CreateUserTemplateInput;
+  DeleteBulkCategoryInput: DeleteBulkCategoryInput;
+  DeleteBulkClientInput: DeleteBulkClientInput;
+  DeleteBulkContentInput: DeleteBulkContentInput;
+  DeleteBulkTagInput: DeleteBulkTagInput;
   Feature: Feature;
   Float: Scalars['Float'];
   ID: Scalars['ID'];
@@ -1819,6 +1867,10 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createTeam?: Resolver<ResolversTypes['Team'], ParentType, ContextType, RequireFields<MutationCreateTeamArgs, 'input'>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'input'>>;
   deleteApp?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteAppArgs, 'id'>>;
+  deleteBulkCategory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkCategoryArgs, 'input'>>;
+  deleteBulkClient?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkClientArgs, 'input'>>;
+  deleteBulkContent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkContentArgs, 'input'>>;
+  deleteBulkTag?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkTagArgs, 'input'>>;
   deleteCategory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, 'id'>>;
   deleteClient?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteClientArgs, 'id'>>;
   deleteContent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteContentArgs, 'id'>>;
