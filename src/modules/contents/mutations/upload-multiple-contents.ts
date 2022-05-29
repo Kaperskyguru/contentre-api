@@ -43,7 +43,7 @@ export default async (
         featuredImage: importedContent.image,
         publishedDate: importedContent.publishedDate,
         tags: importedContent.tags!,
-        url
+        url: importedContent.url
       }
     })
     const importedContent = await Promise.all(multipleContents)
@@ -52,22 +52,33 @@ export default async (
       .map((i) => i)
       .map(async (content) => {
         // Checking if client already exists
-        let client = await prisma.client.findFirst({
-          where: {
-            name: content.client.name,
-            userId: user.id,
-            website: content.client.website
-          }
-        })
-
-        if (!client) {
-          client = await prisma.client.create({
-            data: {
+        let client
+        try {
+          client = await prisma.client.upsert({
+            where: {
+              name_userId_website_unique_constraint: {
+                name: content.client.name,
+                userId: user.id,
+                website: content.client.website!
+              }
+            },
+            update: {
+              website: content.client.website
+            },
+            create: {
               name: content.client.name,
               website: content.client.website,
               icon: content.client.icon,
               user: { connect: { id: user.id } },
               team: { connect: { id: user.activeTeamId! } }
+            }
+          })
+        } catch (e) {
+          client = await prisma.client.findFirst({
+            where: {
+              name: content.client.name,
+              userId: user.id,
+              website: content.client.website!
             }
           })
         }
@@ -81,7 +92,7 @@ export default async (
             publishedDate: content.publishedDate,
             tags: content.tags!,
             user: { connect: { id: user.id } },
-            client: { connect: { id: client.id } },
+            client: { connect: { id: client?.id } },
             team: { connect: { id: user.activeTeamId! } }
           }
         })

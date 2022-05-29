@@ -41,10 +41,10 @@ const generateFavicon = (metadata: urlMetadata.Result) => {
 
 const generateURL = (metadata: urlMetadata.Result) => {
   const url = metadata['og:url'] ?? metadata.url
-  if (url.trim().charAt(url.length - 1) === '/') {
-    return url.trim().substring(0, url.length - 1)
-  }
-  return url
+  // if (url.trim().charAt(url.length - 1) === '/') {
+  //   return url.trim().substring(0, url.length - 1)
+  // }
+  return url.trim().replace(/\/+$/g, '')
 }
 
 const generateDate = (metadata: urlMetadata.Result) => {

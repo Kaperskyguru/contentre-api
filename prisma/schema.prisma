@@ -169,6 +169,8 @@ model Client {
   updatedAt   DateTime    @default(now()) @updatedAt @db.Timestamp(6)
   contents    Content[]   @relation("ClientContent")
   portfolios  Portfolio[] @relation("ClientPortfolio")
+
+  @@unique([name, userId, website], name: "name_userId_website_unique_constraint", map: "name_userId_website_unique_constraint")
 }
 
 enum Status {
