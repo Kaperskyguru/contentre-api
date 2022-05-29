@@ -79,6 +79,7 @@ export type Category = {
 export type CategoryFiltersInput = {
   categories?: InputMaybe<Array<Scalars['String']>>;
   categoryIds?: InputMaybe<Array<Scalars['ID']>>;
+  clients?: InputMaybe<Array<Scalars['String']>>;
   daily?: InputMaybe<Scalars['Boolean']>;
   duration?: InputMaybe<Scalars['Int']>;
   fromAmount?: InputMaybe<Scalars['Float']>;
@@ -294,6 +295,10 @@ export type CreateTeamInput = {
   name?: InputMaybe<Scalars['String']>;
 };
 
+export type CreateTopicInput = {
+  name: Scalars['String'];
+};
+
 export type CreateUserInput = {
   analyticsSource?: InputMaybe<Scalars['String']>;
   analyticsSourceData?: InputMaybe<Scalars['String']>;
@@ -330,6 +335,10 @@ export type DeleteBulkContentInput = {
 };
 
 export type DeleteBulkTagInput = {
+  ids: Array<Scalars['ID']>;
+};
+
+export type DeleteBulkTopicInput = {
   ids: Array<Scalars['ID']>;
 };
 
@@ -425,11 +434,11 @@ export type Member = {
   id: Scalars['ID'];
   lastActivityAt: Scalars['Time'];
   name?: Maybe<Scalars['String']>;
-  phoneCode?: Maybe<Scalars['String']>;
   phoneNumber?: Maybe<Scalars['String']>;
   role: MemberRole;
   team?: Maybe<Team>;
   updatedAt: Scalars['Time'];
+  username?: Maybe<Scalars['String']>;
 };
 
 export type MemberRole =
@@ -465,12 +474,14 @@ export type Mutation = {
   createSocial?: Maybe<Social>;
   createTag?: Maybe<Tag>;
   createTeam: Team;
+  createTopic?: Maybe<Topic>;
   createUser: User;
   deleteApp: Scalars['Boolean'];
   deleteBulkCategory: Scalars['Boolean'];
   deleteBulkClient: Scalars['Boolean'];
   deleteBulkContent: Scalars['Boolean'];
   deleteBulkTag: Scalars['Boolean'];
+  deleteBulkTopic: Scalars['Boolean'];
   deleteCategory: Scalars['Boolean'];
   deleteClient: Scalars['Boolean'];
   deleteContent: Scalars['Boolean'];
@@ -479,6 +490,7 @@ export type Mutation = {
   deleteSocial: Scalars['Boolean'];
   deleteTag: Scalars['Boolean'];
   deleteTeam: User;
+  deleteTopic: Scalars['Boolean'];
   deleteUser: Scalars['Boolean'];
   inviteFriends: Scalars['Boolean'];
   loginUser: User;
@@ -498,6 +510,7 @@ export type Mutation = {
   updatePortfolio: Portfolio;
   updateSocial: Social;
   updateTag: Tag;
+  updateTopic: Topic;
   updateUser: User;
   updateUserTemplate: UserTemplate;
   uploadContent: Content;
@@ -566,6 +579,11 @@ export type MutationCreateTeamArgs = {
 };
 
 
+export type MutationCreateTopicArgs = {
+  input: CreateTopicInput;
+};
+
+
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
 };
@@ -593,6 +611,11 @@ export type MutationDeleteBulkContentArgs = {
 
 export type MutationDeleteBulkTagArgs = {
   input: DeleteBulkTagInput;
+};
+
+
+export type MutationDeleteBulkTopicArgs = {
+  input: DeleteBulkTopicInput;
 };
 
 
@@ -632,6 +655,11 @@ export type MutationDeleteTagArgs = {
 
 
 export type MutationDeleteTeamArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteTopicArgs = {
   id: Scalars['ID'];
 };
 
@@ -734,6 +762,12 @@ export type MutationUpdateSocialArgs = {
 export type MutationUpdateTagArgs = {
   id: Scalars['ID'];
   input: UpdateTagInput;
+};
+
+
+export type MutationUpdateTopicArgs = {
+  id: Scalars['ID'];
+  input: UpdateTopicInput;
 };
 
 
@@ -898,7 +932,9 @@ export type Query = {
   getTags: TagResponse;
   getTeams: Array<Team>;
   getTemplates: Array<Template>;
+  getTopic: Topic;
   getTopicStats?: Maybe<OverallStatResponse>;
+  getTopics: TopicResponse;
   getUser: User;
   getVersion: Scalars['String'];
 };
@@ -1049,8 +1085,20 @@ export type QueryGetTemplatesArgs = {
 };
 
 
+export type QueryGetTopicArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type QueryGetTopicStatsArgs = {
   filters?: InputMaybe<ContentFiltersInput>;
+};
+
+
+export type QueryGetTopicsArgs = {
+  filters?: InputMaybe<TopicFiltersInput>;
+  size?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1202,6 +1250,40 @@ export type TemplateType =
   | 'CUSTOMIZED'
   | 'TEMPLATE';
 
+export type Topic = {
+  __typename?: 'Topic';
+  createdAt: Scalars['Time'];
+  id?: Maybe<Scalars['ID']>;
+  name: Scalars['String'];
+  totalAmount?: Maybe<Scalars['Float']>;
+  totalContents?: Maybe<Scalars['Int']>;
+  updatedAt: Scalars['Time'];
+  userId?: Maybe<Scalars['ID']>;
+};
+
+export type TopicFiltersInput = {
+  categories?: InputMaybe<Array<Scalars['String']>>;
+  categoryIds?: InputMaybe<Array<Scalars['ID']>>;
+  clients?: InputMaybe<Array<Scalars['String']>>;
+  daily?: InputMaybe<Scalars['Boolean']>;
+  duration?: InputMaybe<Scalars['Int']>;
+  fromAmount?: InputMaybe<Scalars['Float']>;
+  fromDate?: InputMaybe<Scalars['String']>;
+  sortBy?: InputMaybe<Scalars['String']>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  terms?: InputMaybe<Scalars['String']>;
+  toAmount?: InputMaybe<Scalars['Float']>;
+  toDate?: InputMaybe<Scalars['String']>;
+  topicIds?: InputMaybe<Array<Scalars['ID']>>;
+  topics?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type TopicResponse = {
+  __typename?: 'TopicResponse';
+  meta: Meta;
+  topics: Array<Topic>;
+};
+
 export type UpdateAppInput = {
   isActivated?: InputMaybe<Scalars['Boolean']>;
   key?: InputMaybe<Scalars['String']>;
@@ -1259,6 +1341,10 @@ export type UpdateSocialInput = {
 };
 
 export type UpdateTagInput = {
+  name?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateTopicInput = {
   name?: InputMaybe<Scalars['String']>;
 };
 
@@ -1467,12 +1553,14 @@ export type ResolversTypes = {
   CreateSocialInput: CreateSocialInput;
   CreateTagInput: CreateTagInput;
   CreateTeamInput: CreateTeamInput;
+  CreateTopicInput: CreateTopicInput;
   CreateUserInput: CreateUserInput;
   CreateUserTemplateInput: CreateUserTemplateInput;
   DeleteBulkCategoryInput: DeleteBulkCategoryInput;
   DeleteBulkClientInput: DeleteBulkClientInput;
   DeleteBulkContentInput: DeleteBulkContentInput;
   DeleteBulkTagInput: DeleteBulkTagInput;
+  DeleteBulkTopicInput: DeleteBulkTopicInput;
   Feature: ResolverTypeWrapper<Feature>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Format: Format;
@@ -1527,6 +1615,9 @@ export type ResolversTypes = {
   TemplateFiltersInput: TemplateFiltersInput;
   TemplateType: TemplateType;
   Time: ResolverTypeWrapper<Scalars['Time']>;
+  Topic: ResolverTypeWrapper<Topic>;
+  TopicFiltersInput: TopicFiltersInput;
+  TopicResponse: ResolverTypeWrapper<TopicResponse>;
   UpdateAppInput: UpdateAppInput;
   UpdateCategoryInput: UpdateCategoryInput;
   UpdateClientInput: UpdateClientInput;
@@ -1535,6 +1626,7 @@ export type ResolversTypes = {
   UpdatePortfolioInput: UpdatePortfolioInput;
   UpdateSocialInput: UpdateSocialInput;
   UpdateTagInput: UpdateTagInput;
+  UpdateTopicInput: UpdateTopicInput;
   UpdateUserInput: UpdateUserInput;
   UpdateUserTemplateInput: UpdateUserTemplateInput;
   UploadContentInput: UploadContentInput;
@@ -1580,12 +1672,14 @@ export type ResolversParentTypes = {
   CreateSocialInput: CreateSocialInput;
   CreateTagInput: CreateTagInput;
   CreateTeamInput: CreateTeamInput;
+  CreateTopicInput: CreateTopicInput;
   CreateUserInput: CreateUserInput;
   CreateUserTemplateInput: CreateUserTemplateInput;
   DeleteBulkCategoryInput: DeleteBulkCategoryInput;
   DeleteBulkClientInput: DeleteBulkClientInput;
   DeleteBulkContentInput: DeleteBulkContentInput;
   DeleteBulkTagInput: DeleteBulkTagInput;
+  DeleteBulkTopicInput: DeleteBulkTopicInput;
   Feature: Feature;
   Float: Scalars['Float'];
   ID: Scalars['ID'];
@@ -1633,6 +1727,9 @@ export type ResolversParentTypes = {
   Template: Template;
   TemplateFiltersInput: TemplateFiltersInput;
   Time: Scalars['Time'];
+  Topic: Topic;
+  TopicFiltersInput: TopicFiltersInput;
+  TopicResponse: TopicResponse;
   UpdateAppInput: UpdateAppInput;
   UpdateCategoryInput: UpdateCategoryInput;
   UpdateClientInput: UpdateClientInput;
@@ -1641,6 +1738,7 @@ export type ResolversParentTypes = {
   UpdatePortfolioInput: UpdatePortfolioInput;
   UpdateSocialInput: UpdateSocialInput;
   UpdateTagInput: UpdateTagInput;
+  UpdateTopicInput: UpdateTopicInput;
   UpdateUserInput: UpdateUserInput;
   UpdateUserTemplateInput: UpdateUserTemplateInput;
   UploadContentInput: UploadContentInput;
@@ -1829,11 +1927,11 @@ export type MemberResolvers<ContextType = any, ParentType extends ResolversParen
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   lastActivityAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  phoneCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   phoneNumber?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   role?: Resolver<ResolversTypes['MemberRole'], ParentType, ContextType>;
   team?: Resolver<Maybe<ResolversTypes['Team']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  username?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1865,12 +1963,14 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createSocial?: Resolver<Maybe<ResolversTypes['Social']>, ParentType, ContextType, RequireFields<MutationCreateSocialArgs, 'input'>>;
   createTag?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<MutationCreateTagArgs, 'input'>>;
   createTeam?: Resolver<ResolversTypes['Team'], ParentType, ContextType, RequireFields<MutationCreateTeamArgs, 'input'>>;
+  createTopic?: Resolver<Maybe<ResolversTypes['Topic']>, ParentType, ContextType, RequireFields<MutationCreateTopicArgs, 'input'>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'input'>>;
   deleteApp?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteAppArgs, 'id'>>;
   deleteBulkCategory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkCategoryArgs, 'input'>>;
   deleteBulkClient?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkClientArgs, 'input'>>;
   deleteBulkContent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkContentArgs, 'input'>>;
   deleteBulkTag?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkTagArgs, 'input'>>;
+  deleteBulkTopic?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkTopicArgs, 'input'>>;
   deleteCategory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, 'id'>>;
   deleteClient?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteClientArgs, 'id'>>;
   deleteContent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteContentArgs, 'id'>>;
@@ -1879,6 +1979,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteSocial?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteSocialArgs, 'id'>>;
   deleteTag?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteTagArgs, 'id'>>;
   deleteTeam?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationDeleteTeamArgs, 'id'>>;
+  deleteTopic?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteTopicArgs, 'id'>>;
   deleteUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'oldPassword'>>;
   inviteFriends?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationInviteFriendsArgs, 'data'>>;
   loginUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'data'>>;
@@ -1898,6 +1999,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updatePortfolio?: Resolver<ResolversTypes['Portfolio'], ParentType, ContextType, RequireFields<MutationUpdatePortfolioArgs, 'id' | 'input'>>;
   updateSocial?: Resolver<ResolversTypes['Social'], ParentType, ContextType, RequireFields<MutationUpdateSocialArgs, 'id' | 'input'>>;
   updateTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<MutationUpdateTagArgs, 'id' | 'input'>>;
+  updateTopic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType, RequireFields<MutationUpdateTopicArgs, 'id' | 'input'>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'input'>>;
   updateUserTemplate?: Resolver<ResolversTypes['UserTemplate'], ParentType, ContextType, RequireFields<MutationUpdateUserTemplateArgs, 'id' | 'input'>>;
   uploadContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<MutationUploadContentArgs, 'input'>>;
@@ -1999,7 +2101,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getTags?: Resolver<ResolversTypes['TagResponse'], ParentType, ContextType, RequireFields<QueryGetTagsArgs, never>>;
   getTeams?: Resolver<Array<ResolversTypes['Team']>, ParentType, ContextType>;
   getTemplates?: Resolver<Array<ResolversTypes['Template']>, ParentType, ContextType, RequireFields<QueryGetTemplatesArgs, never>>;
+  getTopic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType, RequireFields<QueryGetTopicArgs, 'id'>>;
   getTopicStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetTopicStatsArgs, never>>;
+  getTopics?: Resolver<ResolversTypes['TopicResponse'], ParentType, ContextType, RequireFields<QueryGetTopicsArgs, never>>;
   getUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryGetUserArgs, 'uuid'>>;
   getVersion?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
@@ -2083,6 +2187,23 @@ export type TemplateResolvers<ContextType = any, ParentType extends ResolversPar
 export interface TimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Time'], any> {
   name: 'Time';
 }
+
+export type TopicResolvers<ContextType = any, ParentType extends ResolversParentTypes['Topic'] = ResolversParentTypes['Topic']> = {
+  createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  totalAmount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  totalContents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type TopicResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['TopicResponse'] = ResolversParentTypes['TopicResponse']> = {
+  meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
+  topics?: Resolver<Array<ResolversTypes['Topic']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   activeRole?: Resolver<Maybe<ResolversTypes['MemberRole']>, ParentType, ContextType>;
@@ -2176,6 +2297,8 @@ export type Resolvers<ContextType = any> = {
   Team?: TeamResolvers<ContextType>;
   Template?: TemplateResolvers<ContextType>;
   Time?: GraphQLScalarType;
+  Topic?: TopicResolvers<ContextType>;
+  TopicResponse?: TopicResponseResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserTemplate?: UserTemplateResolvers<ContextType>;
   subUser?: SubUserResolvers<ContextType>;

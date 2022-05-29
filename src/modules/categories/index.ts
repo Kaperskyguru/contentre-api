@@ -49,6 +49,7 @@ const typeDefs = gql`
     daily: Boolean
     tags: [String!]
     fromAmount: Float
+    clients: [String!]
     toAmount: Float
     categories: [String!]
     fromDate: String

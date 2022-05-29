@@ -72,10 +72,11 @@ model Team {
   socials        Social[]       @relation("TeamSocial")
   // Portfolio             Portfolio[]          @relation("UserPortfolio")
   // Template              Template[]           @relation("UserTemplate")
-  Category       Category[]     @relation("TeamCategory")
-  Tag            Tag[]          @relation("TeamTag")
-  ConnectedApp   ConnectedApp[] @relation("TeamConnectedApp")
-  Media          Media[]        @relation("TeamMedia")
+  category       Category[]     @relation("TeamCategory")
+  tag            Tag[]          @relation("TeamTag")
+  connectedApp   ConnectedApp[] @relation("TeamConnectedApp")
+  media          Media[]        @relation("TeamMedia")
+  topic          Topic[]        @relation("TeamTopic")
 }
 
 model Member {
@@ -344,6 +345,8 @@ model Topic {
   name      String   @db.VarChar(120)
   content   Content? @relation("ContentTopic", fields: [contentId], references: [id])
   contentId String?  @db.Char(36)
+  teamId    String?  @db.Char(36)
+  team      Team?    @relation("TeamTopic", fields: [teamId], references: [id])
   createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(6)
 }
