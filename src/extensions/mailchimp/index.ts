@@ -31,7 +31,8 @@ export default async (data: MailChimp): Promise<boolean> => {
       status: 'subscribed',
       merge_fields: {
         FNAME: data.name.split(' ')[0] ?? '',
-        LNAME: data.name.split(' ')[1] ?? ''
+        LNAME: data.name.split(' ')[1] ?? '',
+        NAME: data.name
       },
       tags: data.tags ? data.tags : []
     })
