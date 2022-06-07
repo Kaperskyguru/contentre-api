@@ -85,7 +85,8 @@ export default async (
         subject: 'Welcome to Contentre!',
         template: 'welcome',
         variables: {
-          to_name: updatedUser.name as string
+          to_name: updatedUser.name as string,
+          username: updatedUser.username as string
         }
       })
     }

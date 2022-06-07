@@ -89,24 +89,50 @@ export default async ({ to, template, variables }: SendEmail) => {
       environment.mailjet.apiSecret
     )
 
-    const request = mailjet.post('send', { version: 'v3.1' }).request({
-      Messages: [
-        {
-          From: {
-            Email: environment.mail?.sender ?? 'info@contentre.io',
-            Name: environment.appName ?? 'Contentre'
-          },
-          To: [
-            {
-              Email: to,
-              Name: variables?.to_name ?? ''
+    let request = null
+    if (template === 'welcome') {
+      request = mailjet.post('send', { version: 'v3.1' }).request({
+        Messages: [
+          {
+            From: {
+              Email: environment.mail?.sender ?? 'info@contentre.io',
+              Name: environment.appName ?? 'Contentre'
+            },
+            To: [
+              {
+                Email: to,
+                Name: variables?.to_name ?? ''
+              }
+            ],
+            Subject: subject,
+            TemplateID: 3987459,
+            TemplateLanguage: true,
+            Variables: {
+              USERNAME: variables.username
             }
-          ],
-          Subject: subject,
-          HTMLPart: temp
-        }
-      ]
-    })
+          }
+        ]
+      })
+    } else {
+      request = mailjet.post('send', { version: 'v3.1' }).request({
+        Messages: [
+          {
+            From: {
+              Email: environment.mail?.sender ?? 'info@contentre.io',
+              Name: environment.appName ?? 'Contentre'
+            },
+            To: [
+              {
+                Email: to,
+                Name: variables?.to_name ?? ''
+              }
+            ],
+            Subject: subject,
+            HTMLPart: temp
+          }
+        ]
+      })
+    }
     request
       .then((result: any) => {
         resolve(result.body)
