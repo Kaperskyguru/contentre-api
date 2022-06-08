@@ -25,6 +25,8 @@ export default async (
   try {
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
+    // Check if content exceeded
+
     const { urls } = input
     const contentData: any = []
     let multipleContent: Multiple | any

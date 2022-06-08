@@ -21,6 +21,8 @@ export default async (
   try {
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
+    // Check if content exceeded
+
     const { url } = input
 
     const importedContent = await ImportContent({ url }, context)

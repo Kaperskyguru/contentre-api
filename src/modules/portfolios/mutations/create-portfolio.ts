@@ -21,6 +21,8 @@ export default async (
   try {
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
+    // Check if portfolio exceeded
+
     const { title } = input
     let description = input.description ?? undefined
     let templateId = input.templateId ?? undefined
