@@ -20,7 +20,7 @@ const typeDefs = gql`
     lastname: String
     bio: String
     homeAddress: String
-    portfolio: String
+    portfolioURL: String
     jobTitle: String
     username: String
     hasTrial: Boolean
@@ -41,6 +41,11 @@ const typeDefs = gql`
     isTrial: Boolean
   }
 
+  type subUser {
+    id: ID!
+    subscriptionId: ID
+  }
+
   input CreateUserInput {
     email: String!
     password: String!
@@ -50,6 +55,7 @@ const typeDefs = gql`
     language: String
     analyticsSource: String
     analyticsSourceData: String
+    source: String
     signedUpThrough: SignedUpThrough
   }
 
@@ -58,7 +64,7 @@ const typeDefs = gql`
     name: String!
     expiry: Time
     planId: String
-    features: [Feature!]!
+    features: [Feature!]
   }
 
   type Feature {
@@ -70,6 +76,22 @@ const typeDefs = gql`
   enum SignedUpThrough {
     CONTENTRE
     GOOGLE
+  }
+
+  input UserInput {
+    avatarURL: String
+    email: String
+    name: String
+    phoneCode: String
+    phoneNumber: String
+  }
+
+  extend input TeamInput {
+    members: [TeamMembersRelation!]
+  }
+
+  extend input TeamMembersRelation {
+    create: [UserInput]
   }
 
   input UpdateUserInput {

@@ -66,7 +66,10 @@ export default async (
       totalShares: val.totalShares ?? 0,
       totalComments: val.totalComments ?? 0,
       totalLikes: val.totalLikes ?? 0,
-      totalContents: val.totalContents ?? 0
+      totalContents: val.totalContents ?? 0,
+      totalInteractions: 0,
+      totalAmount: 0,
+      totalClients: 0
     }))
 
     return topicStats[0]

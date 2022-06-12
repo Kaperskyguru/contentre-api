@@ -11,6 +11,12 @@ import portfolios from './portfolios'
 import categories from './categories'
 import segment from './segment'
 import tags from './tags'
+import socials from './socials'
+import teams from './teams'
+import media from './media'
+import apps from './apps'
+import invites from './invites'
+import topic from './topics'
 
 const typeDefs = gql`
   scalar Time
@@ -48,15 +54,15 @@ const schema = makeExecutableSchema({
     contents.typeDefs,
     tags.typeDefs,
     categories.typeDefs,
-    //   institutions.typeDefs,
-    //   invites.typeDefs,
+    socials.typeDefs,
+    invites.typeDefs,
     //   notifications.typeDefs,
     users.typeDefs,
-    //   transactions.typeDefs,
-    //   storage.typeDefs,
-    //   admin.typeDefs,
-    segment.typeDefs
-    //   invoices.typeDefs
+    teams.typeDefs,
+    media.typeDefs,
+    topic.typeDefs,
+    segment.typeDefs,
+    apps.typeDefs
   ],
   resolvers: [
     resolvers,
@@ -66,15 +72,15 @@ const schema = makeExecutableSchema({
     contents.resolvers,
     tags.resolvers,
     categories.resolvers,
-    //   institutions.resolvers,
-    //   invites.resolvers,
+    socials.resolvers,
+    invites.resolvers,
     //   notifications.resolvers,
     users.resolvers,
-    //   transactions.resolvers,
-    //   storage.resolvers,
-    //   admin.resolvers,
-    segment.resolvers
-    //   invoices.resolvers
+    teams.resolvers,
+    media.resolvers,
+    topic.resolvers,
+    segment.resolvers,
+    apps.resolvers
   ]
 })
 

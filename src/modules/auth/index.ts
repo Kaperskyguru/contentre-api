@@ -33,7 +33,7 @@ const typeDefs = gql`
   extend type Mutation {
     loginUser(data: LoginUserInput!): User!
     sendPhoneCode(phoneCode: String!, phoneNumber: String!): Boolean!
-    sendEmailCode(email: String!): Boolean!
+    sendEmailCode(email: String!, template: String): Boolean!
     changePassword(oldPassword: String!, newPassword: String!): User!
     logoutUser: Boolean!
     resetPassword(newPassword: String!): User!

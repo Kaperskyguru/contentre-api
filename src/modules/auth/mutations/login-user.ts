@@ -7,8 +7,6 @@ import { MutationLoginUserArgs, User } from '@/types/modules'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 import jwt from 'jsonwebtoken'
-import sendEmailCode from './send-email-code'
-import sendPhoneCode from './send-phone-code'
 import sendToSegment from '@/extensions/segment-service/segment'
 
 export default async (
@@ -22,8 +20,9 @@ export default async (
   logMutation('loginUser %o', { input: data, ipAddress, requestURL })
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { email }
+    const user = await prisma.user.findFirst({
+      where: { email: { equals: email, mode: 'insensitive' } },
+      include: { subscription: true }
     })
 
     if (!user) throw new Error('authentication failed')
@@ -65,45 +64,6 @@ export default async (
     })
     if (!updatedUser) throw new Error('authentication failed')
 
-    // If the user still needs to confirm the phone after authentication.
-    if (
-      updatedUser.twofactor === 'SMS' &&
-      updatedUser.phoneCode &&
-      updatedUser.phoneNumber
-    ) {
-      // Call the mutation to send the phone verification code.
-      sendPhoneCode(
-        _parent,
-        {
-          phoneCode: updatedUser.phoneCode,
-          phoneNumber: updatedUser.phoneNumber
-        },
-        { ...context, user: updatedUser }
-      )
-
-      await prisma.user.update({
-        where: { id: updatedUser.id },
-        data: { phoneConfirmed: false }
-      })
-    }
-
-    if (updatedUser.twofactor === 'EMAIL' && updatedUser.email) {
-      // Call the mutation to send the email verification code.
-      sendEmailCode(
-        _parent,
-        {
-          email: updatedUser.email
-        },
-        { ...context, user: updatedUser }
-      )
-      await prisma.user.update({
-        where: { id: updatedUser.id },
-        data: { emailConfirmed: false }
-      })
-    }
-
-    //   await clearLoginAttempts(email, context)
-
     // Send data to Segment
     await sendToSegment({
       operation: 'identify',
@@ -118,7 +78,7 @@ export default async (
       eventName: 'login',
       userId: updatedUser.id,
       data: {
-        // companyId: updatedUser.activeCompanyId
+        teamId: updatedUser.activeTeamId
       }
     })
 

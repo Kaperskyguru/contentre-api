@@ -3,6 +3,7 @@ import { QueryGetUserArgs, User } from '@modules-types'
 import { Context } from '@types'
 import { useErrorParser } from '@helpers'
 import { logError, logQuery } from '@helpers/logger'
+import { getUser } from '@/helpers/getUser'
 
 export default async (
   _parent: unknown,
@@ -17,14 +18,15 @@ export default async (
     if (!uuid) throw new ApolloError('Invalid input', '422')
 
     const userData = await prisma.user.findUnique({
-      where: { id: uuid }
+      where: { id: uuid },
+      include: { subscription: true }
     })
 
     if (!userData) {
       throw new Error('user not found')
     }
 
-    return userData
+    return getUser(userData)
   } catch (e) {
     logError('findUser %o', e)
 

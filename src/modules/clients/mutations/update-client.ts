@@ -48,7 +48,6 @@ export default async (
     // Finally update the category.
     const updatedClient = await prisma.client.update({
       where: { id },
-      include: { user: true },
       data
     })
 

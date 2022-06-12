@@ -1,3 +1,4 @@
+import Medium from '@extensions/medium'
 import { useErrorParser } from '@helpers'
 import { logError, logQuery } from '@helpers/logger'
 import { ContentResponse, QueryGetContentsArgs } from '@modules-types'

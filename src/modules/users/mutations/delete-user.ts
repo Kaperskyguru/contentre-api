@@ -30,6 +30,11 @@ export default async (
 
     // Run a transaction to ensure operations succeeds together.
     await prisma.$transaction([
+      prisma.social.deleteMany({ where: { userId: user.id } }),
+      prisma.portfolio.deleteMany({ where: { userId: user.id } }),
+      prisma.tag.deleteMany({ where: { userId: user.id } }),
+      prisma.category.deleteMany({ where: { userId: user.id } }),
+      prisma.content.deleteMany({ where: { userId: user.id } }),
       prisma.client.deleteMany({ where: { userId: user.id } }),
       prisma.verificationIntent.deleteMany({ where: { userId: user.id } }),
       prisma.user.delete({ where: { id: user.id } })

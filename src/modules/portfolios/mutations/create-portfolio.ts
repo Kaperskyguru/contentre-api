@@ -1,4 +1,5 @@
 import { useErrorParser } from '@/helpers'
+import { environment } from '@/helpers/environment'
 import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
 import { Portfolio, MutationCreatePortfolioArgs } from '@/types/modules'
@@ -10,7 +11,7 @@ export default async (
   { input }: MutationCreatePortfolioArgs,
   context: Context & Required<Context>
 ): Promise<Portfolio> => {
-  const { user, ipAddress, requestURL, sentryId } = context
+  const { user, ipAddress, requestURL, sentryId, prisma } = context
   logMutation('createPortfolio %o', {
     input,
     user,
@@ -20,10 +21,55 @@ export default async (
   try {
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
-    const { url, title } = input
+    // Check if portfolio exceeded
+
+    const { title } = input
     let description = input.description ?? undefined
     let templateId = input.templateId ?? undefined
-    return createPortfolio({ url, description, title, templateId }, context)
+    let clientId = input.clientId ?? undefined
+    let categoryId = input.categoryId ?? undefined
+    let tags = input.tags ?? undefined
+    let shouldCustomize = input.shouldCustomize ?? false
+
+    //Generate URL
+    let url = `${environment.domain}/${user.username}/${String(
+      Math.floor(100000 + Math.random() * 900000)
+    )}`
+
+    /**
+     *
+     * When creating Templates, Generate Slug in this format
+     *
+     * Name: Light Green
+     *
+     * Slug: LightGreen_[rand]
+     *
+     */
+
+    //Check for existing portfolio
+    const portfolio = await prisma.portfolio.findFirst({
+      where: { userId: user.id, url: url }
+    })
+
+    if (portfolio) {
+      url = `${environment.domain}/${user.username}/${String(
+        Math.floor(100000 + Math.random() * 900000)
+      )}`
+    }
+
+    return createPortfolio(
+      {
+        url,
+        description,
+        title,
+        templateId,
+        clientId,
+        categoryId,
+        tags,
+        shouldCustomize
+      },
+      { user, prisma }
+    )
   } catch (e) {
     logError('createPortfolio %o', {
       input,

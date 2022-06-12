@@ -1,32 +1,50 @@
 import sendToSegment from '@extensions/segment-service/segment'
 import { Context } from '@/types'
 import { ApolloError } from 'apollo-server-core'
-import { Portfolio } from '@/types/modules'
+import { Portfolio, User } from '@/types/modules'
+import { PrismaClient, User as DBUser } from '@prisma/client'
 
 interface PortfolioInput {
   url: string
   description?: string
   title: string
   templateId?: string
+  clientId?: string
+  categoryId?: string
+  tags?: Array<string>
+  shouldCustomize: boolean
 }
 
 export const createPortfolio = async (
-  { url, description, title, templateId }: PortfolioInput,
-  { prisma, user }: Context & Required<Context>
+  {
+    url,
+    description,
+    title,
+    templateId,
+    clientId,
+    categoryId,
+    tags,
+    shouldCustomize
+  }: PortfolioInput,
+  { user, prisma }: { user: User | DBUser; prisma: PrismaClient }
 ): Promise<Portfolio> => {
-  if (!user) throw new ApolloError('You must be logged in.', '401')
   // Use Template or use Blank
-
   let template
-  if (templateId !== undefined) {
-    template = await prisma.template.findUnique({
-      where: { id: templateId! }
-    })
-  } else
-    template = await prisma.template.findFirst({
-      where: { title: { equals: 'BLANK', mode: 'insensitive' } }
-    })
 
+  if (shouldCustomize) {
+    template = await prisma.template.findFirst({
+      where: { title: { equals: 'CUSTOMIZE', mode: 'insensitive' } }
+    })
+  } else {
+    if (templateId !== undefined) {
+      template = await prisma.template.findUnique({
+        where: { id: templateId! }
+      })
+    } else
+      template = await prisma.template.findFirst({
+        where: { title: { equals: 'BLANK', mode: 'insensitive' } }
+      })
+  }
   // Create UserTemplate incase of editing
   const userTemplate = await prisma.userTemplate.create({
     data: {
@@ -34,6 +52,13 @@ export const createPortfolio = async (
       content: template?.content!
     }
   })
+
+  const data: Record<string, unknown> = {}
+
+  if (categoryId !== undefined) data.category = { connect: { id: categoryId } }
+  if (clientId !== undefined) data.client = { connect: { id: clientId } }
+  if (tags !== undefined) data.tags = tags
+
   const [result, countPortfolios] = await prisma.$transaction([
     prisma.portfolio.create({
       data: {
@@ -41,7 +66,8 @@ export const createPortfolio = async (
         title,
         template: { connect: { id: userTemplate.id } },
         description,
-        user: { connect: { id: user.id } }
+        user: { connect: { id: user.id } },
+        ...data
       }
     }),
 

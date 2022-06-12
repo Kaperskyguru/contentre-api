@@ -3,12 +3,21 @@ const defaultPort = 9000
 export interface Environment {
   context: 'LOCAL' | 'DEVELOP' | 'STAGING' | 'PRODUCTION'
   apiURL: string
+  appName: string
   domain: string
   port: number | string
   debug?: string
   apollo: {
     introspection: boolean
     playground: boolean
+  }
+  mailchimp: {
+    key: string
+    server: string
+    id: string
+  }
+  medium: {
+    BASE_URL: string
   }
   database: {
     url: string
@@ -17,29 +26,16 @@ export interface Environment {
     saltRounds: number
     tokenSecret: string
   }
-  yapily: {
-    url: string
-    key: string
-    secret: string
-  }
-  veryfi: {
-    clientId: string
-    clientSecret: string
-    username: string
+  mailjet: {
     apiKey: string
+    apiSecret: string
   }
   mail: {
-    type: string
-    sendAPIKey: string
     host: string
     port: number
     username: string
     password: string
-  } | null
-  twilio: {
-    sid: string
-    token: string
-    phone: string
+    sender: string
   } | null
   sentry: {
     dsn: string
@@ -58,12 +54,6 @@ export interface Environment {
   }
   adminToken?: string
   segment: string
-  heronData: {
-    username: string
-    password: string
-    url: string
-    signature: string
-  }
   pusher: {
     appId: string
     key: string
@@ -84,11 +74,20 @@ export const environment: Environment = {
   context,
   port: process.env.PORT || defaultPort,
   apiURL: process.env.API_URL as string,
+  appName: process.env.APP_NAME as string,
   domain: process.env.FE_URL as string,
   debug: process.env.DEBUG,
   apollo: {
     introspection: ['LOCAL', 'DEVELOP'].includes(context),
     playground: ['LOCAL', 'DEVELOP'].includes(context)
+  },
+  mailchimp: {
+    key: process.env.MAILCHIMP_KEY as string,
+    server: process.env.MAILCHIMP_SERVER as string,
+    id: process.env.MAILCHIMP_LIST_ID as string
+  },
+  medium: {
+    BASE_URL: process.env.MEDIUM_BASE_URL as string
   },
   database: {
     url: process.env.DATABASE_URL as string
@@ -97,44 +96,17 @@ export const environment: Environment = {
     saltRounds: Number(process.env.AUTH_SALT_ROUNDS) || 10,
     tokenSecret: process.env.AUTH_TOKEN_SECRET as string
   },
-  yapily: {
-    url: process.env.YAPILY_BASE_URL as string,
-    key: process.env.YAPILY_APPLICATION_KEY as string,
-    secret: process.env.YAPILY_APPLICATION_SECRET as string
+  mailjet: {
+    apiKey: process.env.MAILJET_KEY as string,
+    apiSecret: process.env.MAILJET_SECRET as string
   },
-  veryfi: {
-    clientId: process.env.VERYFI_CLIENT_ID as string,
-    clientSecret: process.env.VERYFI_CLIENT_SECRET as string,
-    username: process.env.VERYFI_USERNAME as string,
-    apiKey: process.env.VERYFI_API_KEY as string
+  mail: {
+    host: process.env.MAIL_HOST as string,
+    port: Number(process.env.MAIL_PORT) || 2525,
+    username: process.env.MAIL_USERNAME as string,
+    password: process.env.MAIL_PASSWORD as string,
+    sender: process.env.MAIL_SENDER as string
   },
-  mail:
-    process.env.MAIL_TYPE === 'send'
-      ? {
-          sendAPIKey: process.env.SEND_API_KEY as string,
-          type: process.env.MAIL_TYPE as string,
-          host: process.env.MAIL_HOST as string,
-          port: Number(process.env.MAIL_PORT) || 2525,
-          username: process.env.MAIL_USERNAME as string,
-          password: process.env.MAIL_PASSWORD as string
-        }
-      : process.env.MAIL_HOST || process.env.MAIL_PORT
-      ? {
-          host: process.env.MAIL_HOST as string,
-          type: process.env.MAIL_TYPE as string,
-          sendAPIKey: process.env.SEND_API_KEY as string,
-          port: Number(process.env.MAIL_PORT) || 2525,
-          username: process.env.MAIL_USERNAME as string,
-          password: process.env.MAIL_PASSWORD as string
-        }
-      : null,
-  twilio: process.env.TWILIO_ACCOUNT_SID
-    ? {
-        sid: process.env.TWILIO_ACCOUNT_SID as string,
-        token: process.env.TWILIO_AUTH_TOKEN as string,
-        phone: process.env.TWILIO_PHONE_NUMBER as string
-      }
-    : null,
   sentry: {
     dsn: process.env.SENTRY_DSN as string
   },
@@ -152,12 +124,6 @@ export const environment: Environment = {
   },
   adminToken: process.env.ADMIN_TOKEN,
   segment: process.env.SEGMENT_KEY as string,
-  heronData: {
-    username: process.env.HERON_DATA_USERNAME as string,
-    password: process.env.HERON_DATA_PASSWORD as string,
-    url: process.env.HERON_DATA_BASE_URL as string,
-    signature: process.env.HERON_DATA_SIGNATURE as string
-  },
   pusher: {
     appId: process.env.PUSHER_APPID!,
     key: process.env.PUSHER_KEY!,

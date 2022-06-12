@@ -14,8 +14,7 @@ export default async (
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
     const client = await prisma.client.findUnique({
-      where: { id },
-      include: { user: true }
+      where: { id }
     })
 
     if (!client) throw new Error('client not found')

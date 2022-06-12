@@ -21,6 +21,8 @@ export default async (
   try {
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
+    // Check if content exceeded
+
     const { url } = input
 
     const importedContent = await ImportContent({ url }, context)
@@ -36,7 +38,8 @@ export default async (
           name: importedContent.client.name,
           website: importedContent.client.website,
           icon: importedContent.client.icon,
-          user: { connect: { id: user.id } }
+          user: { connect: { id: user.id } },
+          team: { connect: { id: user.activeTeamId! } }
         }
       })
 
@@ -63,17 +66,34 @@ export default async (
         publishedDate: importedContent.publishedDate,
         tags: importedContent.tags!,
         user: { connect: { id: user.id } },
-        client: { connect: { id: client.id } }
+        client: { connect: { id: client.id } },
+        team: { connect: { id: user.activeTeamId! } }
       }
     })
 
     if (importedContent.tags) {
-      const tags = importedContent.tags.map((name) => ({
-        name,
-        userId: user.id
-      }))
+      const data: any = []
+
+      const promiseTags = importedContent.tags.map(async (name) => {
+        const tag = await prisma.tag.findFirst({
+          where: { name, userId: user.id, teamId: user.activeTeamId }
+        })
+
+        if (!tag) {
+          data.push({
+            name,
+            userId: user.id,
+            teamId: user.activeTeamId!
+          })
+        }
+        return data
+      })
+
+      await Promise.all(promiseTags)
+
       await prisma.tag.createMany({
-        data: tags
+        data,
+        skipDuplicates: true
       })
 
       await sendToSegment({

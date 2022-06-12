@@ -6,11 +6,14 @@ import updateContent from './mutations/update-content'
 import getContent from './queries/get-content'
 import getContents from './queries/get-contents'
 import uploadContent from './mutations/upload-content'
+import uploadMultipleContent from './mutations/upload-multiple-contents'
 import interactions from './fields/interactions'
 import getIndexMetadata from './queries/get-index-metadata'
 import getOverallStats from './queries/get-overall-stats'
 import getCategoryStats from './queries/get-category-stats'
 import getTopicStats from './queries/get-topic-stats'
+import getBoxStats from './queries/get-box-stats'
+import deleteBulkContent from './mutations/delete-bulk-content'
 
 const typeDefs = gql`
   type Content {
@@ -82,13 +85,16 @@ const typeDefs = gql`
   }
 
   type BoxStats {
-    likePercent: Float!
-    commentPercent: Float!
-    sharePercent: Float!
-    amountPercent: Float!
-    likes: Float!
-    shares: Float!
-    comments: Float!
+    amountPercent: Float
+    amount: Float
+    totalContents: Int!
+
+    amountPercentStat: Float
+    contentPercent: Float!
+    totalClients: Int!
+    clientPercent: Float!
+    interactionPercent: Float!
+    currentInteractions: Int!
   }
 
   type Stat {
@@ -103,9 +109,8 @@ const typeDefs = gql`
   }
 
   type Performance {
-    totalShares: Int!
-    totalComments: Int!
-    totalLikes: Int!
+    totalInteractions: Int!
+    totalAmount: Int!
     totalContents: Int!
   }
 
@@ -126,21 +131,27 @@ const typeDefs = gql`
     totalLikes: Int!
     totalComments: Int!
     totalShares: Int!
+
+    totalInteractions: Int!
+    totalAmount: Int!
+    totalClients: Int!
   }
 
   input CreateContentInput {
     url: String
     content: String
     title: String!
-    excerpt: String!
-    clientId: ID!
+    excerpt: String
+    clientId: ID
     tags: [String!]
     category: String
     amount: Float
     status: StatusType
     comments: Int
+    visibility: Visibility
     likes: Int
     shares: Int
+    apps: Apps
     paymentType: PaymentType
   }
 
@@ -148,14 +159,29 @@ const typeDefs = gql`
     url: String!
   }
 
+  input UploadMultipleContentInput {
+    urls: [String!]!
+  }
+
+  input DeleteBulkContentInput {
+    ids: [ID!]!
+  }
+
   input UpdateContentInput {
     title: String
     comments: Int
+    excerpt: String
+    content: String
+    url: String
+    featuredImage: String
     likes: Int
     shares: Int
     status: StatusType
     paymentType: String
     amount: Float
+    tags: [String!]
+    apps: Apps
+    clientId: ID
     category: String
     visibility: String
   }
@@ -208,12 +234,15 @@ const typeDefs = gql`
 
     getCategoryStats(filters: ContentFiltersInput): OverallStatResponse
     getTopicStats(filters: ContentFiltersInput): OverallStatResponse
+    getBoxStats(filters: ContentFiltersInput): BoxStats
   }
 
   extend type Mutation {
     createContent(input: CreateContentInput!): Content
     uploadContent(input: UploadContentInput!): Content!
+    uploadMultipleContent(input: UploadMultipleContentInput!): [Content!]!
     deleteContent(id: ID!): Boolean!
+    deleteBulkContent(input: DeleteBulkContentInput!): Boolean!
     updateContent(id: ID!, input: UpdateContentInput!): Content!
   }
 `
@@ -225,14 +254,17 @@ const resolvers: Resolvers = {
     getIndexMetadata,
     getOverallStats,
     getCategoryStats,
-    getTopicStats
+    getTopicStats,
+    getBoxStats
   },
 
   Mutation: {
     createContent,
     uploadContent,
     deleteContent,
-    updateContent
+    updateContent,
+    deleteBulkContent,
+    uploadMultipleContent
   },
 
   Content: {

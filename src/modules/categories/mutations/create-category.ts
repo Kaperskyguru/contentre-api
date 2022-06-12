@@ -36,6 +36,7 @@ export default async (
     const [result, countCategories] = await prisma.$transaction([
       prisma.category.create({
         data: {
+          team: { connect: { id: user.activeTeamId! } },
           name,
           color,
           user: { connect: { id: user.id } }

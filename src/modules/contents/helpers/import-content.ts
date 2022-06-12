@@ -14,11 +14,7 @@ export const ImportContent = async (
 
   if (!user) throw new ApolloError('You must be logged in.', '401')
 
-  let trimmedURL = null
-  //preparing URL
-  if (url.trim().charAt(url.length - 1) === '/') {
-    trimmedURL = url.trim().substring(0, url.length - 1)
-  } else trimmedURL = url
+  let trimmedURL = url.trim().replace(/\/+$/g, '')
 
   // Checking if content already exists
   const content = await prisma.content.findFirst({
@@ -28,7 +24,7 @@ export const ImportContent = async (
   if (content) throw new ApolloError('duplicate content', '401')
 
   // If success, create a new content in our DB.
-  return await importSingleContent(url)
+  return await importSingleContent(trimmedURL)
 }
 
 export default ImportContent

@@ -5,6 +5,8 @@ import sendEmailCode from '@/modules/auth/mutations/send-email-code'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 import sendToSegment from '@/extensions/segment-service/segment'
+import { getUser } from '@/helpers/getUser'
+import { url } from 'inspector'
 
 export default async (
   _parent: unknown,
@@ -19,7 +21,15 @@ export default async (
 
     // Prepare data for the update, checking and filling each possible field.
     const data: Record<string, unknown> = {}
-    if (input.avatarURL !== undefined) data.avatarURL = input.avatarURL
+    if (input.avatarURL !== undefined) {
+      await prisma.media.create({
+        data: {
+          team: { connect: { id: user.activeTeamId! } },
+          url: input.avatarURL!
+        }
+      })
+      data.avatarURL = input.avatarURL
+    }
     if (input.name !== undefined) data.name = input.name
     if (input.jobTitle !== undefined) data.jobTitle = input.jobTitle
     if (input.homeAddress !== undefined) data.homeAddress = input.homeAddress
@@ -46,7 +56,8 @@ export default async (
     // Finally update the user.
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
-      data
+      data,
+      include: { subscription: true }
     })
 
     // Send data to Segment
@@ -81,13 +92,14 @@ export default async (
       sendEmailCode(
         _parent,
         {
-          email: updatedUser.email
+          email: updatedUser.email,
+          template: 'email-verification'
         },
         context
       )
     }
 
-    return updatedUser
+    return getUser(updatedUser)
   } catch (e) {
     logError('updateUser %o', e)
 

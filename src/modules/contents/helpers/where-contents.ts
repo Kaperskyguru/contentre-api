@@ -64,16 +64,28 @@ export const whereContents = (
             }
           : undefined
       },
-
       {
-        client: filters?.clients?.length
+        tags: filters?.tags?.length
           ? {
-              name: {
-                in: filters.clients
-              }
+              path: [],
+              array_contains: filters.tags
             }
           : undefined
-      }
+      },
+
+      filters?.clients?.length && filters?.clients.includes('Personal')
+        ? {
+            clientId: null
+          }
+        : {
+            client: filters?.clients?.length
+              ? {
+                  name: {
+                    in: filters.clients
+                  }
+                }
+              : undefined
+          }
     ]
   }
 }

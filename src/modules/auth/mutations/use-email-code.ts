@@ -1,10 +1,13 @@
 import { VerificationIntent } from '.prisma/client'
 import { useErrorParser } from '@/helpers'
+import { environment } from '@/helpers/environment'
 import { getUser } from '@/helpers/getUser'
 import { logError, logMutation } from '@/helpers/logger'
 import setJWT from '@/helpers/setJWT'
 import { Context } from '@/types'
 import { MutationUseEmailCodeArgs, User } from '@/types/modules'
+import sendEmail from '@extensions/mail-service/send-email'
+import mailchimp from '@extensions/mailchimp'
 import { ApolloError } from 'apollo-server-core'
 
 export default async (
@@ -49,7 +52,8 @@ export default async (
     // Store the user update operation for running in a transaction.
     const updateUser = prisma.user.update({
       where: { id: userId },
-      data: { emailConfirmed: true }
+      data: { emailConfirmed: true },
+      include: { subscription: true }
     })
 
     // Store the intents delete operation for running in a transaction.
@@ -63,6 +67,30 @@ export default async (
     // Authenticate the user since the identity was already proven.
     setJWT(updatedUser, setCookies!)
     // Get the formatted updated user to return.
+
+    // Check if no Mailgun configuration in develop context.
+    const isDevelop =
+      !environment.mail && ['LOCAL', 'DEVELOP'].includes(environment.context)
+
+    if (!isDevelop) {
+      //Subscribe mailchimp
+      await mailchimp({
+        name: updatedUser.name,
+        email: updatedUser.email,
+        tags: ['contentre_welcome_signup']
+      })
+
+      await sendEmail({
+        to: updatedUser.email,
+        subject: 'Welcome to Contentre!',
+        template: 'welcome',
+        variables: {
+          to_name: updatedUser.name as string,
+          username: updatedUser.username as string
+        }
+      })
+    }
+
     return getUser(updatedUser)
   } catch (e) {
     logError('useEmailCode %o', {

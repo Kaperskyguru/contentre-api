@@ -25,7 +25,10 @@ export default async (
 
   try {
     // Checking if user already exists, but did not verify email
-    user = await prisma.user.findUnique({ where: { email: input.email } })
+    user = await prisma.user.findUnique({
+      where: { email: input.email },
+      include: { subscription: true }
+    })
 
     if (user && !user.emailConfirmed) {
       setJWT(user, setCookies)
@@ -41,40 +44,56 @@ export default async (
       if (referredUser) data.referrerId = referredUser.id
     }
 
+    // Create billing User
+    //Find sub where it's free
+    const sub = await prisma.subscription.findFirst({ where: { name: 'free' } })
+
+    const lowerCasedUsername = input.username.toLocaleLowerCase()
+
     // If success, create a new user in our DB.
     user = await prisma.user.create({
       data: {
         email: input.email,
-        username: input.username,
+        username: lowerCasedUsername,
+        subscriptionId: sub?.id!,
+        billingId: 'BillingId',
         name: input.name,
         signedUpThrough: input.signedUpThrough!,
-        portfolio: `${environment.domain}/${input.username}`,
+        portfolioURL: `${environment.domain}/${lowerCasedUsername}`,
         password: await hashPassword(input.password),
         ...data
-      }
+      },
+      include: { subscription: true }
     })
 
-    // Create billing User
-
-    //Find sub where it's free
-    const sub = await prisma.subscription.findFirst({ where: { name: 'free' } })
-
-    //Update user
-    await prisma.user.update({
+    const updateUser = await prisma.user.update({
       where: { id: user.id },
       data: {
-        billingId: 'BillingId',
-        subscriptionId: sub?.id
+        activeTeam: {
+          create: {
+            role: 'ADMIN',
+            user: {
+              connect: { id: user?.id }
+            },
+            team: {
+              create: {
+                name: 'Personal'
+              }
+            }
+          }
+        }
       }
     })
+
+    if (!updateUser) throw new ApolloError('User could not be created', '401')
 
     // Send data to Segment.
     const segmentData: Record<string, string | boolean | Date | null> = {
-      createdAt: user.createdAt,
-      email: user.email,
-      name: user.name,
-      hasFinishedOnboarding: user.hasFinishedOnboarding,
-      lastActivityAt: user.lastActivityAt
+      createdAt: updateUser.createdAt,
+      email: updateUser.email,
+      name: updateUser.name,
+      hasFinishedOnboarding: updateUser.hasFinishedOnboarding,
+      lastActivityAt: updateUser.lastActivityAt
     }
 
     if (input.language) {
@@ -89,6 +108,10 @@ export default async (
       segmentData.source = input.analyticsSourceData
     }
 
+    if (input.source) {
+      segmentData.customTrafficSource = input.source
+    }
+
     await sendToSegment({
       operation: 'identify',
       userId: user.id,
@@ -101,26 +124,27 @@ export default async (
     await sendToSegment({
       operation: 'track',
       eventName: 'user_created',
-      userId: user.id,
+      userId: updateUser.id,
       data: {
         ...segmentData,
         signedUpThrough: input.signedUpThrough
       }
     })
 
-    setJWT(user, setCookies)
+    setJWT(updateUser, setCookies)
 
     // Create Default portfolio
     createPortfolio(
       {
-        url: `${environment.domain}/${input.username}`,
+        url: updateUser.portfolioURL!,
         title: 'Default',
-        description: 'This is your default portfolio'
+        description: 'This is your default portfolio',
+        shouldCustomize: false
       },
-      context
+      { user, prisma }
     )
 
-    return getUser(user)
+    return getUser(updateUser)
   } catch (e) {
     logError('createUser %o', {
       input,

@@ -1,10 +1,11 @@
 import { useErrorParser } from '@/helpers'
 import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
-import { Content, MutationCreateContentArgs, Tag } from '@/types/modules'
+import { Content, MutationCreateContentArgs } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
 import getOrCreateCategoryId from '../helpers/getOrCreateCategory'
 import sendToSegment from '@extensions/segment-service/segment'
+import Plugins from '@/helpers/plugins'
 
 export default async (
   _parent: unknown,
@@ -21,35 +22,72 @@ export default async (
   try {
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
-    const { url, clientId, content, excerpt, title, tags, category, status } =
-      input
+    // Check if content exceeded
+
+    const {
+      url,
+      clientId,
+      visibility,
+      content,
+      excerpt,
+      title,
+      tags,
+      category,
+      status,
+      apps
+    } = input
 
     const categoryId =
       (await getOrCreateCategoryId(category, { user, prisma })) ?? undefined
+
+    const data: Record<string, unknown> = {}
+    if (clientId !== undefined) {
+      data.client = { connect: { id: clientId } }
+    }
+    //Generate excerpt
+    let defaultExcerpt: string | null = null
+    if (excerpt === undefined) {
+      defaultExcerpt = content?.substring(0, 140) ?? ''
+    } else defaultExcerpt = excerpt
 
     const newContent = await prisma.content.create({
       data: {
         url,
         title,
-        excerpt,
+        excerpt: defaultExcerpt!,
         content,
+        visibility: visibility ?? 'PRIVATE',
         status: status ?? 'PUBLISHED',
         category: { connect: { id: categoryId } },
-        tags: tags?.length || undefined,
+        tags: tags?.length ? tags : undefined,
         user: { connect: { id: user.id } },
-        client: { connect: { id: clientId } }
+        team: { connect: { id: user.activeTeamId! } },
+        ...data
       }
     })
 
     if (tags?.length) {
       const tagNames = Object.values(tags).map((name: any) => ({
         name,
-        userId: user.id
+        userId: user.id,
+        teamId: user.activeTeamId! ?? undefined,
+        team: { connect: { id: user.activeTeamId! } }
       }))
 
       await prisma.tag.createMany({
         data: tagNames
       })
+
+      // Share to App
+      if (apps !== undefined) {
+        if (apps?.medium) {
+          apps.medium.title = newContent.title
+          apps.medium.content = newContent?.content ?? newContent.excerpt
+          apps.medium.tags = input.tags
+        }
+
+        await Plugins(apps, { user, prisma })
+      }
 
       await sendToSegment({
         operation: 'track',
@@ -70,8 +108,8 @@ export default async (
       data: {
         userEmail: user.email,
         clientId: clientId,
-        url
-        // companyId: user.activeCompanyId,
+        url,
+        teamId: user.activeTeamId
       }
     })
 
@@ -86,6 +124,8 @@ export default async (
     })
 
     const message = useErrorParser(e)
+
+    console.log(e)
 
     throw new ApolloError(message, e.code ?? '500', { sentryId })
   }

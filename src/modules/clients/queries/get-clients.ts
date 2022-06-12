@@ -33,9 +33,6 @@ export default async (
           : { name: 'desc' }
       ],
       where,
-      include: {
-        user: true
-      },
       take: size ?? undefined,
       skip: skip ?? 0
     })

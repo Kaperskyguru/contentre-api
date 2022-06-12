@@ -5,6 +5,7 @@ import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 
 import getDateIntervals from '@helpers/get-date-intervals'
+import whereContentRaw from '../helpers/where-contents-raw'
 
 export default async (
   _parent: unknown,
@@ -23,52 +24,52 @@ export default async (
       totalLikes: number
       totalComments: number
       totalShares: number
+
+      totalAmount: number
+      totalInteractions: number
+      totalClients: number
     }
     // Get Content by Category
+    const { query, args } = whereContentRaw(user, filters)
     const statsCategory: CategoryStat[] = await prisma.$queryRawUnsafe<
       CategoryStat[]
     >(
       `
           SELECT
-          ca."name",
-          COUNT(c."id") "totalContents",
-          SUM(c."likes") "totalLikes",
-          SUM(c."comments") "totalComments",
-          SUM(c."shares") "totalShares"
-          
+            COUNT(c."id") "totalContents",
+            SUM(c."likes") "totalLikes",
+            SUM(c."comments") "totalComments",
+            SUM(c."shares") "totalShares",
+
+            SUM(c."amount") "totalAmount",
+            COUNT(cl."id") "totalClients",
+            SUM(COALESCE(c."likes",0) + COALESCE(c."comments",0) + COALESCE(c."shares", 0)) "totalInteractions"  
+
           FROM
-            "Category" ca
-            LEFT JOIN "Content" c ON c."categoryId" = ca."id"
+            "Category" cat LEFT JOIN
+            "Content" c ON c."categoryId" = cat."id" LEFT JOIN
+            "Client" cl ON c."clientId" = cl."id"
           WHERE
   
               c."id" IS NOT NULL
-              AND (
-                ca."userId" = $1 AND c."userId" = $1
-              )
-              AND (
-                CAST($2 AS TEXT) IS NULL OR
-                ca."name" = ANY(STRING_TO_ARRAY($2, ','))
-              )
-              AND (
-                "c"."publishedDate" BETWEEN $3::TIMESTAMP AND $4::TIMESTAMP
-                )
-            
-            GROUP BY 1
-            LIMIT 1;
+                ${query}
           
         `.clearIndentation(),
-      user.id, //$1
-      filters?.categories?.length ? filters?.categories?.join(',') : null, //$2
-      fromDate, // $3
-      toDate // $4
+      ...args
     )
 
     const categoryStats = statsCategory.map((val) => ({
-      name: val.name,
+      name: filters?.categories?.length
+        ? filters?.categories.join(',')
+        : 'Categories Overview',
       totalShares: val.totalShares ?? 0,
       totalComments: val.totalComments ?? 0,
       totalLikes: val.totalLikes ?? 0,
-      totalContents: val.totalContents ?? 0
+      totalContents: val.totalContents ?? 0,
+
+      totalAmount: val.totalAmount ?? 0,
+      totalClients: val.totalClients ?? 0,
+      totalInteractions: val.totalInteractions ?? 0
     }))
 
     return categoryStats[0]

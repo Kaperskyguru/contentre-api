@@ -37,6 +37,7 @@ export default async (
       prisma.tag.create({
         data: {
           name,
+          team: { connect: { id: user.activeTeamId! } },
           user: { connect: { id: user.id } }
         }
       }),
