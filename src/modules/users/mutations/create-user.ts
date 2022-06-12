@@ -34,6 +34,10 @@ export default async (
       setJWT(user, setCookies)
       throw new ApolloError('verify email')
     }
+
+    if (user) {
+      throw new ApolloError('Unique constraint failed')
+    }
     user = null
     const data: Record<string, unknown> = {}
 
@@ -46,7 +50,7 @@ export default async (
 
     // Create billing User
     //Find sub where it's free
-    const sub = await prisma.subscription.findFirst({ where: { name: 'free' } })
+    const plan = await prisma.plan.findFirst({ where: { name: 'Basic' } })
 
     const lowerCasedUsername = input.username.toLocaleLowerCase()
 
@@ -55,7 +59,6 @@ export default async (
       data: {
         email: input.email,
         username: lowerCasedUsername,
-        subscriptionId: sub?.id!,
         billingId: 'BillingId',
         name: input.name,
         signedUpThrough: input.signedUpThrough!,
@@ -66,9 +69,20 @@ export default async (
       include: { subscription: true }
     })
 
+    const sub = await prisma.subscription.create({
+      data: {
+        name: plan?.name!,
+        userId: user?.id!,
+        teamId: user.activeTeamId,
+        planId: plan?.id!
+      }
+    })
+
     const updateUser = await prisma.user.update({
       where: { id: user.id },
       data: {
+        subscription: { connect: { id: sub.id } },
+        activeSubscription: { connect: { id: sub.id } },
         activeTeam: {
           create: {
             role: 'ADMIN',
@@ -77,7 +91,8 @@ export default async (
             },
             team: {
               create: {
-                name: 'Personal'
+                name: 'Personal',
+                activeSubscription: { connect: { id: sub.id } }
               }
             }
           }

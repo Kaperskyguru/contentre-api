@@ -1402,6 +1402,7 @@ export type User = {
   subscriptionId?: Maybe<Scalars['ID']>;
   teams?: Maybe<Array<Team>>;
   totalContents?: Maybe<Scalars['Int']>;
+  totalPortfolios?: Maybe<Scalars['Int']>;
   totalUsersReferred?: Maybe<Scalars['String']>;
   trialEndDate?: Maybe<Scalars['Time']>;
   updatedAt: Scalars['Time'];
@@ -2234,6 +2235,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   subscriptionId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   teams?: Resolver<Maybe<Array<ResolversTypes['Team']>>, ParentType, ContextType>;
   totalContents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  totalPortfolios?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   totalUsersReferred?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   trialEndDate?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;

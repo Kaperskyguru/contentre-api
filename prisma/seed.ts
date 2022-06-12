@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 const seedTemplates = async () => {
-  const sub = await prisma.subscription.findFirst({ where: { name: 'team' } })
+  const sub = await prisma.subscription.findFirst({ where: { name: 'Team' } })
   const user = await prisma.user.create({
     data: {
       name: 'Admin Admin',
@@ -11,7 +11,8 @@ const seedTemplates = async () => {
       password: '$2b$10$cKsE9uzk.TTgtl.kgk15UeV5Adto8NVYTp3Wt3o2YxK9ZrSnx.sEi',
       email: 'test@test.com',
       portfolioURL: `http://localhost:3000/admin`,
-      subscriptionId: sub?.id!,
+      subscriptionId: sub?.id!, //Change subscriptionId tot activeSubscriptionId
+      activeSubscriptionId: sub.id,
       emailConfirmed: true
     }
   })
@@ -27,7 +28,9 @@ const seedTemplates = async () => {
           },
           team: {
             create: {
-              name: 'Personal'
+              name: 'Personal',
+              // Add activeSubscriptionId
+              activeSubscription: { connect: { id: sub.id } }
             }
           }
         }
@@ -49,16 +52,13 @@ const seedTemplates = async () => {
 
 const subscriptions = [
   {
-    name: 'free'
+    name: 'Basic'
   },
   {
-    name: 'basic'
+    name: 'Premium'
   },
   {
-    name: 'pro'
-  },
-  {
-    name: 'team'
+    name: 'Team'
   }
 ]
 const seedSubscriptions = async () => {
@@ -68,40 +68,33 @@ const seedSubscriptions = async () => {
 }
 
 const seedFeatures = async () => {
-  const proSub = await prisma.subscription.findFirst({ where: { name: 'pro' } })
-  const teamSub = await prisma.subscription.findFirst({
-    where: { name: 'team' }
+  const premiumSub = await prisma.plan.findFirst({
+    where: { name: 'Premium' }
   })
-  const freeSub = await prisma.subscription.findFirst({
-    where: { name: 'free' }
+  const teamSub = await prisma.plan.findFirst({
+    where: { name: 'Team' }
   })
-  const basSub = await prisma.subscription.findFirst({
-    where: { name: 'basic' }
+  const basicSub = await prisma.plan.findFirst({
+    where: { name: 'Basic' }
   })
 
   const features = [
     {
       feature: 'TOTAL_CONTENTS',
       value: '12',
-      subscriptionId: freeSub?.id!
-    },
-
-    {
-      feature: 'TOTAL_CONTENTS',
-      value: '50',
-      subscriptionId: basSub?.id!
+      planId: basicSub?.id!
     },
 
     {
       feature: 'TOTAL_CONTENTS',
       value: 'unlimited',
-      subscriptionId: proSub?.id!
+      planId: premiumSub?.id!
     },
 
     {
       feature: 'TOTAL_CONTENTS',
       value: 'unlimited',
-      subscriptionId: teamSub?.id!
+      planId: teamSub?.id!
     }
   ]
   await prisma.feature.createMany({

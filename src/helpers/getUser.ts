@@ -24,7 +24,7 @@ export const getUser = async (user: User): Promise<User> => {
     "team"."createdAt" DESC
 `
 
-  const subscription: Subscription[] = await prisma.$queryRawUnsafe(
+  const activeSubscription: Subscription[] = await prisma.$queryRawUnsafe(
     `
       SELECT 
         s.* 
@@ -34,7 +34,7 @@ export const getUser = async (user: User): Promise<User> => {
         "s"."id" = $1 
         LIMIT 1
       `,
-    user.subscriptionId
+    user.subscriptionId // Change to activeSubscriptionId
   )
 
   const features: Feature[] = await prisma.$queryRawUnsafe(
@@ -44,9 +44,9 @@ export const getUser = async (user: User): Promise<User> => {
       FROM 
         "Feature" AS "f"
       WHERE 
-        "f"."subscriptionId" = $1 
+        "f"."planId" = $1 
       `,
-    user.subscriptionId
+    activeSubscription[0].planId
   )
 
   const activeTeam = teams.find((team) => team.activeTeam)
@@ -66,7 +66,7 @@ export const getUser = async (user: User): Promise<User> => {
       : null,
     activeRole: activeTeam?.role ?? null,
     subscription: {
-      ...subscription[0],
+      ...activeSubscription[0],
       features: features.map((item) => ({
         feature: item.feature,
         value: item.value,

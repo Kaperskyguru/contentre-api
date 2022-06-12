@@ -33,8 +33,10 @@ model User {
   twofactor             TwoFactorType        @default(NONE)
   signedUpThrough       SignedUpThrough      @default(CONTENTRE)
   referrerId            String?              @db.Char(36)
-  subscriptionId        String               @db.Char(36)
-  subscription          Subscription         @relation("UserSubscription", fields: [subscriptionId], references: [id])
+  subscriptionId        String?              @unique @db.Char(36)
+  subscription          Subscription?        @relation("UserSubscription", fields: [subscriptionId], references: [id])
+  activeSubscriptionId  String?              @unique @db.Char(36)
+  activeSubscription    Subscription?        @relation("UserSubscriptionActive", fields: [activeSubscriptionId], references: [id])
   billingId             String?              @db.Char(36)
   hasTrial              Boolean              @default(false)
   trialEndDate          DateTime?            @db.Timestamp(6)
@@ -46,37 +48,40 @@ model User {
   clients               Client[]             @relation("UserClient")
   contents              Content[]            @relation("UserContent")
   socials               Social[]             @relation("SocialUser")
-  User                  User[]               @relation("UserToUser")
-  Portfolio             Portfolio[]          @relation("UserPortfolio")
-  Template              Template[]           @relation("UserTemplate")
-  Category              Category[]           @relation("UserCategory")
-  Tag                   Tag[]                @relation("UserTag")
+  users                 User[]               @relation("UserToUser")
+  portfolios            Portfolio[]          @relation("UserPortfolio")
+  subscriptions         Subscription[]       @relation("UserSubscriptions")
+  templates             Template[]           @relation("UserTemplate")
+  categories            Category[]           @relation("UserCategory")
+  tags                  Tag[]                @relation("UserTag")
 }
 
 model Team {
-  id             String         @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  name           String         @db.VarChar(100)
-  address        String?        @db.VarChar(2048)
-  portfolio      String?        @db.VarChar(2048)
-  avatarURL      String?        @db.VarChar(2048)
-  createdAt      DateTime       @default(now()) @db.Timestamp(6)
-  updatedAt      DateTime       @default(now()) @updatedAt @db.Timestamp(6)
-  subscriptionId String?        @db.Char(36)
-  // subscription          Subscription         @relation("UserSubscription", fields: [subscriptionId], references: [id])
-  billingId      String?        @db.Char(36)
-  hasTrial       Boolean        @default(false)
-  trialEndDate   DateTime?      @db.Timestamp(6)
-  members        Member[]       @relation("TeamMember")
-  clients        Client[]       @relation("TeamClient")
-  contents       Content[]      @relation("TeamContent")
-  socials        Social[]       @relation("TeamSocial")
+  id                   String         @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name                 String         @db.VarChar(100)
+  address              String?        @db.VarChar(2048)
+  portfolio            String?        @db.VarChar(2048)
+  avatarURL            String?        @db.VarChar(2048)
+  createdAt            DateTime       @default(now()) @db.Timestamp(6)
+  updatedAt            DateTime       @default(now()) @updatedAt @db.Timestamp(6)
+  activeSubscriptionId String?        @unique @db.Char(36)
+  activeSubscription   Subscription?  @relation("TeamSubscriptionActive", fields: [activeSubscriptionId], references: [id])
+  billingId            String?        @db.Char(36)
+  hasTrial             Boolean        @default(false)
+  trialEndDate         DateTime?      @db.Timestamp(6)
+  members              Member[]       @relation("TeamMember")
+  clients              Client[]       @relation("TeamClient")
+  contents             Content[]      @relation("TeamContent")
+  socials              Social[]       @relation("TeamSocial")
   // Portfolio             Portfolio[]          @relation("UserPortfolio")
   // Template              Template[]           @relation("UserTemplate")
-  category       Category[]     @relation("TeamCategory")
-  tag            Tag[]          @relation("TeamTag")
-  connectedApp   ConnectedApp[] @relation("TeamConnectedApp")
-  media          Media[]        @relation("TeamMedia")
-  topic          Topic[]        @relation("TeamTopic")
+  categories           Category[]     @relation("TeamCategory")
+  tags                 Tag[]          @relation("TeamTag")
+  connectedApps        ConnectedApp[] @relation("TeamConnectedApp")
+  media                Media[]        @relation("TeamMedia")
+  topics               Topic[]        @relation("TeamTopic")
+  subscriptions        Subscription[] @relation("TeamSubscription")
+
 }
 
 model Member {
@@ -236,24 +241,58 @@ model Portfolio {
 }
 
 model Subscription {
-  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  name      String    @db.VarChar(120)
-  planId    String?   @db.Char(36)
-  expiry    DateTime? @db.Timestamp(6)
-  createdAt DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt DateTime  @default(now()) @updatedAt @db.Timestamp(6)
-  User      User[]    @relation("UserSubscription")
-  Feature   Feature[] @relation("SubscriptionFeature")
+  id               String              @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name             String              @db.VarChar(120)
+  planId           String?             @db.Char(36)
+  userId           String?             @db.Char(36)
+  teamId           String?             @db.Char(36)
+  team             Team?               @relation("TeamSubscription", fields: [teamId], references: [id])
+  user             User?               @relation("UserSubscriptions", fields: [userId], references: [id])
+  channel          PaymentChannelType? // This should be removed, but think well well first
+  paymentChannelId String?             @db.Char(36)
+  expiry           DateTime?           @db.Timestamp(6)
+  createdAt        DateTime            @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime            @default(now()) @updatedAt @db.Timestamp(6)
+  users            User[]              @relation("UserSubscription")
+  paymentChannel   PaymentChannel?     @relation("PaymentChannelSubscription", fields: [paymentChannelId], references: [id])
+
+  activeUsers User[] @relation("UserSubscriptionActive")
+  activeTeams Team[] @relation("TeamSubscriptionActive")
+}
+
+model Plan {
+  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name            String           @db.VarChar(120)
+  createdAt       DateTime         @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime         @default(now()) @updatedAt @db.Timestamp(6)
+  features        Feature[]        @relation("PlanFeature")
+  paymentChannels PaymentChannel[] @relation("PlanPaymentChannel")
+}
+
+model PaymentChannel {
+  id            String             @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  channel       PaymentChannelType @default(PAYSTACK)
+  planId        String             @db.Char(36)
+  paymentPlanId String?            @db.Char(36)
+  plan          Plan               @relation("PlanPaymentChannel", fields: [planId], references: [id])
+  createdAt     DateTime           @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime           @default(now()) @updatedAt @db.Timestamp(6)
+  subscriptions Subscription[]     @relation("PaymentChannelSubscription")
+}
+
+enum PaymentChannelType {
+  PAYSTACK
+  STRIPE
 }
 
 model Feature {
-  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  subscriptionId String       @db.Char(36)
-  feature        String       @db.VarChar(120)
-  value          String       @db.VarChar(36)
-  createdAt      DateTime     @default(now()) @db.Timestamp(6)
-  updatedAt      DateTime     @default(now()) @updatedAt @db.Timestamp(6)
-  subscription   Subscription @relation("SubscriptionFeature", fields: [subscriptionId], references: [id])
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  feature   String   @db.VarChar(120)
+  value     String   @db.VarChar(36)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(6)
+  plan      Plan?    @relation("PlanFeature", fields: [planId], references: [id])
+  planId    String?  @db.Char(36)
 }
 
 enum TemplateType {
@@ -262,18 +301,18 @@ enum TemplateType {
 }
 
 model Template {
-  id           String         @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  title        String         @db.VarChar(2048)
-  slug         String         @default("Default") @db.VarChar(2048)
-  type         TemplateType   @default(TEMPLATE)
-  userId       String?        @db.Char(36)
-  user         User?          @relation("UserTemplate", fields: [userId], references: [id])
-  content      String         @db.Text
-  css          String?        @db.Text
-  visibility   Visibility     @default(PUBLIC)
-  createdAt    DateTime       @default(now()) @db.Timestamp(6)
-  updatedAt    DateTime       @default(now()) @updatedAt @db.Timestamp(6)
-  UserTemplate UserTemplate[] @relation("TemplateUserTemplate")
+  id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  title         String         @db.VarChar(2048)
+  slug          String         @default("Default") @db.VarChar(2048)
+  type          TemplateType   @default(TEMPLATE)
+  userId        String?        @db.Char(36)
+  user          User?          @relation("UserTemplate", fields: [userId], references: [id])
+  content       String         @db.Text
+  css           String?        @db.Text
+  visibility    Visibility     @default(PUBLIC)
+  createdAt     DateTime       @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime       @default(now()) @updatedAt @db.Timestamp(6)
+  userTemplates UserTemplate[] @relation("TemplateUserTemplate")
 
   @@unique([slug], name: "uniqueSlug", map: "uniqueSlug")
 }
@@ -283,7 +322,7 @@ model UserTemplate {
   content    String      @db.Text
   templateId String      @db.Char(36)
   template   Template    @relation("TemplateUserTemplate", fields: [templateId], references: [id])
-  portfolio  Portfolio[] @relation("UserTemplatePortfolio")
+  portfolios Portfolio[] @relation("UserTemplatePortfolio")
   css        String?     @db.Text
   createdAt  DateTime    @default(now()) @db.Timestamp(6)
   updatedAt  DateTime    @default(now()) @updatedAt @db.Timestamp(6)

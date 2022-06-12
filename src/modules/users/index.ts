@@ -8,6 +8,7 @@ import deleteUser from './mutations/delete-user'
 import getUser from './queries/getUser'
 import usersReferred from './fields/users-referred'
 import totalContents from './fields/total-contents'
+import totalPortfolios from './fields/total-contents'
 import isPaying from './fields/is-paying'
 import isTrial from './fields/is-trial'
 
@@ -32,6 +33,7 @@ const typeDefs = gql`
     totalUsersReferred: String
     hasFinishedOnboarding: Boolean
     totalContents: Int
+    totalPortfolios: Int
     avatarURL: String
     createdAt: Time!
     updatedAt: Time!
@@ -135,6 +137,7 @@ const resolvers: Resolvers = {
     avatarURL: userAvatarURL,
     totalUsersReferred: usersReferred,
     totalContents: totalContents,
+    totalPortfolios: totalPortfolios,
     paying: isPaying,
     isTrial: isTrial
   }
