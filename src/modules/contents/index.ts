@@ -14,6 +14,7 @@ import getCategoryStats from './queries/get-category-stats'
 import getTopicStats from './queries/get-topic-stats'
 import getBoxStats from './queries/get-box-stats'
 import deleteBulkContent from './mutations/delete-bulk-content'
+import getContentStats from './queries/get-content-stats'
 
 const typeDefs = gql`
   type Content {
@@ -231,7 +232,7 @@ const typeDefs = gql`
     getContent(id: ID!): Content!
     getIndexMetadata(filters: ContentFiltersInput): IndexMetadataResponse
     getOverallStats(filters: ContentFiltersInput): OverallStatsResponse
-
+    getContentStats(filters: ContentFiltersInput): IndexMetadataResponse
     getCategoryStats(filters: ContentFiltersInput): OverallStatResponse
     getTopicStats(filters: ContentFiltersInput): OverallStatResponse
     getBoxStats(filters: ContentFiltersInput): BoxStats
@@ -251,6 +252,7 @@ const resolvers: Resolvers = {
   Query: {
     getContents,
     getContent,
+    getContentStats,
     getIndexMetadata,
     getOverallStats,
     getCategoryStats,

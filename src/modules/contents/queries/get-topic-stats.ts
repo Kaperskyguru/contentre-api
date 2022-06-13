@@ -36,12 +36,12 @@ export default async (
           
           FROM
             "Topic" t
-            LEFT JOIN "Content" c ON c."topicId" = t."id"
+            LEFT JOIN "Content" c ON c."id" = t."contentId"
           WHERE
   
               c."id" IS NOT NULL
               AND (
-                ca."userId" = $1 AND c."userId" = $1
+                c."teamId" = $1
               )
               AND (
                 CAST($2 AS TEXT) IS NULL OR
@@ -55,7 +55,7 @@ export default async (
             LIMIT 1;
           
         `.clearIndentation(),
-      user.id, //$1
+      user.activeTeamId, //$1
       filters?.topicIds?.length ? filters?.topicIds?.join(',') : null, //$2
       fromDate, // $3
       toDate // $4
