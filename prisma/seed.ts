@@ -4,6 +4,7 @@ const prisma = new PrismaClient()
 
 const seedTemplates = async () => {
   const sub = await prisma.subscription.findFirst({ where: { name: 'Team' } })
+  if (!sub) return
   const user = await prisma.user.create({
     data: {
       name: 'Admin Admin',
@@ -30,7 +31,7 @@ const seedTemplates = async () => {
             create: {
               name: 'Personal',
               // Add activeSubscriptionId
-              activeSubscription: { connect: { id: sub.id } }
+              activeSubscription: { connect: { id: sub?.id! } }
             }
           }
         }

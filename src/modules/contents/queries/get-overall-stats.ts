@@ -42,7 +42,7 @@ export default async (
               SELECT
               cl."name",
               cl.status,
-              COUNT(c."id") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "totalContents",
+              CASE WHEN cl."name" IS NOT NULL THEN COUNT(c."id") FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) ELSE COUNT(c."id") END "totalContents",
               SUM( COALESCE(c."likes",0) + COALESCE(c."comments",0) + COALESCE(c."shares",0) ) FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP, 'YYYY')::INT) "total",
               SUM( COALESCE(c."likes",0) + COALESCE(c."comments",0) + COALESCE(c."shares",0) ) FILTER(WHERE TO_CHAR("c"."publishedDate", 'YYYY')::INT = TO_CHAR(NOW()::TIMESTAMP - '1 year'::INTERVAL, 'YYYY')::INT)  "lastTotal",
   
@@ -106,8 +106,8 @@ export default async (
       return {
         interactions: !Number.isFinite(interactions) ? 100 : interactions,
         growth: !Number.isFinite(subGrowth) ? 100 : subGrowth,
-        name: val.name,
-        status: val.status,
+        name: val?.name ?? 'Personal',
+        status: val?.status ?? 'ACTIVE',
         totalShares: val.totalShares || 0,
         totalComments: val.totalComments || 0,
         totalLikes: val.totalLikes || 0,
