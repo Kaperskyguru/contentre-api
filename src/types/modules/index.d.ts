@@ -914,6 +914,7 @@ export type Query = {
   getClient: Client;
   getClients: ClientResponse;
   getContent: Content;
+  getContentStats?: Maybe<IndexMetadataResponse>;
   getContents: ContentResponse;
   getCurrentUser?: Maybe<User>;
   getIndexMetadata?: Maybe<IndexMetadataResponse>;
@@ -988,6 +989,11 @@ export type QueryGetClientsArgs = {
 
 export type QueryGetContentArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryGetContentStatsArgs = {
+  filters?: InputMaybe<ContentFiltersInput>;
 };
 
 
@@ -2084,6 +2090,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<QueryGetClientArgs, 'id'>>;
   getClients?: Resolver<ResolversTypes['ClientResponse'], ParentType, ContextType, RequireFields<QueryGetClientsArgs, never>>;
   getContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<QueryGetContentArgs, 'id'>>;
+  getContentStats?: Resolver<Maybe<ResolversTypes['IndexMetadataResponse']>, ParentType, ContextType, RequireFields<QueryGetContentStatsArgs, never>>;
   getContents?: Resolver<ResolversTypes['ContentResponse'], ParentType, ContextType, RequireFields<QueryGetContentsArgs, never>>;
   getCurrentUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   getIndexMetadata?: Resolver<Maybe<ResolversTypes['IndexMetadataResponse']>, ParentType, ContextType, RequireFields<QueryGetIndexMetadataArgs, never>>;
