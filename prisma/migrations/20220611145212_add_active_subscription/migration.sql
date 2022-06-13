@@ -8,7 +8,7 @@
 
 */
 -- DropForeignKey
-ALTER TABLE "Team" DROP CONSTRAINT "Team_subscriptionId_fkey";
+-- ALTER TABLE "Team" DROP CONSTRAINT "Team_subscriptionId_fkey";
 
 -- AlterTable
 ALTER TABLE "Subscription" ADD COLUMN     "teamId" CHAR(36),
