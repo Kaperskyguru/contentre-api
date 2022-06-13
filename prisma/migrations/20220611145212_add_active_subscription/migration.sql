@@ -8,7 +8,7 @@
 
 */
 -- DropForeignKey
--- ALTER TABLE "Team" DROP CONSTRAINT "Team_subscriptionId_fkey";
+ALTER TABLE "Team" DROP CONSTRAINT "Team_subscriptionId_fkey";
 
 -- AlterTable
 ALTER TABLE "Subscription" ADD COLUMN     "teamId" CHAR(36),
@@ -25,7 +25,7 @@ ALTER TABLE "User" ADD COLUMN     "activeSubscriptionId" CHAR(36);
 CREATE UNIQUE INDEX "Team_activeSubscriptionId_key" ON "Team"("activeSubscriptionId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_subscriptionId_key" ON "User"("subscriptionId");
+-- CREATE UNIQUE INDEX "User_subscriptionId_key" ON "User"("subscriptionId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_activeSubscriptionId_key" ON "User"("activeSubscriptionId");
