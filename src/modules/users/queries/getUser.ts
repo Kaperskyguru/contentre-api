@@ -19,7 +19,7 @@ export default async (
 
     const userData = await prisma.user.findUnique({
       where: { id: uuid },
-      include: { subscription: true }
+      include: { activeSubscription: true }
     })
 
     if (!userData) {

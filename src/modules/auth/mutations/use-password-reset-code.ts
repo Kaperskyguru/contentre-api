@@ -57,7 +57,7 @@ export default async (
     const updateUser = prisma.user.update({
       where: { id: userId },
       data: { emailConfirmed: true },
-      include: { subscription: true }
+      include: { activeSubscription: true }
     })
 
     // Store the intents delete operation for running in a transaction.

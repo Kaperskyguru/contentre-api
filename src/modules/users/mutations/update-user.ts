@@ -57,7 +57,7 @@ export default async (
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
       data,
-      include: { subscription: true }
+      include: { activeSubscription: true }
     })
 
     // Send data to Segment

@@ -65,7 +65,7 @@ export const getUser = async (user: User): Promise<User> => {
         }
       : null,
     activeRole: activeTeam?.role ?? null,
-    subscription: {
+    activeSubscription: {
       ...activeSubscription[0],
       features: features.map((item) => ({
         feature: item.feature,

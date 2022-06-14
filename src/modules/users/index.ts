@@ -17,8 +17,6 @@ const typeDefs = gql`
     id: ID!
     email: String!
     name: String!
-    firstname: String
-    lastname: String
     bio: String
     homeAddress: String
     portfolioURL: String
@@ -29,6 +27,7 @@ const typeDefs = gql`
     subscriptionId: ID
     activeSubscriptionId: ID
     subscription: Subscription
+    activeSubscription: Subscription
     phoneCode: String
     phoneNumber: String
     totalUsersReferred: String
