@@ -6,7 +6,7 @@
 
 */
 -- CreateIndex
-CREATE UNIQUE INDEX "User_subscriptionId_key" ON "User"("subscriptionId");
+CREATE UNIQUE INDEX IF NOT EXISTS "User_subscriptionId_key" ON "User"("subscriptionId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_activeSubscriptionId_key" ON "User"("activeSubscriptionId");
+CREATE UNIQUE INDEX IF NOT EXISTS "User_activeSubscriptionId_key" ON "User"("activeSubscriptionId");
