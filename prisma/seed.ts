@@ -3,8 +3,9 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 const seedTemplates = async () => {
-  const sub = await prisma.subscription.findFirst({ where: { name: 'Team' } })
-  if (!sub) return
+  const plan = await prisma.plan.findFirst({ where: { name: 'Basic' } })
+
+  if (!plan) return
   const user = await prisma.user.create({
     data: {
       name: 'Admin Admin',
@@ -12,15 +13,24 @@ const seedTemplates = async () => {
       password: '$2b$10$cKsE9uzk.TTgtl.kgk15UeV5Adto8NVYTp3Wt3o2YxK9ZrSnx.sEi',
       email: 'test@test.com',
       portfolioURL: `http://localhost:3000/admin`,
-      subscriptionId: sub?.id!, //Change subscriptionId tot activeSubscriptionId
-      activeSubscriptionId: sub.id,
       emailConfirmed: true
+    }
+  })
+
+  const sub = await prisma.subscription.create({
+    data: {
+      name: plan?.name!,
+      userId: user?.id!,
+      teamId: user.activeTeamId,
+      planId: plan?.id!
     }
   })
 
   const updateUser = await prisma.user.update({
     where: { id: user.id },
     data: {
+      activeSubscription: { connect: { id: sub?.id! } },
+      subscription: { connect: { id: sub?.id! } },
       activeTeam: {
         create: {
           role: 'ADMIN',
@@ -48,23 +58,6 @@ const seedTemplates = async () => {
       visibility: 'PUBLIC'
     },
     update: {}
-  })
-}
-
-const subscriptions = [
-  {
-    name: 'Basic'
-  },
-  {
-    name: 'Premium'
-  },
-  {
-    name: 'Team'
-  }
-]
-const seedSubscriptions = async () => {
-  await prisma.subscription.createMany({
-    data: subscriptions
   })
 }
 
@@ -104,7 +97,7 @@ const seedFeatures = async () => {
 }
 
 const seed = async () => {
-  await seedSubscriptions()
+  // await seedSubscriptions()
   await seedTemplates()
   await seedFeatures()
 }

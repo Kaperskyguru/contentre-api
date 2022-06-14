@@ -31,8 +31,29 @@ export default async (
     let tags = input.tags ?? undefined
     let shouldCustomize = input.shouldCustomize ?? false
 
+    const countPortfolio = await prisma.portfolio.count({
+      where: { userId: user.id }
+    })
+
+    let url = `${environment.domain}/${user.username}`
+    if (countPortfolio < 1) {
+      return createPortfolio(
+        {
+          url,
+          description,
+          title,
+          templateId,
+          clientId,
+          categoryId,
+          tags,
+          shouldCustomize
+        },
+        { user, prisma }
+      )
+    }
+
     //Generate URL
-    let url = `${environment.domain}/${user.username}/${String(
+    url = `${environment.domain}/${user.username}/${String(
       Math.floor(100000 + Math.random() * 900000)
     )}`
 

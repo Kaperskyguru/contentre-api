@@ -19,6 +19,16 @@ export type Scalars = {
   Time: any;
 };
 
+export type AllPortfolioFiltersInput = {
+  terms?: InputMaybe<Scalars['String']>;
+};
+
+export type AllPortfoliosResponse = {
+  __typename?: 'AllPortfoliosResponse';
+  meta: Meta;
+  portfolios: Array<Portfolio>;
+};
+
 export type App = {
   __typename?: 'App';
   app?: Maybe<Integration>;
@@ -854,6 +864,7 @@ export type Portfolio = {
   type?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Time'];
   url: Scalars['String'];
+  user?: Maybe<User>;
   userId?: Maybe<Scalars['ID']>;
 };
 
@@ -905,6 +916,7 @@ export type PortfolioFiltersInput = {
 
 export type Query = {
   __typename?: 'Query';
+  getAllPortfolios?: Maybe<AllPortfoliosResponse>;
   getApp: App;
   getApps: AppResponse;
   getBoxStats?: Maybe<BoxStats>;
@@ -938,6 +950,13 @@ export type Query = {
   getTopics: TopicResponse;
   getUser: User;
   getVersion: Scalars['String'];
+};
+
+
+export type QueryGetAllPortfoliosArgs = {
+  filters?: InputMaybe<AllPortfolioFiltersInput>;
+  size?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1528,6 +1547,8 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  AllPortfolioFiltersInput: AllPortfolioFiltersInput;
+  AllPortfoliosResponse: ResolverTypeWrapper<AllPortfoliosResponse>;
   App: ResolverTypeWrapper<App>;
   AppFiltersInput: AppFiltersInput;
   AppResponse: ResolverTypeWrapper<AppResponse>;
@@ -1649,6 +1670,8 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  AllPortfolioFiltersInput: AllPortfolioFiltersInput;
+  AllPortfoliosResponse: AllPortfoliosResponse;
   App: App;
   AppFiltersInput: AppFiltersInput;
   AppResponse: AppResponse;
@@ -1756,6 +1779,12 @@ export type ResolversParentTypes = {
   UserTeamsRelation: UserTeamsRelation;
   UserTemplate: UserTemplate;
   subUser: SubUser;
+};
+
+export type AllPortfoliosResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['AllPortfoliosResponse'] = ResolversParentTypes['AllPortfoliosResponse']> = {
+  meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
+  portfolios?: Resolver<Array<ResolversTypes['Portfolio']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type AppResolvers<ContextType = any, ParentType extends ResolversParentTypes['App'] = ResolversParentTypes['App']> = {
@@ -2054,6 +2083,7 @@ export type PortfolioResolvers<ContextType = any, ParentType extends ResolversPa
   type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -2081,6 +2111,7 @@ export type PortfolioDetailResolvers<ContextType = any, ParentType extends Resol
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getAllPortfolios?: Resolver<Maybe<ResolversTypes['AllPortfoliosResponse']>, ParentType, ContextType, RequireFields<QueryGetAllPortfoliosArgs, never>>;
   getApp?: Resolver<ResolversTypes['App'], ParentType, ContextType, RequireFields<QueryGetAppArgs, 'id'>>;
   getApps?: Resolver<ResolversTypes['AppResponse'], ParentType, ContextType, RequireFields<QueryGetAppsArgs, never>>;
   getBoxStats?: Resolver<Maybe<ResolversTypes['BoxStats']>, ParentType, ContextType, RequireFields<QueryGetBoxStatsArgs, never>>;
@@ -2267,6 +2298,7 @@ export type SubUserResolvers<ContextType = any, ParentType extends ResolversPare
 };
 
 export type Resolvers<ContextType = any> = {
+  AllPortfoliosResponse?: AllPortfoliosResponseResolvers<ContextType>;
   App?: AppResolvers<ContextType>;
   AppResponse?: AppResponseResolvers<ContextType>;
   BoxStats?: BoxStatsResolvers<ContextType>;

@@ -25,10 +25,10 @@ ALTER TABLE "User" ADD COLUMN     "activeSubscriptionId" CHAR(36);
 CREATE UNIQUE INDEX "Team_activeSubscriptionId_key" ON "Team"("activeSubscriptionId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_subscriptionId_key" ON "User"("subscriptionId");
+-- CREATE UNIQUE INDEX "User_subscriptionId_key" ON "User"("subscriptionId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_activeSubscriptionId_key" ON "User"("activeSubscriptionId");
+-- CREATE UNIQUE INDEX "User_activeSubscriptionId_key" ON "User"("activeSubscriptionId");
 
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_activeSubscriptionId_fkey" FOREIGN KEY ("activeSubscriptionId") REFERENCES "Subscription"("id") ON DELETE SET NULL ON UPDATE CASCADE;
