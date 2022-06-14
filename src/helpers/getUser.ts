@@ -34,7 +34,7 @@ export const getUser = async (user: User): Promise<User> => {
         "s"."id" = $1 
         LIMIT 1
       `,
-    user.subscriptionId // Change to activeSubscriptionId
+    user.activeSubscriptionId // Change to activeSubscriptionId
   )
 
   const features: Feature[] = await prisma.$queryRawUnsafe(

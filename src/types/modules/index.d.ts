@@ -1400,6 +1400,7 @@ export type UploadMultipleContentInput = {
 export type User = {
   __typename?: 'User';
   activeRole?: Maybe<MemberRole>;
+  activeSubscriptionId?: Maybe<Scalars['ID']>;
   activeTeam?: Maybe<Team>;
   activeTeamId?: Maybe<Scalars['String']>;
   avatarURL?: Maybe<Scalars['String']>;
@@ -2246,6 +2247,7 @@ export type TopicResponseResolvers<ContextType = any, ParentType extends Resolve
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   activeRole?: Resolver<Maybe<ResolversTypes['MemberRole']>, ParentType, ContextType>;
+  activeSubscriptionId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   activeTeam?: Resolver<Maybe<ResolversTypes['Team']>, ParentType, ContextType>;
   activeTeamId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   avatarURL?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
