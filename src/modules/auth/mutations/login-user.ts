@@ -22,7 +22,7 @@ export default async (
   try {
     const user = await prisma.user.findFirst({
       where: { email: { equals: email, mode: 'insensitive' } },
-      include: { subscription: true }
+      include: { activeSubscription: true }
     })
 
     if (!user) throw new Error('authentication failed')

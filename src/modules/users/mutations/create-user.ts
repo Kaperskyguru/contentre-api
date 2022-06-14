@@ -27,7 +27,7 @@ export default async (
     // Checking if user already exists, but did not verify email
     user = await prisma.user.findUnique({
       where: { email: input.email },
-      include: { subscription: true }
+      include: { activeSubscription: true }
     })
 
     if (user && !user.emailConfirmed) {
@@ -66,7 +66,7 @@ export default async (
         password: await hashPassword(input.password),
         ...data
       },
-      include: { subscription: true }
+      include: { activeSubscription: true }
     })
 
     const sub = await prisma.subscription.create({

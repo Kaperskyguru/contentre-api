@@ -1400,6 +1400,7 @@ export type UploadMultipleContentInput = {
 export type User = {
   __typename?: 'User';
   activeRole?: Maybe<MemberRole>;
+  activeSubscription?: Maybe<Subscription>;
   activeSubscriptionId?: Maybe<Scalars['ID']>;
   activeTeam?: Maybe<Team>;
   activeTeamId?: Maybe<Scalars['String']>;
@@ -1409,7 +1410,6 @@ export type User = {
   createdAt: Scalars['Time'];
   email: Scalars['String'];
   emailConfirmed: Scalars['Boolean'];
-  firstname?: Maybe<Scalars['String']>;
   hasFinishedOnboarding?: Maybe<Scalars['Boolean']>;
   hasTrial?: Maybe<Scalars['Boolean']>;
   homeAddress?: Maybe<Scalars['String']>;
@@ -1417,7 +1417,6 @@ export type User = {
   isTrial?: Maybe<Scalars['Boolean']>;
   jobTitle?: Maybe<Scalars['String']>;
   lastActivityAt: Scalars['Time'];
-  lastname?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   paying?: Maybe<Scalars['Boolean']>;
   phoneCode?: Maybe<Scalars['String']>;
@@ -2247,6 +2246,7 @@ export type TopicResponseResolvers<ContextType = any, ParentType extends Resolve
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   activeRole?: Resolver<Maybe<ResolversTypes['MemberRole']>, ParentType, ContextType>;
+  activeSubscription?: Resolver<Maybe<ResolversTypes['Subscription']>, ParentType, ContextType>;
   activeSubscriptionId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   activeTeam?: Resolver<Maybe<ResolversTypes['Team']>, ParentType, ContextType>;
   activeTeamId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2256,7 +2256,6 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   emailConfirmed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  firstname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   hasFinishedOnboarding?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   hasTrial?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   homeAddress?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2264,7 +2263,6 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   isTrial?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   jobTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastActivityAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
-  lastname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   paying?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   phoneCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

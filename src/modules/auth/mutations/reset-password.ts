@@ -27,7 +27,7 @@ export default async (
       data: {
         password: await hashPassword(newPassword)
       },
-      include: { subscription: true }
+      include: { activeSubscription: true }
     })
 
     // Check if no Mailgun configuration in develop context.
