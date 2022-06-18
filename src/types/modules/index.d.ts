@@ -275,6 +275,16 @@ export type CreateMultipleMediaInput = {
   media: Array<CreateMediaInput>;
 };
 
+export type CreateNoteInput = {
+  content: Scalars['String'];
+  notebookId?: InputMaybe<Scalars['ID']>;
+  title?: InputMaybe<Scalars['String']>;
+};
+
+export type CreateNotebookInput = {
+  name: Scalars['String'];
+};
+
 export type CreatePortfolioInput = {
   categoryId?: InputMaybe<Scalars['ID']>;
   clientId?: InputMaybe<Scalars['ID']>;
@@ -341,6 +351,14 @@ export type DeleteBulkClientInput = {
 };
 
 export type DeleteBulkContentInput = {
+  ids: Array<Scalars['ID']>;
+};
+
+export type DeleteBulkNoteInput = {
+  ids: Array<Scalars['ID']>;
+};
+
+export type DeleteBulkNotebookInput = {
   ids: Array<Scalars['ID']>;
 };
 
@@ -480,6 +498,8 @@ export type Mutation = {
   createContent?: Maybe<Content>;
   createMedia?: Maybe<Media>;
   createMultipleMedia: Array<Media>;
+  createNote?: Maybe<Note>;
+  createNotebook?: Maybe<Notebook>;
   createPortfolio?: Maybe<Portfolio>;
   createSocial?: Maybe<Social>;
   createTag?: Maybe<Tag>;
@@ -490,12 +510,16 @@ export type Mutation = {
   deleteBulkCategory: Scalars['Boolean'];
   deleteBulkClient: Scalars['Boolean'];
   deleteBulkContent: Scalars['Boolean'];
+  deleteBulkNote: Scalars['Boolean'];
+  deleteBulkNotebook: Scalars['Boolean'];
   deleteBulkTag: Scalars['Boolean'];
   deleteBulkTopic: Scalars['Boolean'];
   deleteCategory: Scalars['Boolean'];
   deleteClient: Scalars['Boolean'];
   deleteContent: Scalars['Boolean'];
   deleteMedia: Scalars['Boolean'];
+  deleteNote: Scalars['Boolean'];
+  deleteNotebook: Scalars['Boolean'];
   deletePortfolio: Scalars['Boolean'];
   deleteSocial: Scalars['Boolean'];
   deleteTag: Scalars['Boolean'];
@@ -517,6 +541,8 @@ export type Mutation = {
   updateClient: Client;
   updateContent: Content;
   updateMedia: Media;
+  updateNote: Notebook;
+  updateNotebook: Notebook;
   updatePortfolio: Portfolio;
   updateSocial: Social;
   updateTag: Tag;
@@ -566,6 +592,16 @@ export type MutationCreateMediaArgs = {
 
 export type MutationCreateMultipleMediaArgs = {
   input: CreateMultipleMediaInput;
+};
+
+
+export type MutationCreateNoteArgs = {
+  input: CreateNoteInput;
+};
+
+
+export type MutationCreateNotebookArgs = {
+  input: CreateNotebookInput;
 };
 
 
@@ -619,6 +655,16 @@ export type MutationDeleteBulkContentArgs = {
 };
 
 
+export type MutationDeleteBulkNoteArgs = {
+  input: DeleteBulkNoteInput;
+};
+
+
+export type MutationDeleteBulkNotebookArgs = {
+  input: DeleteBulkNotebookInput;
+};
+
+
 export type MutationDeleteBulkTagArgs = {
   input: DeleteBulkTagInput;
 };
@@ -645,6 +691,16 @@ export type MutationDeleteContentArgs = {
 
 
 export type MutationDeleteMediaArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteNoteArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteNotebookArgs = {
   id: Scalars['ID'];
 };
 
@@ -757,6 +813,18 @@ export type MutationUpdateMediaArgs = {
 };
 
 
+export type MutationUpdateNoteArgs = {
+  id: Scalars['ID'];
+  input: UpdateNoteInput;
+};
+
+
+export type MutationUpdateNotebookArgs = {
+  id: Scalars['ID'];
+  input: UpdateNotebookInput;
+};
+
+
 export type MutationUpdatePortfolioArgs = {
   id: Scalars['ID'];
   input: UpdatePortfolioInput;
@@ -820,6 +888,57 @@ export type MutationUsePhoneCodeArgs = {
 
 export type MutationVerifyUsernameArgs = {
   username: Scalars['String'];
+};
+
+export type Note = {
+  __typename?: 'Note';
+  content?: Maybe<Scalars['String']>;
+  createdAt: Scalars['Time'];
+  id?: Maybe<Scalars['ID']>;
+  link?: Maybe<Scalars['String']>;
+  notebookId?: Maybe<Scalars['ID']>;
+  shareable?: Maybe<Scalars['Boolean']>;
+  teamId?: Maybe<Scalars['ID']>;
+  title?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['Time'];
+  userId?: Maybe<Scalars['ID']>;
+};
+
+export type NoteFiltersInput = {
+  all?: InputMaybe<Scalars['Boolean']>;
+  sortBy?: InputMaybe<Scalars['String']>;
+  terms?: InputMaybe<Scalars['String']>;
+};
+
+export type NoteResponse = {
+  __typename?: 'NoteResponse';
+  meta: Meta;
+  notes: Array<Note>;
+};
+
+export type Notebook = {
+  __typename?: 'Notebook';
+  createdAt: Scalars['Time'];
+  id?: Maybe<Scalars['ID']>;
+  link?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  shareable?: Maybe<Scalars['Boolean']>;
+  teamId?: Maybe<Scalars['ID']>;
+  totalNotes?: Maybe<Scalars['Int']>;
+  updatedAt: Scalars['Time'];
+  userId?: Maybe<Scalars['ID']>;
+};
+
+export type NotebookFiltersInput = {
+  all?: InputMaybe<Scalars['Boolean']>;
+  sortBy?: InputMaybe<Scalars['String']>;
+  terms?: InputMaybe<Scalars['String']>;
+};
+
+export type NotebookResponse = {
+  __typename?: 'NotebookResponse';
+  meta: Meta;
+  notebooks: Array<Notebook>;
 };
 
 export type OverallStatResponse = {
@@ -933,6 +1052,10 @@ export type Query = {
   getMedia: Media;
   getMedias: MediaResponse;
   getMembers?: Maybe<Array<Member>>;
+  getNote: Note;
+  getNotebook: Notebook;
+  getNotebooks: NotebookResponse;
+  getNotes: NoteResponse;
   getOverallStats?: Maybe<OverallStatsResponse>;
   getPortfolio: Portfolio;
   getPortfolioContent?: Maybe<PortfolioContent>;
@@ -1042,6 +1165,30 @@ export type QueryGetMediasArgs = {
 
 export type QueryGetMembersArgs = {
   contains?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryGetNoteArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryGetNotebookArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryGetNotebooksArgs = {
+  filters?: InputMaybe<NotebookFiltersInput>;
+  size?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryGetNotesArgs = {
+  filters?: InputMaybe<NoteFiltersInput>;
+  size?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1355,6 +1502,16 @@ export type UpdateMediaInput = {
   url: Scalars['String'];
 };
 
+export type UpdateNoteInput = {
+  content?: InputMaybe<Scalars['String']>;
+  shareable?: InputMaybe<Scalars['Boolean']>;
+  title?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateNotebookInput = {
+  name?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdatePortfolioInput = {
   description?: InputMaybe<Scalars['String']>;
   title?: InputMaybe<Scalars['String']>;
@@ -1576,6 +1733,8 @@ export type ResolversTypes = {
   CreateContentInput: CreateContentInput;
   CreateMediaInput: CreateMediaInput;
   CreateMultipleMediaInput: CreateMultipleMediaInput;
+  CreateNoteInput: CreateNoteInput;
+  CreateNotebookInput: CreateNotebookInput;
   CreatePortfolioInput: CreatePortfolioInput;
   CreateProfileInput: CreateProfileInput;
   CreateSocialInput: CreateSocialInput;
@@ -1587,6 +1746,8 @@ export type ResolversTypes = {
   DeleteBulkCategoryInput: DeleteBulkCategoryInput;
   DeleteBulkClientInput: DeleteBulkClientInput;
   DeleteBulkContentInput: DeleteBulkContentInput;
+  DeleteBulkNoteInput: DeleteBulkNoteInput;
+  DeleteBulkNotebookInput: DeleteBulkNotebookInput;
   DeleteBulkTagInput: DeleteBulkTagInput;
   DeleteBulkTopicInput: DeleteBulkTopicInput;
   Feature: ResolverTypeWrapper<Feature>;
@@ -1609,6 +1770,12 @@ export type ResolversTypes = {
   Meta: ResolverTypeWrapper<Meta>;
   Metadata: ResolverTypeWrapper<Metadata>;
   Mutation: ResolverTypeWrapper<{}>;
+  Note: ResolverTypeWrapper<Note>;
+  NoteFiltersInput: NoteFiltersInput;
+  NoteResponse: ResolverTypeWrapper<NoteResponse>;
+  Notebook: ResolverTypeWrapper<Notebook>;
+  NotebookFiltersInput: NotebookFiltersInput;
+  NotebookResponse: ResolverTypeWrapper<NotebookResponse>;
   OverallStatResponse: ResolverTypeWrapper<OverallStatResponse>;
   OverallStatsResponse: ResolverTypeWrapper<OverallStatsResponse>;
   PaymentType: PaymentType;
@@ -1651,6 +1818,8 @@ export type ResolversTypes = {
   UpdateClientInput: UpdateClientInput;
   UpdateContentInput: UpdateContentInput;
   UpdateMediaInput: UpdateMediaInput;
+  UpdateNoteInput: UpdateNoteInput;
+  UpdateNotebookInput: UpdateNotebookInput;
   UpdatePortfolioInput: UpdatePortfolioInput;
   UpdateSocialInput: UpdateSocialInput;
   UpdateTagInput: UpdateTagInput;
@@ -1697,6 +1866,8 @@ export type ResolversParentTypes = {
   CreateContentInput: CreateContentInput;
   CreateMediaInput: CreateMediaInput;
   CreateMultipleMediaInput: CreateMultipleMediaInput;
+  CreateNoteInput: CreateNoteInput;
+  CreateNotebookInput: CreateNotebookInput;
   CreatePortfolioInput: CreatePortfolioInput;
   CreateProfileInput: CreateProfileInput;
   CreateSocialInput: CreateSocialInput;
@@ -1708,6 +1879,8 @@ export type ResolversParentTypes = {
   DeleteBulkCategoryInput: DeleteBulkCategoryInput;
   DeleteBulkClientInput: DeleteBulkClientInput;
   DeleteBulkContentInput: DeleteBulkContentInput;
+  DeleteBulkNoteInput: DeleteBulkNoteInput;
+  DeleteBulkNotebookInput: DeleteBulkNotebookInput;
   DeleteBulkTagInput: DeleteBulkTagInput;
   DeleteBulkTopicInput: DeleteBulkTopicInput;
   Feature: Feature;
@@ -1728,6 +1901,12 @@ export type ResolversParentTypes = {
   Meta: Meta;
   Metadata: Metadata;
   Mutation: {};
+  Note: Note;
+  NoteFiltersInput: NoteFiltersInput;
+  NoteResponse: NoteResponse;
+  Notebook: Notebook;
+  NotebookFiltersInput: NotebookFiltersInput;
+  NotebookResponse: NotebookResponse;
   OverallStatResponse: OverallStatResponse;
   OverallStatsResponse: OverallStatsResponse;
   Performance: Performance;
@@ -1765,6 +1944,8 @@ export type ResolversParentTypes = {
   UpdateClientInput: UpdateClientInput;
   UpdateContentInput: UpdateContentInput;
   UpdateMediaInput: UpdateMediaInput;
+  UpdateNoteInput: UpdateNoteInput;
+  UpdateNotebookInput: UpdateNotebookInput;
   UpdatePortfolioInput: UpdatePortfolioInput;
   UpdateSocialInput: UpdateSocialInput;
   UpdateTagInput: UpdateTagInput;
@@ -1995,6 +2176,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createContent?: Resolver<Maybe<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<MutationCreateContentArgs, 'input'>>;
   createMedia?: Resolver<Maybe<ResolversTypes['Media']>, ParentType, ContextType, RequireFields<MutationCreateMediaArgs, 'input'>>;
   createMultipleMedia?: Resolver<Array<ResolversTypes['Media']>, ParentType, ContextType, RequireFields<MutationCreateMultipleMediaArgs, 'input'>>;
+  createNote?: Resolver<Maybe<ResolversTypes['Note']>, ParentType, ContextType, RequireFields<MutationCreateNoteArgs, 'input'>>;
+  createNotebook?: Resolver<Maybe<ResolversTypes['Notebook']>, ParentType, ContextType, RequireFields<MutationCreateNotebookArgs, 'input'>>;
   createPortfolio?: Resolver<Maybe<ResolversTypes['Portfolio']>, ParentType, ContextType, RequireFields<MutationCreatePortfolioArgs, 'input'>>;
   createSocial?: Resolver<Maybe<ResolversTypes['Social']>, ParentType, ContextType, RequireFields<MutationCreateSocialArgs, 'input'>>;
   createTag?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<MutationCreateTagArgs, 'input'>>;
@@ -2005,12 +2188,16 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteBulkCategory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkCategoryArgs, 'input'>>;
   deleteBulkClient?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkClientArgs, 'input'>>;
   deleteBulkContent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkContentArgs, 'input'>>;
+  deleteBulkNote?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkNoteArgs, 'input'>>;
+  deleteBulkNotebook?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkNotebookArgs, 'input'>>;
   deleteBulkTag?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkTagArgs, 'input'>>;
   deleteBulkTopic?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkTopicArgs, 'input'>>;
   deleteCategory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, 'id'>>;
   deleteClient?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteClientArgs, 'id'>>;
   deleteContent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteContentArgs, 'id'>>;
   deleteMedia?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteMediaArgs, 'id'>>;
+  deleteNote?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteNoteArgs, 'id'>>;
+  deleteNotebook?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteNotebookArgs, 'id'>>;
   deletePortfolio?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeletePortfolioArgs, 'id'>>;
   deleteSocial?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteSocialArgs, 'id'>>;
   deleteTag?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteTagArgs, 'id'>>;
@@ -2032,6 +2219,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationUpdateClientArgs, 'id' | 'input'>>;
   updateContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<MutationUpdateContentArgs, 'id' | 'input'>>;
   updateMedia?: Resolver<ResolversTypes['Media'], ParentType, ContextType, RequireFields<MutationUpdateMediaArgs, 'id' | 'input'>>;
+  updateNote?: Resolver<ResolversTypes['Notebook'], ParentType, ContextType, RequireFields<MutationUpdateNoteArgs, 'id' | 'input'>>;
+  updateNotebook?: Resolver<ResolversTypes['Notebook'], ParentType, ContextType, RequireFields<MutationUpdateNotebookArgs, 'id' | 'input'>>;
   updatePortfolio?: Resolver<ResolversTypes['Portfolio'], ParentType, ContextType, RequireFields<MutationUpdatePortfolioArgs, 'id' | 'input'>>;
   updateSocial?: Resolver<ResolversTypes['Social'], ParentType, ContextType, RequireFields<MutationUpdateSocialArgs, 'id' | 'input'>>;
   updateTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<MutationUpdateTagArgs, 'id' | 'input'>>;
@@ -2045,6 +2234,45 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   usePhoneCode?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUsePhoneCodeArgs, 'code'>>;
   verifyUsername?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationVerifyUsernameArgs, 'username'>>;
   version?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
+export type NoteResolvers<ContextType = any, ParentType extends ResolversParentTypes['Note'] = ResolversParentTypes['Note']> = {
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  notebookId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  shareable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  teamId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type NoteResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['NoteResponse'] = ResolversParentTypes['NoteResponse']> = {
+  meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
+  notes?: Resolver<Array<ResolversTypes['Note']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type NotebookResolvers<ContextType = any, ParentType extends ResolversParentTypes['Notebook'] = ResolversParentTypes['Notebook']> = {
+  createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  shareable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  teamId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  totalNotes?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type NotebookResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['NotebookResponse'] = ResolversParentTypes['NotebookResponse']> = {
+  meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
+  notebooks?: Resolver<Array<ResolversTypes['Notebook']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type OverallStatResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['OverallStatResponse'] = ResolversParentTypes['OverallStatResponse']> = {
@@ -2128,6 +2356,10 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getMedia?: Resolver<ResolversTypes['Media'], ParentType, ContextType, RequireFields<QueryGetMediaArgs, 'id'>>;
   getMedias?: Resolver<ResolversTypes['MediaResponse'], ParentType, ContextType, RequireFields<QueryGetMediasArgs, never>>;
   getMembers?: Resolver<Maybe<Array<ResolversTypes['Member']>>, ParentType, ContextType, RequireFields<QueryGetMembersArgs, never>>;
+  getNote?: Resolver<ResolversTypes['Note'], ParentType, ContextType, RequireFields<QueryGetNoteArgs, 'id'>>;
+  getNotebook?: Resolver<ResolversTypes['Notebook'], ParentType, ContextType, RequireFields<QueryGetNotebookArgs, 'id'>>;
+  getNotebooks?: Resolver<ResolversTypes['NotebookResponse'], ParentType, ContextType, RequireFields<QueryGetNotebooksArgs, never>>;
+  getNotes?: Resolver<ResolversTypes['NoteResponse'], ParentType, ContextType, RequireFields<QueryGetNotesArgs, never>>;
   getOverallStats?: Resolver<Maybe<ResolversTypes['OverallStatsResponse']>, ParentType, ContextType, RequireFields<QueryGetOverallStatsArgs, never>>;
   getPortfolio?: Resolver<ResolversTypes['Portfolio'], ParentType, ContextType, RequireFields<QueryGetPortfolioArgs, 'id'>>;
   getPortfolioContent?: Resolver<Maybe<ResolversTypes['PortfolioContent']>, ParentType, ContextType, RequireFields<QueryGetPortfolioContentArgs, 'filters'>>;
@@ -2321,6 +2553,10 @@ export type Resolvers<ContextType = any> = {
   Meta?: MetaResolvers<ContextType>;
   Metadata?: MetadataResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Note?: NoteResolvers<ContextType>;
+  NoteResponse?: NoteResponseResolvers<ContextType>;
+  Notebook?: NotebookResolvers<ContextType>;
+  NotebookResponse?: NotebookResponseResolvers<ContextType>;
   OverallStatResponse?: OverallStatResponseResolvers<ContextType>;
   OverallStatsResponse?: OverallStatsResponseResolvers<ContextType>;
   Performance?: PerformanceResolvers<ContextType>;

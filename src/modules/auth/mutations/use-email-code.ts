@@ -68,6 +68,15 @@ export default async (
     setJWT(updatedUser, setCookies!)
     // Get the formatted updated user to return.
 
+    //Create Personal Notebook
+    await prisma.notebook.create({
+      data: {
+        name: 'Personal Notebook',
+        user: { connect: { id: updatedUser.id } },
+        team: { connect: { id: updatedUser?.activeTeamId! } }
+      }
+    })
+
     // Check if no Mailgun configuration in develop context.
     const isDevelop =
       !environment.mail && ['LOCAL', 'DEVELOP'].includes(environment.context)

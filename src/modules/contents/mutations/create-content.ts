@@ -1,7 +1,7 @@
 import { useErrorParser } from '@/helpers'
 import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
-import { Content, MutationCreateContentArgs } from '@/types/modules'
+import { Content, MutationCreateContentArgs, Note } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
 import getOrCreateCategoryId from '../helpers/getOrCreateCategory'
 import sendToSegment from '@extensions/segment-service/segment'
@@ -11,7 +11,7 @@ export default async (
   _parent: unknown,
   { input }: MutationCreateContentArgs,
   context: Context & Required<Context>
-): Promise<Content> => {
+): Promise<Content | Note> => {
   const { prisma, user, ipAddress, requestURL, sentryId } = context
   logMutation('createContent %o', {
     input,
@@ -41,8 +41,30 @@ export default async (
       (await getOrCreateCategoryId(category, { user, prisma })) ?? undefined
 
     const data: Record<string, unknown> = {}
-    if (clientId !== undefined) {
-      data.client = { connect: { id: clientId } }
+    if (clientId === undefined) {
+      // Create Note instead
+      const notebook = await prisma.notebook.findFirst({
+        where: {
+          name: 'Personal Notebook'
+        }
+      })
+      const note = await prisma.note.create({
+        data: {
+          title: title,
+          content: content ?? excerpt,
+          notebook: { connect: { id: notebook?.id } },
+          user: { connect: { id: user.id } },
+          team: { connect: { id: user.activeTeamId! } }
+        }
+      })
+      return {
+        ...note,
+        visibility: 'PRIVATE',
+        status: 'DRAFT',
+        type: 'TEXT',
+        excerpt: note?.content ?? '',
+        title: note?.title ?? ''
+      }
     }
     //Generate excerpt
     let defaultExcerpt: string | null = null
