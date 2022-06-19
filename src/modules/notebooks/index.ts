@@ -58,6 +58,7 @@ const typeDefs = gql`
     title: String
     content: String
     shareable: Boolean
+    notebookId: ID
   }
 
   input DeleteBulkNotebookInput {
@@ -76,6 +77,9 @@ const typeDefs = gql`
 
   input NoteFiltersInput {
     terms: String
+    notebookId: ID
+    fromDate: String
+    toDate: String
     sortBy: String
     all: Boolean
   }

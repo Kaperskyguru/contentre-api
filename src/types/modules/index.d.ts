@@ -925,8 +925,11 @@ export type Note = {
 
 export type NoteFiltersInput = {
   all?: InputMaybe<Scalars['Boolean']>;
+  fromDate?: InputMaybe<Scalars['String']>;
+  notebookId?: InputMaybe<Scalars['ID']>;
   sortBy?: InputMaybe<Scalars['String']>;
   terms?: InputMaybe<Scalars['String']>;
+  toDate?: InputMaybe<Scalars['String']>;
 };
 
 export type NoteResponse = {
@@ -1523,6 +1526,7 @@ export type UpdateMediaInput = {
 
 export type UpdateNoteInput = {
   content?: InputMaybe<Scalars['String']>;
+  notebookId?: InputMaybe<Scalars['ID']>;
   shareable?: InputMaybe<Scalars['Boolean']>;
   title?: InputMaybe<Scalars['String']>;
 };

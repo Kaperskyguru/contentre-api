@@ -21,7 +21,7 @@ export default async (
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
     // Extract fields from the mutation input.
-    const { title, content, shareable } = input
+    const { title, content, shareable, notebookId } = input
 
     // Check for required arguments not provided.
     if (!id) {
@@ -34,6 +34,7 @@ export default async (
     if (title !== undefined) data.title = title
     if (shareable !== undefined) data.shareable = shareable
     if (content !== undefined) data.content = content
+    if (notebookId !== undefined) data.notebookId = notebookId
 
     // Finally update the Note.
     return await prisma.note.update({
