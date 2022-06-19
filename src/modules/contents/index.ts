@@ -15,6 +15,7 @@ import getTopicStats from './queries/get-topic-stats'
 import getBoxStats from './queries/get-box-stats'
 import deleteBulkContent from './mutations/delete-bulk-content'
 import getContentStats from './queries/get-content-stats'
+import convertNoteContent from './mutations/convert-note-content'
 
 const typeDefs = gql`
   type Content {
@@ -156,6 +157,18 @@ const typeDefs = gql`
     paymentType: PaymentType
   }
 
+  input ConvertContentInput {
+    url: String
+    excerpt: String
+    clientId: ID
+    tags: [String!]
+    category: String
+    status: StatusType
+    visibility: Visibility
+    apps: Apps
+    paymentType: PaymentType
+  }
+
   input UploadContentInput {
     url: String!
   }
@@ -240,6 +253,7 @@ const typeDefs = gql`
 
   extend type Mutation {
     createContent(input: CreateContentInput!): Content
+    convertNoteContent(id: ID!, input: ConvertContentInput!): Content
     uploadContent(input: UploadContentInput!): Content!
     uploadMultipleContent(input: UploadMultipleContentInput!): [Content!]!
     deleteContent(id: ID!): Boolean!
@@ -262,6 +276,7 @@ const resolvers: Resolvers = {
 
   Mutation: {
     createContent,
+    convertNoteContent,
     uploadContent,
     deleteContent,
     updateContent,

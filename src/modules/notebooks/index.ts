@@ -7,6 +7,9 @@ import deleteNotebook from './mutations/delete-notebook'
 import updateNotebook from './mutations/update-notebook'
 import totalNotes from './fields/total-notes'
 import deleteBulkNotebook from './mutations/delete-bulk-notebook'
+import createNote from './mutations/create-note'
+import deleteNote from './mutations/delete-note'
+import updateNote from './mutations/update-note'
 
 import getNote from './queries/get-note'
 import getNotes from './queries/get-notes'
@@ -107,7 +110,7 @@ const typeDefs = gql`
     createNote(input: CreateNoteInput!): Note
     deleteBulkNote(input: DeleteBulkNoteInput!): Boolean!
     deleteNote(id: ID!): Boolean!
-    updateNote(id: ID!, input: UpdateNoteInput!): Notebook!
+    updateNote(id: ID!, input: UpdateNoteInput!): Note!
   }
 `
 
@@ -122,6 +125,9 @@ const resolvers: Resolvers = {
     createNotebook,
     deleteNotebook,
     updateNotebook,
+    createNote,
+    deleteNote,
+    updateNote,
     deleteBulkNotebook
   },
   Notebook: {

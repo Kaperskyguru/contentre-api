@@ -218,6 +218,18 @@ export type ContentType =
   | 'TEXT'
   | 'VIDEO';
 
+export type ConvertContentInput = {
+  apps?: InputMaybe<Apps>;
+  category?: InputMaybe<Scalars['String']>;
+  clientId?: InputMaybe<Scalars['ID']>;
+  excerpt?: InputMaybe<Scalars['String']>;
+  paymentType?: InputMaybe<PaymentType>;
+  status?: InputMaybe<StatusType>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  url?: InputMaybe<Scalars['String']>;
+  visibility?: InputMaybe<Visibility>;
+};
+
 export type Country = {
   __typename?: 'Country';
   code: Scalars['String'];
@@ -492,6 +504,7 @@ export type Metadata = {
 export type Mutation = {
   __typename?: 'Mutation';
   changePassword: User;
+  convertNoteContent?: Maybe<Content>;
   createApp?: Maybe<App>;
   createCategory: Category;
   createClient: Client;
@@ -541,7 +554,7 @@ export type Mutation = {
   updateClient: Client;
   updateContent: Content;
   updateMedia: Media;
-  updateNote: Notebook;
+  updateNote: Note;
   updateNotebook: Notebook;
   updatePortfolio: Portfolio;
   updateSocial: Social;
@@ -562,6 +575,12 @@ export type Mutation = {
 export type MutationChangePasswordArgs = {
   newPassword: Scalars['String'];
   oldPassword: Scalars['String'];
+};
+
+
+export type MutationConvertNoteContentArgs = {
+  id: Scalars['ID'];
+  input: ConvertContentInput;
 };
 
 
@@ -1725,6 +1744,7 @@ export type ResolversTypes = {
   ContentFiltersInput: ContentFiltersInput;
   ContentResponse: ResolverTypeWrapper<ContentResponse>;
   ContentType: ContentType;
+  ConvertContentInput: ConvertContentInput;
   Country: ResolverTypeWrapper<Country>;
   CountryInput: CountryInput;
   CreateAppInput: CreateAppInput;
@@ -1858,6 +1878,7 @@ export type ResolversParentTypes = {
   Content: Content;
   ContentFiltersInput: ContentFiltersInput;
   ContentResponse: ContentResponse;
+  ConvertContentInput: ConvertContentInput;
   Country: Country;
   CountryInput: CountryInput;
   CreateAppInput: CreateAppInput;
@@ -2170,6 +2191,7 @@ export type MetadataResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   changePassword?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'oldPassword'>>;
+  convertNoteContent?: Resolver<Maybe<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<MutationConvertNoteContentArgs, 'id' | 'input'>>;
   createApp?: Resolver<Maybe<ResolversTypes['App']>, ParentType, ContextType, RequireFields<MutationCreateAppArgs, 'input'>>;
   createCategory?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<MutationCreateCategoryArgs, 'input'>>;
   createClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationCreateClientArgs, 'input'>>;
@@ -2219,7 +2241,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationUpdateClientArgs, 'id' | 'input'>>;
   updateContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<MutationUpdateContentArgs, 'id' | 'input'>>;
   updateMedia?: Resolver<ResolversTypes['Media'], ParentType, ContextType, RequireFields<MutationUpdateMediaArgs, 'id' | 'input'>>;
-  updateNote?: Resolver<ResolversTypes['Notebook'], ParentType, ContextType, RequireFields<MutationUpdateNoteArgs, 'id' | 'input'>>;
+  updateNote?: Resolver<ResolversTypes['Note'], ParentType, ContextType, RequireFields<MutationUpdateNoteArgs, 'id' | 'input'>>;
   updateNotebook?: Resolver<ResolversTypes['Notebook'], ParentType, ContextType, RequireFields<MutationUpdateNotebookArgs, 'id' | 'input'>>;
   updatePortfolio?: Resolver<ResolversTypes['Portfolio'], ParentType, ContextType, RequireFields<MutationUpdatePortfolioArgs, 'id' | 'input'>>;
   updateSocial?: Resolver<ResolversTypes['Social'], ParentType, ContextType, RequireFields<MutationUpdateSocialArgs, 'id' | 'input'>>;

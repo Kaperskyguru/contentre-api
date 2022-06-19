@@ -59,6 +59,22 @@ const seedTemplates = async () => {
     },
     update: {}
   })
+
+  await prisma.notebook.create({
+    data: {
+      name: 'Personal Notebook',
+      userId: updateUser.id,
+      teamId: updateUser.activeTeamId
+    }
+  })
+
+  await prisma.category.create({
+    data: {
+      name: 'Uncategorized',
+      userId: updateUser.id,
+      teamId: updateUser.activeTeamId
+    }
+  })
 }
 
 const seedFeatures = async () => {

@@ -35,24 +35,6 @@ export default async (
     if (shareable !== undefined) data.shareable = shareable
     if (content !== undefined) data.content = content
 
-    // Do not create duplicated categories.
-    const foundNote = !!(await prisma.note.findFirst({
-      where: {
-        userId: user.id,
-        title: {
-          equals: title,
-          mode: 'insensitive'
-        },
-        id: {
-          not: {
-            equals: id
-          }
-        }
-      }
-    }))
-
-    if (foundNote) throw new ApolloError('Duplicate Note')
-
     // Finally update the Note.
     return await prisma.note.update({
       where: { id },

@@ -23,22 +23,23 @@ export default async (
 
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
-    // if (!name) throw new ApolloError('invalid input', '422')
+    let notebook = null
+    if (notebookId === undefined)
+      notebook = await prisma.notebook.findFirst({
+        where: {
+          userId: user.id,
+          teamId: user.activeTeamId,
+          name: 'Personal Notebook'
+        }
+      })
 
-    // Checking if client already exists
-    const note = await prisma.note.findFirst({
-      where: { title, content, userId: user.id, teamId: user.activeTeamId }
-    })
-
-    if (note) throw new ApolloError('Note already created')
-
-    // If success, create a new note in our DB.
+    // If success, create a new note in our DB
     const [result, countNotes] = await prisma.$transaction([
       prisma.note.create({
         data: {
           title,
           content,
-          notebook: { connect: { id: notebookId! } },
+          notebook: { connect: { id: notebookId ?? notebook?.id } },
           team: { connect: { id: user.activeTeamId! } },
           user: { connect: { id: user.id } }
         }
@@ -76,7 +77,7 @@ export default async (
       requestURL,
       error: e
     })
-
+    console.log(e)
     const message = useErrorParser(e)
 
     throw new ApolloError(message, e.code ?? '500', { sentryId })
