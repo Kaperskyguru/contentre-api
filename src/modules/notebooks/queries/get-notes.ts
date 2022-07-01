@@ -16,12 +16,6 @@ export default async (
   if (!user) throw new ApolloError('You must be logged in.', '401')
 
   try {
-    // const where: any = {}
-    // where.userId = user.id
-    // where.teamId = user.activeTeamId
-    // if (filters?.notebookId) where.notebookId = filters.notebookId
-    // if()
-
     const where = whereNotes(user, filters)
 
     const noteWithTotal = await prisma.note.count({
