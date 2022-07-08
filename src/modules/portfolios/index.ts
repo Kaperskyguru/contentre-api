@@ -65,6 +65,7 @@ const typeDefs = gql`
     name: String!
     profileImage: String
     contact: Contact
+    socials: [Social]!
   }
 
   type Contact {
