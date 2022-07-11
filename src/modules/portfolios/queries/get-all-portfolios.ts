@@ -25,6 +25,10 @@ export default async (
       select: { id: true }
     })
 
+    const userWithTotal = await prisma.user.count({
+      select: { id: true }
+    })
+
     //TODO: Try to order by Premium
     const portfolios = await prisma.portfolio.findMany({
       orderBy: [{ title: 'desc' }],
@@ -36,6 +40,7 @@ export default async (
 
     return {
       meta: {
+        totalUsers: userWithTotal?.id ?? 0,
         total: portfolioWithTotal.id ?? 0
       },
       portfolios

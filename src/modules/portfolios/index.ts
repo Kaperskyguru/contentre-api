@@ -54,6 +54,10 @@ const typeDefs = gql`
     meta: Meta!
   }
 
+  extend type Meta {
+    totalUsers: Int
+  }
+
   type PortfolioDetail {
     html: String
     css: String
@@ -117,6 +121,8 @@ const typeDefs = gql`
 
   input AllPortfolioFiltersInput {
     terms: String
+    skills: [String!]
+    specialism: [String!]
   }
 
   input TemplateFiltersInput {

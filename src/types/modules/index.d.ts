@@ -20,6 +20,8 @@ export type Scalars = {
 };
 
 export type AllPortfolioFiltersInput = {
+  skills?: InputMaybe<Array<Scalars['String']>>;
+  specialism?: InputMaybe<Array<Scalars['String']>>;
   terms?: InputMaybe<Scalars['String']>;
 };
 
@@ -488,6 +490,7 @@ export type MemberRole =
 export type Meta = {
   __typename?: 'Meta';
   total: Scalars['Int'];
+  totalUsers?: Maybe<Scalars['Int']>;
 };
 
 export type Metadata = {
@@ -1041,7 +1044,7 @@ export type PortfolioDetail = {
   job?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   profileImage?: Maybe<Scalars['String']>;
-  socials?: Maybe<Array<Maybe<Social>>>;
+  socials: Array<Maybe<Social>>;
   templateSlug: Scalars['String'];
   templateType: TemplateType;
 };
@@ -2180,6 +2183,7 @@ export type MemberResolvers<ContextType = any, ParentType extends ResolversParen
 
 export type MetaResolvers<ContextType = any, ParentType extends ResolversParentTypes['Meta'] = ResolversParentTypes['Meta']> = {
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalUsers?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2360,7 +2364,7 @@ export type PortfolioDetailResolvers<ContextType = any, ParentType extends Resol
   job?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   profileImage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  socials?: Resolver<Maybe<Array<Maybe<ResolversTypes['Social']>>>, ParentType, ContextType>;
+  socials?: Resolver<Array<Maybe<ResolversTypes['Social']>>, ParentType, ContextType>;
   templateSlug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   templateType?: Resolver<ResolversTypes['TemplateType'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
