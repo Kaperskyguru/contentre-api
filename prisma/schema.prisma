@@ -54,6 +54,8 @@ model User {
   templates             Template[]           @relation("UserTemplate")
   categories            Category[]           @relation("UserCategory")
   tags                  Tag[]                @relation("UserTag")
+  notebooks             Notebook[]           @relation("UserNotebook")
+  notes                 Note[]               @relation("UserNote")
 }
 
 model Team {
@@ -81,7 +83,8 @@ model Team {
   media                Media[]        @relation("TeamMedia")
   topics               Topic[]        @relation("TeamTopic")
   subscriptions        Subscription[] @relation("TeamSubscription")
-
+  notebooks            Notebook[]     @relation("TeamNotebook")
+  notes                Note[]         @relation("TeamNote")
 }
 
 model Member {
@@ -363,6 +366,36 @@ model Tag {
   team      Team?    @relation("TeamTag", fields: [teamId], references: [id])
   createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(6)
+}
+
+model Notebook {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name      String   @db.VarChar(120)
+  shareable Boolean  @default(false)
+  link      String?  @db.VarChar(2048)
+  userId    String?  @db.Char(36)
+  user      User?    @relation("UserNotebook", fields: [userId], references: [id])
+  teamId    String?  @db.Char(36)
+  team      Team?    @relation("TeamNotebook", fields: [teamId], references: [id])
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(6)
+  Note      Note[]   @relation("NotebookNote")
+}
+
+model Note {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  title      String?  @db.VarChar(120)
+  content    String?  @db.VarChar(2048)
+  shareable  Boolean  @default(false)
+  link       String?  @db.VarChar(2048)
+  userId     String?  @db.Char(36)
+  notebookId String   @db.Char(36)
+  notebook   Notebook @relation("NotebookNote", fields: [notebookId], references: [id])
+  user       User?    @relation("UserNote", fields: [userId], references: [id])
+  teamId     String?  @db.Char(36)
+  team       Team?    @relation("TeamNote", fields: [teamId], references: [id])
+  createdAt  DateTime @default(now()) @db.Timestamp(6)
+  updatedAt  DateTime @default(now()) @updatedAt @db.Timestamp(6)
 }
 
 model Category {

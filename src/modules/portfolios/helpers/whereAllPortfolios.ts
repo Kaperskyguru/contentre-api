@@ -1,8 +1,8 @@
 import { Prisma } from '.prisma/client'
-import { Maybe, PortfolioFiltersInput } from '@modules-types'
+import { Maybe, AllPortfolioFiltersInput } from '@modules-types'
 
 export const whereAllPortfolios = (
-  filters?: Maybe<PortfolioFiltersInput>
+  filters?: Maybe<AllPortfolioFiltersInput>
 ): {
   AND: Prisma.PortfolioWhereInput[]
 } => {
@@ -12,20 +12,42 @@ export const whereAllPortfolios = (
         ? {
             OR: [
               {
-                title: {
-                  contains: filters.terms,
-                  mode: 'insensitive'
-                }
-              },
-              {
-                description: {
-                  contains: filters.terms,
-                  mode: 'insensitive'
+                user: {
+                  name: {
+                    contains: filters.terms,
+                    mode: 'insensitive'
+                  },
+                  bio: {
+                    contains: filters.terms,
+                    mode: 'insensitive'
+                  }
                 }
               }
             ]
           }
-        : {}
+        : {},
+      {
+        user: filters?.skills?.length
+          ? {
+              OR: [
+                {
+                  jobTitle: {
+                    contains: filters?.skills.join(' '),
+                    mode: 'insensitive'
+                  }
+                },
+                {
+                  bio: {
+                    contains: filters?.skills.join(' '),
+                    mode: 'insensitive'
+                  }
+                }
+              ]
+            }
+          : {}
+      }
+
+      // Add Topics to Users here for Specialism
     ]
   }
 }

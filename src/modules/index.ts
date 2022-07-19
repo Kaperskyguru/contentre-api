@@ -17,6 +17,7 @@ import media from './media'
 import apps from './apps'
 import invites from './invites'
 import topic from './topics'
+import notebooks from './notebooks'
 
 const typeDefs = gql`
   scalar Time
@@ -56,7 +57,7 @@ const schema = makeExecutableSchema({
     categories.typeDefs,
     socials.typeDefs,
     invites.typeDefs,
-    //   notifications.typeDefs,
+    notebooks.typeDefs,
     users.typeDefs,
     teams.typeDefs,
     media.typeDefs,
@@ -74,7 +75,7 @@ const schema = makeExecutableSchema({
     categories.resolvers,
     socials.resolvers,
     invites.resolvers,
-    //   notifications.resolvers,
+    notebooks.resolvers,
     users.resolvers,
     teams.resolvers,
     media.resolvers,

@@ -36,6 +36,10 @@ export default async (
       throw new ApolloError('Portfolio not found', '404')
     }
 
+    const socials = await prisma.social.findMany({
+      where: { userId: user.id }
+    })
+
     const template = portfolio?.template.template
     return {
       html: portfolio?.template?.content,
@@ -47,6 +51,7 @@ export default async (
       coverImage: '',
       profileImage: user.avatarURL,
       name: user.name,
+      socials,
       contact: {
         email: user.email,
         phone: user.phoneNumber,
