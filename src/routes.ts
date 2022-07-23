@@ -13,7 +13,7 @@ const origins: Readonly<{
     /https:\/\/deploy-preview-.*--contentre-app\.netlify\.app$/,
     /https:\/\/deploy-preview-.*--develop-app-contentre\.netlify\.app$/
   ],
-  STAGING: ['http://localhost:3000', /\.*contentre\.io$/], // remove *
+  STAGING: ['http://localhost:3000', /https:\/\/staging.contentre\.io$/], // remove *
   PRODUCTION: /\.*contentre\.io$/
 })
 
