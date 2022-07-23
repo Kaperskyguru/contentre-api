@@ -19,6 +19,10 @@ export interface Environment {
   medium: {
     BASE_URL: string
   }
+  paystack: {
+    url: string
+    token: string
+  }
   database: {
     url: string
   }
@@ -85,6 +89,10 @@ export const environment: Environment = {
     key: process.env.MAILCHIMP_KEY as string,
     server: process.env.MAILCHIMP_SERVER as string,
     id: process.env.MAILCHIMP_LIST_ID as string
+  },
+  paystack: {
+    url: process.env.PAYSTACK_BASE_URL as string,
+    token: process.env.PAYSTACK_TOKEN as string
   },
   medium: {
     BASE_URL: process.env.MEDIUM_BASE_URL as string

@@ -985,6 +985,10 @@ export type OverallStatsResponse = {
   stats?: Maybe<Array<Stat>>;
 };
 
+export type PaymentChannel =
+  | 'PAYSTACK'
+  | 'STRIPE';
+
 export type PaymentType =
   | 'ARTICLE'
   | 'MONTHLY'
@@ -1089,6 +1093,7 @@ export type Query = {
   getPortfolios: Array<Portfolio>;
   getSocial: Social;
   getSocials: SocialResponse;
+  getSubscriptionUrl?: Maybe<SubscriptionUrl>;
   getTag: Tag;
   getTagStats?: Maybe<OverallStatResponse>;
   getTags: TagResponse;
@@ -1259,6 +1264,12 @@ export type QueryGetSocialsArgs = {
 };
 
 
+export type QueryGetSubscriptionUrlArgs = {
+  plan?: InputMaybe<Scalars['String']>;
+  service?: InputMaybe<PaymentChannel>;
+};
+
+
 export type QueryGetTagArgs = {
   id: Scalars['ID'];
 };
@@ -1381,6 +1392,11 @@ export type Subscription = {
   id: Scalars['ID'];
   name: Scalars['String'];
   planId?: Maybe<Scalars['String']>;
+};
+
+export type SubscriptionUrl = {
+  __typename?: 'SubscriptionURL';
+  url?: Maybe<Scalars['String']>;
 };
 
 export type Tag = {
@@ -1806,6 +1822,7 @@ export type ResolversTypes = {
   NotebookResponse: ResolverTypeWrapper<NotebookResponse>;
   OverallStatResponse: ResolverTypeWrapper<OverallStatResponse>;
   OverallStatsResponse: ResolverTypeWrapper<OverallStatsResponse>;
+  PaymentChannel: PaymentChannel;
   PaymentType: PaymentType;
   Performance: ResolverTypeWrapper<Performance>;
   Portfolio: ResolverTypeWrapper<Portfolio>;
@@ -1827,6 +1844,7 @@ export type ResolversTypes = {
   StatusType: StatusType;
   String: ResolverTypeWrapper<Scalars['String']>;
   Subscription: ResolverTypeWrapper<{}>;
+  SubscriptionURL: ResolverTypeWrapper<SubscriptionUrl>;
   Tag: ResolverTypeWrapper<Tag>;
   TagFiltersInput: TagFiltersInput;
   TagResponse: ResolverTypeWrapper<TagResponse>;
@@ -1955,6 +1973,7 @@ export type ResolversParentTypes = {
   Stat: Stat;
   String: Scalars['String'];
   Subscription: {};
+  SubscriptionURL: SubscriptionUrl;
   Tag: Tag;
   TagFiltersInput: TagFiltersInput;
   TagResponse: TagResponse;
@@ -2399,6 +2418,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getPortfolios?: Resolver<Array<ResolversTypes['Portfolio']>, ParentType, ContextType, RequireFields<QueryGetPortfoliosArgs, never>>;
   getSocial?: Resolver<ResolversTypes['Social'], ParentType, ContextType, RequireFields<QueryGetSocialArgs, 'id'>>;
   getSocials?: Resolver<ResolversTypes['SocialResponse'], ParentType, ContextType, RequireFields<QueryGetSocialsArgs, never>>;
+  getSubscriptionUrl?: Resolver<Maybe<ResolversTypes['SubscriptionURL']>, ParentType, ContextType, RequireFields<QueryGetSubscriptionUrlArgs, never>>;
   getTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<QueryGetTagArgs, 'id'>>;
   getTagStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetTagStatsArgs, never>>;
   getTags?: Resolver<ResolversTypes['TagResponse'], ParentType, ContextType, RequireFields<QueryGetTagsArgs, never>>;
@@ -2451,6 +2471,11 @@ export type SubscriptionResolvers<ContextType = any, ParentType extends Resolver
   id?: SubscriptionResolver<ResolversTypes['ID'], "id", ParentType, ContextType>;
   name?: SubscriptionResolver<ResolversTypes['String'], "name", ParentType, ContextType>;
   planId?: SubscriptionResolver<Maybe<ResolversTypes['String']>, "planId", ParentType, ContextType>;
+};
+
+export type SubscriptionUrlResolvers<ContextType = any, ParentType extends ResolversParentTypes['SubscriptionURL'] = ResolversParentTypes['SubscriptionURL']> = {
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type TagResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tag'] = ResolversParentTypes['Tag']> = {
@@ -2601,6 +2626,7 @@ export type Resolvers<ContextType = any> = {
   SocialResponse?: SocialResponseResolvers<ContextType>;
   Stat?: StatResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
+  SubscriptionURL?: SubscriptionUrlResolvers<ContextType>;
   Tag?: TagResolvers<ContextType>;
   TagResponse?: TagResponseResolvers<ContextType>;
   Team?: TeamResolvers<ContextType>;
