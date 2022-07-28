@@ -26,7 +26,7 @@ const typeDefs = gql`
     lastUpdated: Time
     url: String
     tags: JSON
-    topics: [String!]
+    topics: [Topic!]
     type: ContentType!
     user: User
     excerpt: String!
@@ -146,8 +146,11 @@ const typeDefs = gql`
     excerpt: String
     clientId: ID
     tags: [String!]
+    topics: [String!]
     category: String
+    featuredImage: String
     amount: Float
+    noteId: ID
     status: StatusType
     comments: Int
     visibility: Visibility

@@ -11,7 +11,7 @@ import totalAmount from './fields/total-amount'
 
 const typeDefs = gql`
   type Topic {
-    id: ID
+    id: ID!
     name: String!
     totalContents: Int
     totalAmount: Float

@@ -210,6 +210,10 @@ model Content {
   paymentType   PaymentType @default(ARTICLE)
   likes         Int         @default(0)
   shares        Int         @default(0)
+  notebookId    String?     @db.Char(36)
+  notebook      Notebook?   @relation("NotebookContent", fields: [notebookId], references: [id])
+  shareable     Boolean     @default(false)
+  shareLink     String?     @db.VarChar(2048)
   featuredImage String?     @db.VarChar(2048)
   publishedDate DateTime?   @db.Timestamp(6)
   createdAt     DateTime    @default(now()) @db.Timestamp(6)
@@ -369,17 +373,18 @@ model Tag {
 }
 
 model Notebook {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  name      String   @db.VarChar(120)
-  shareable Boolean  @default(false)
-  link      String?  @db.VarChar(2048)
-  userId    String?  @db.Char(36)
-  user      User?    @relation("UserNotebook", fields: [userId], references: [id])
-  teamId    String?  @db.Char(36)
-  team      Team?    @relation("TeamNotebook", fields: [teamId], references: [id])
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(6)
-  Note      Note[]   @relation("NotebookNote")
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name      String    @db.VarChar(120)
+  shareable Boolean   @default(false)
+  link      String?   @db.VarChar(2048)
+  userId    String?   @db.Char(36)
+  user      User?     @relation("UserNotebook", fields: [userId], references: [id])
+  teamId    String?   @db.Char(36)
+  team      Team?     @relation("TeamNotebook", fields: [teamId], references: [id])
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @default(now()) @updatedAt @db.Timestamp(6)
+  Note      Note[]    @relation("NotebookNote")
+  Content   Content[] @relation("NotebookContent")
 }
 
 model Note {

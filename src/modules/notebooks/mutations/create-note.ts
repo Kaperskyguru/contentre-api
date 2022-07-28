@@ -23,6 +23,8 @@ export default async (
 
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
+    if (!title) throw new ApolloError('Invalid input')
+
     let notebook = null
     if (notebookId === undefined)
       notebook = await prisma.notebook.findFirst({
@@ -35,18 +37,20 @@ export default async (
 
     // If success, create a new note in our DB
     const [result, countNotes] = await prisma.$transaction([
-      prisma.note.create({
+      prisma.content.create({
         data: {
           title,
           content,
+          status: 'DRAFT',
+          excerpt: '',
           notebook: { connect: { id: notebookId ?? notebook?.id } },
           team: { connect: { id: user.activeTeamId! } },
           user: { connect: { id: user.id } }
         }
       }),
 
-      prisma.note.count({
-        where: { userId: user.id, teamId: user.activeTeamId! }
+      prisma.content.count({
+        where: { userId: user.id, teamId: user.activeTeamId!, status: 'DRAFT' }
       })
     ])
 

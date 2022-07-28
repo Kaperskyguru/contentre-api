@@ -1,6 +1,7 @@
 import { environment } from '@helpers/environment'
 import cors from 'cors'
 import express from 'express'
+import automateUserEmail from './rest/automate-user-email'
 
 export const app = express()
 
@@ -26,5 +27,11 @@ app.use(corsOptions)
 
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ extended: false, limit: '50mb' }))
+
+// Create REST API here to communicate with GraphQL
+app.post('/sendOnboardingMail', (req, res) => {
+  automateUserEmail()
+  res.end('API under development')
+})
 
 export default { app }

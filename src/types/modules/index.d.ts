@@ -184,7 +184,7 @@ export type Content = {
   status?: Maybe<StatusType>;
   tags?: Maybe<Scalars['JSON']>;
   title: Scalars['String'];
-  topics?: Maybe<Array<Scalars['String']>>;
+  topics?: Maybe<Array<Topic>>;
   type: ContentType;
   updatedAt: Scalars['Time'];
   url?: Maybe<Scalars['String']>;
@@ -270,12 +270,15 @@ export type CreateContentInput = {
   comments?: InputMaybe<Scalars['Int']>;
   content?: InputMaybe<Scalars['String']>;
   excerpt?: InputMaybe<Scalars['String']>;
+  featuredImage?: InputMaybe<Scalars['String']>;
   likes?: InputMaybe<Scalars['Int']>;
+  noteId?: InputMaybe<Scalars['ID']>;
   paymentType?: InputMaybe<PaymentType>;
   shares?: InputMaybe<Scalars['Int']>;
   status?: InputMaybe<StatusType>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   title: Scalars['String'];
+  topics?: InputMaybe<Array<Scalars['String']>>;
   url?: InputMaybe<Scalars['String']>;
   visibility?: InputMaybe<Visibility>;
 };
@@ -1451,7 +1454,7 @@ export type TemplateType =
 export type Topic = {
   __typename?: 'Topic';
   createdAt: Scalars['Time'];
-  id?: Maybe<Scalars['ID']>;
+  id: Scalars['ID'];
   name: Scalars['String'];
   totalAmount?: Maybe<Scalars['Float']>;
   totalContents?: Maybe<Scalars['Int']>;
@@ -2103,7 +2106,7 @@ export type ContentResolvers<ContextType = any, ParentType extends ResolversPare
   status?: Resolver<Maybe<ResolversTypes['StatusType']>, ParentType, ContextType>;
   tags?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  topics?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  topics?: Resolver<Maybe<Array<ResolversTypes['Topic']>>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes['ContentType'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2493,7 +2496,7 @@ export interface TimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type TopicResolvers<ContextType = any, ParentType extends ResolversParentTypes['Topic'] = ResolversParentTypes['Topic']> = {
   createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
-  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   totalAmount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   totalContents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
