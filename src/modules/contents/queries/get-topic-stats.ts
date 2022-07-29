@@ -39,7 +39,7 @@ export default async (
             LEFT JOIN "Content" c ON c."id" = t."contentId"
           WHERE
   
-              c."id" IS NOT NULL
+              c."id" IS NOT NULL AND c."notebookId" IS NULL
               AND (
                 c."teamId" = $1
               )

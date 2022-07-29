@@ -3,10 +3,10 @@ import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
 import { Content, MutationCreateContentArgs } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
-import getOrCreateCategoryId from '../helpers/getOrCreateCategory'
 import sendToSegment from '@extensions/segment-service/segment'
 import Plugins from '@/helpers/plugins'
 import { Topic } from '@prisma/client'
+import { getOrCreateCategoryId } from '@/modules/categories/helpers'
 
 export default async (
   _parent: unknown,
@@ -51,13 +51,7 @@ export default async (
     if (apps !== undefined) {
       // Check for Canonical LINK
 
-      if (apps?.medium) {
-        apps.medium.title = title
-        apps.medium.content = content ?? excerpt
-        apps.medium.tags = input.tags
-      }
-
-      await Plugins(apps, { user, prisma })
+      await Plugins(input, { user, prisma })
     }
 
     const data: Record<string, unknown> = {}

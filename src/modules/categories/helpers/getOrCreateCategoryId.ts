@@ -29,6 +29,7 @@ export const getOrCreateCategoryId = async (
       prisma.category.create({
         data: {
           userId: user.id,
+          teamId: user.activeTeamId,
           name
         }
       }),

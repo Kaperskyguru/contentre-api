@@ -1,4 +1,3 @@
-import whereContents from '@/modules/contents/helpers/where-contents'
 import { useErrorParser } from '@helpers'
 import { logError, logQuery } from '@helpers/logger'
 import { QueryGetNotesArgs, NoteResponse } from '@modules-types'
@@ -17,16 +16,15 @@ export default async (
   if (!user) throw new ApolloError('You must be logged in.', '401')
 
   try {
-    const where = whereContents(user, filters)
-
+    const where = whereNotes(user, filters)
     const noteWithTotal = await prisma.content.count({
-      where: { ...where, status: 'DRAFT' },
+      where: { ...where },
       select: { id: true }
     })
     if (!filters?.terms) {
       return {
         notes: await prisma.content.findMany({
-          where: { ...where, status: 'DRAFT' },
+          where: { ...where },
           orderBy: [
             filters?.sortBy
               ? filters.sortBy === 'title'
@@ -49,8 +47,7 @@ export default async (
     const notesStartsWith = await prisma.content.findMany({
       where: {
         title: { startsWith: filters.terms, mode: 'insensitive' },
-        ...where,
-        status: 'DRAFT'
+        ...where
       },
       orderBy: [
         filters?.sortBy
@@ -68,8 +65,7 @@ export default async (
     const notesContains = await prisma.content.findMany({
       where: {
         title: { contains: filters.terms, mode: 'insensitive' },
-        ...where,
-        status: 'DRAFT'
+        ...where
       },
       orderBy: [
         filters?.sortBy

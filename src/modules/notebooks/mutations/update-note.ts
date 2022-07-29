@@ -37,9 +37,12 @@ export default async (
     if (notebookId !== undefined) data.notebookId = notebookId
 
     // Finally update the Note.
-    return await prisma.note.update({
+    return await prisma.content.update({
       where: { id },
-      data
+      data: {
+        ...data,
+        status: 'DRAFT'
+      }
     })
   } catch (e) {
     logError('updateNote %o', {

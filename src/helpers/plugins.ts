@@ -1,12 +1,18 @@
-import { Apps, Maybe, User } from '@/types/modules'
+import { Apps, ConvertContentInput, Maybe, User } from '@/types/modules'
 import Medium from '@extensions/medium'
 import { PrismaClient } from '@prisma/client'
 
 export const Plugins = async (
-  apps: Maybe<Apps>,
+  input: ConvertContentInput,
   { user, prisma }: { user: User; prisma: PrismaClient }
 ): Promise<void> => {
+  const { apps } = input
+
   if (apps?.medium) {
+    const title = input.title
+    const content = input.content ?? input.excerpt
+    const tags = input.tags
+
     const medium = await prisma.connectedApp.findFirst({
       where: { teamId: user.activeTeamId!, name: 'Medium', slug: 'medium' }
     })
@@ -14,24 +20,24 @@ export const Plugins = async (
     const mediumData = apps.medium
 
     let formatContent = `
-    <h1> ${mediumData?.title!} </h1>
-    ${mediumData?.content!}
+    <h1> ${title!} </h1>
+    ${content!}
     `
 
     if (mediumData.contentFormat === 'markdown')
       formatContent = `
-    ${mediumData?.title!}
+    ${title!}
 
-    ${mediumData?.content!}
+    ${content!}
     `
 
     const Post = {
-      title: mediumData?.title!,
+      title: title!,
       content: formatContent,
       contentFormat: mediumData.contentFormat ?? 'html',
       canonicalUrl: mediumData.canonicalUrl ?? undefined,
       notifyFollowers: mediumData.notifyFollowers ?? false,
-      tags: mediumData.tags!,
+      tags: tags!,
       publishStatus: mediumData.publishedStatus ?? 'public'
     }
 

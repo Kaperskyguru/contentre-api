@@ -3,9 +3,11 @@ import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
 import { Content, MutationConvertNoteContentArgs } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
-import getOrCreateCategoryId from '../helpers/getOrCreateCategory'
 import sendToSegment from '@extensions/segment-service/segment'
 import Plugins from '@/helpers/plugins'
+import { getOrCreateCategoryId } from '@/modules/categories/helpers'
+import createBulkTopics from '@/modules/topics/helpers/create-bulk-topics'
+import createBulkTags from '@/modules/tags/helpers/create-bulk-tags'
 
 export default async (
   _parent: unknown,
@@ -13,7 +15,7 @@ export default async (
   context: Context & Required<Context>
 ): Promise<Content> => {
   const { prisma, user, ipAddress, requestURL, sentryId } = context
-  logMutation('covertNoteContent %o', {
+  logMutation('convertNoteToContent %o', {
     input,
     user,
     ipAddress,
@@ -22,86 +24,80 @@ export default async (
   try {
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
-    const { url, clientId, visibility, excerpt, tags, category, status, apps } =
-      input
-
-    //Generate category
-    const categoryId =
-      (await getOrCreateCategoryId(category, { user, prisma })) ?? undefined
-
-    //Check if Note exist
-    const note = await prisma.note.findFirst({
-      where: { id: id, userId: user.id, teamId: user.activeTeamId }
-    })
-    if (!note) throw new ApolloError('Note not found', '404')
-
-    // Check for clientID
-    const data: Record<string, unknown> = {}
-    if (clientId !== undefined) {
-      data.client = { connect: { id: clientId } }
+    // Share to App
+    if (input.apps !== undefined) {
+      // Check for Canonical LINK
+      await Plugins(input, { user, prisma })
     }
 
-    //Generate excerpt
-    let defaultExcerpt: string | null = null
-    if (excerpt === undefined) {
-      defaultExcerpt = note.content?.substring(0, 140) ?? ''
-    } else defaultExcerpt = excerpt
+    const data: Record<string, unknown> = {}
+    if (input.clientId !== undefined) {
+      data.client = { connect: { id: input.clientId } }
+    }
 
-    //Create new Content
-    const newContent = await prisma.content.create({
-      data: {
-        url,
-        title: note?.title!,
-        excerpt: defaultExcerpt!,
-        content: note.content,
-        visibility: visibility ?? 'PRIVATE',
-        status: status ?? 'PUBLISHED',
-        category: { connect: { id: categoryId } },
-        tags: tags?.length ? tags : undefined,
-        user: { connect: { id: user.id } },
-        team: { connect: { id: user.activeTeamId! } },
-        ...data
-      }
-    })
+    if (input.category !== undefined) {
+      const categoryId = await getOrCreateCategoryId(input.category, {
+        user,
+        prisma
+      })
 
-    // Delete Note
-    await prisma.note.delete({
+      if (categoryId !== undefined)
+        data.category = { connect: { id: categoryId } }
+    }
+
+    if (input.featuredImage !== undefined) {
+      await prisma.media.create({
+        data: { teamId: user.activeTeamId!, url: input.featuredImage! }
+      })
+      data.featuredImage = input.featuredImage
+    }
+
+    if (input.excerpt === undefined) {
+      data.excerpt = input.content?.substring(0, 140) ?? ''
+    } else {
+      data.excerpt = input.excerpt
+    }
+
+    if (input.clientId !== undefined)
+      data.client = { connect: { id: input.clientId } }
+
+    if (input.content !== undefined) data.content = input.content
+    if (input.title !== undefined) data.title = input.title
+    if (input.tags !== undefined) data.tags = input.tags
+    if (input.url !== undefined) data.url = input.url
+    if (input.visibility !== undefined) data.visibility = input.visibility
+    if (input.status !== undefined) data.status = input.status
+    if (input.amount !== undefined) data.amount = input.amount
+    if (input.tags !== undefined) data.tags = input.tags
+
+    const content = await prisma.content.findUnique({
       where: { id }
     })
 
-    // Create tags
-    if (tags?.length) {
-      const tagNames = Object.values(tags).map((name: any) => ({
-        name,
-        userId: user.id,
-        teamId: user.activeTeamId! ?? undefined,
-        team: { connect: { id: user.activeTeamId! } }
-      }))
-
-      await prisma.tag.createMany({
-        data: tagNames
-      })
-
-      await sendToSegment({
-        operation: 'track',
-        eventName: 'bulk_create_new_tag',
-        userId: user.id,
-        data: {
-          userEmail: user.email,
-          tags: tags
-        }
-      })
+    if (!content) {
+      throw new ApolloError('content not found', '404')
     }
 
-    // Share to App
-    if (apps !== undefined) {
-      if (apps?.medium) {
-        apps.medium.title = newContent.title
-        apps.medium.content = newContent?.content ?? newContent.excerpt
-        apps.medium.tags = input.tags
-      }
+    // Finally update the category.
+    const updatedContent = await prisma.content.update({
+      where: { id },
+      data: {
+        notebook: {
+          disconnect: true
+        },
+        ...data
+      },
+      include: { category: true, client: true }
+    })
 
-      await Plugins(apps, { user, prisma })
+    if (input.topics?.length) {
+      // Create bulk topics
+      await createBulkTopics(input.topics, updatedContent.id, { user, prisma })
+    }
+
+    if (input.tags?.length) {
+      // Create bulk tags
+      await createBulkTags(input.tags, { user, prisma })
     }
 
     // Send data to segment
@@ -111,15 +107,15 @@ export default async (
       userId: user.id,
       data: {
         userEmail: user.email,
-        clientId: clientId,
-        url,
+        clientId: input.clientId,
+        url: input.url,
         teamId: user.activeTeamId
       }
     })
 
-    return newContent
+    return updatedContent
   } catch (e) {
-    logError('covertNoteContent %o', {
+    logError('convertNoteToContent %o', {
       input,
       user,
       ipAddress,
@@ -128,8 +124,6 @@ export default async (
     })
 
     const message = useErrorParser(e)
-
-    console.log(e)
 
     throw new ApolloError(message, e.code ?? '500', { sentryId })
   }

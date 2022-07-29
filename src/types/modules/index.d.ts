@@ -221,13 +221,22 @@ export type ContentType =
   | 'VIDEO';
 
 export type ConvertContentInput = {
+  amount?: InputMaybe<Scalars['Float']>;
   apps?: InputMaybe<Apps>;
   category?: InputMaybe<Scalars['String']>;
   clientId?: InputMaybe<Scalars['ID']>;
+  comments?: InputMaybe<Scalars['Int']>;
+  content?: InputMaybe<Scalars['String']>;
   excerpt?: InputMaybe<Scalars['String']>;
+  featuredImage?: InputMaybe<Scalars['String']>;
+  likes?: InputMaybe<Scalars['Int']>;
+  noteId?: InputMaybe<Scalars['ID']>;
   paymentType?: InputMaybe<PaymentType>;
+  shares?: InputMaybe<Scalars['Int']>;
   status?: InputMaybe<StatusType>;
   tags?: InputMaybe<Array<Scalars['String']>>;
+  title: Scalars['String'];
+  topics?: InputMaybe<Array<Scalars['String']>>;
   url?: InputMaybe<Scalars['String']>;
   visibility?: InputMaybe<Visibility>;
 };

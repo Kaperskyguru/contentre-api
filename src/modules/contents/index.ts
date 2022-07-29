@@ -162,12 +162,21 @@ const typeDefs = gql`
 
   input ConvertContentInput {
     url: String
+    content: String
+    title: String!
     excerpt: String
     clientId: ID
     tags: [String!]
+    topics: [String!]
     category: String
+    featuredImage: String
+    amount: Float
+    noteId: ID
     status: StatusType
+    comments: Int
     visibility: Visibility
+    likes: Int
+    shares: Int
     apps: Apps
     paymentType: PaymentType
   }

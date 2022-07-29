@@ -96,7 +96,7 @@ export default async (
     if (updatedUser.homeAddress) isProfileCompleted += 5
 
     const contentCount = await prisma.content.count({
-      where: { userId: updatedUser.id }
+      where: { userId: updatedUser.id, notebookId: null }
     })
 
     if (contentCount > 0) if (updatedUser.homeAddress) isProfileCompleted += 20
