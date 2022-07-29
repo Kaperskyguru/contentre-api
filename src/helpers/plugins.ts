@@ -1,9 +1,9 @@
-import { Apps, ConvertContentInput, Maybe, User } from '@/types/modules'
+import { User } from '@/types/modules'
 import Medium from '@extensions/medium'
 import { PrismaClient } from '@prisma/client'
 
 export const Plugins = async (
-  input: ConvertContentInput,
+  input: any,
   { user, prisma }: { user: User; prisma: PrismaClient }
 ): Promise<void> => {
   const { apps } = input

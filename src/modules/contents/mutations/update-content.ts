@@ -100,16 +100,16 @@ export default async (
 
     // Share to App
     if (input.apps !== undefined) {
-      if (input.apps?.medium) {
-        input.apps.medium.title = updatedContent.title
-        input.apps.medium.content =
-          !updatedContent?.content || updatedContent?.content === ''
-            ? updatedContent.excerpt
-            : updatedContent?.content
-        input.apps.medium.tags = input.tags
-      }
+      // if (input.apps?.medium) {
+      //   input.apps.medium.title = updatedContent.title
+      input.content =
+        !updatedContent?.content || updatedContent?.content === ''
+          ? updatedContent.excerpt
+          : updatedContent?.content
+      //   input.apps.medium.tags = input.tags
+      // }
 
-      await Plugins(input.apps, { user, prisma })
+      await Plugins(input, { user, prisma })
     }
 
     return updatedContent
