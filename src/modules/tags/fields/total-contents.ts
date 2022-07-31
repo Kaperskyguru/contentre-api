@@ -8,6 +8,7 @@ export default async (parent: Tag): Promise<Maybe<number>> => {
   const contentCount = await prisma.content.count({
     where: {
       userId: parent?.userId! ?? undefined,
+      notebookId: null,
       tags: {
         path: [],
         array_contains: [parent.name]

@@ -26,7 +26,7 @@ const typeDefs = gql`
     lastUpdated: Time
     url: String
     tags: JSON
-    topics: [String!]
+    topics: [Topic!]
     type: ContentType!
     user: User
     excerpt: String!
@@ -146,8 +146,11 @@ const typeDefs = gql`
     excerpt: String
     clientId: ID
     tags: [String!]
+    topics: [String!]
     category: String
+    featuredImage: String
     amount: Float
+    noteId: ID
     status: StatusType
     comments: Int
     visibility: Visibility
@@ -159,12 +162,21 @@ const typeDefs = gql`
 
   input ConvertContentInput {
     url: String
+    content: String
+    title: String!
     excerpt: String
     clientId: ID
     tags: [String!]
+    topics: [String!]
     category: String
+    featuredImage: String
+    amount: Float
+    noteId: ID
     status: StatusType
+    comments: Int
     visibility: Visibility
+    likes: Int
+    shares: Int
     apps: Apps
     paymentType: PaymentType
   }
@@ -190,6 +202,7 @@ const typeDefs = gql`
     featuredImage: String
     likes: Int
     shares: Int
+    shareable: Boolean
     status: StatusType
     paymentType: String
     amount: Float

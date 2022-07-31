@@ -6,6 +6,7 @@ import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 import sendToSegment from '@extensions/segment-service/segment'
 import Plugins from '@/helpers/plugins'
+import { environment } from '@/helpers/environment'
 
 export default async (
   _parent: unknown,
@@ -21,6 +22,14 @@ export default async (
     // Check for required arguments not provided.
     if (!id) {
       throw new ApolloError('Invalid input', '422')
+    }
+
+    const content = await prisma.content.findUnique({
+      where: { id }
+    })
+
+    if (!content) {
+      throw new ApolloError('content not found', '404')
     }
 
     const data: Record<string, unknown> = {}
@@ -41,7 +50,8 @@ export default async (
     if (input.tags !== undefined) data.tags = input.tags
     if (input.url !== undefined) data.url = input.url
     if (input.excerpt !== undefined) data.excerpt = input.excerpt
-    if (input.content !== undefined) data.content = input.content
+    if (input.content !== undefined || input.content)
+      data.content = input.content
     if (input.shares !== undefined) data.shares = input.shares
     if (input.paymentType !== undefined) data.paymentType = input.paymentType
     if (input.category !== undefined)
@@ -56,12 +66,15 @@ export default async (
     if (input.status !== undefined) data.status = input.status
     if (input.amount !== undefined) data.amount = input.amount
 
-    const content = await prisma.content.findUnique({
-      where: { id }
-    })
-
-    if (!content) {
-      throw new ApolloError('content not found', '404')
+    if (input.shareable !== undefined) {
+      data.shareable = input.shareable
+      if (!content.shareLink) {
+        // Generate link
+        const link = `${environment.domain}/content/${String(
+          Math.floor(100000 + Math.random() * 900000)
+        )}`
+        data.shareLink = link
+      }
     }
 
     // Check if the transaction to delete is not from the current company.
@@ -100,16 +113,16 @@ export default async (
 
     // Share to App
     if (input.apps !== undefined) {
-      if (input.apps?.medium) {
-        input.apps.medium.title = updatedContent.title
-        input.apps.medium.content =
-          !updatedContent?.content || updatedContent?.content === ''
-            ? updatedContent.excerpt
-            : updatedContent?.content
-        input.apps.medium.tags = input.tags
-      }
+      // if (input.apps?.medium) {
+      //   input.apps.medium.title = updatedContent.title
+      input.content =
+        !updatedContent?.content || updatedContent?.content === ''
+          ? updatedContent.excerpt
+          : updatedContent?.content
+      //   input.apps.medium.tags = input.tags
+      // }
 
-      await Plugins(input.apps, { user, prisma })
+      await Plugins(input, { user, prisma })
     }
 
     return updatedContent

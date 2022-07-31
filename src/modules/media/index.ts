@@ -1,6 +1,7 @@
 import { Resolvers } from '@/types/modules'
 import { gql } from 'apollo-server-express'
 import getMedias from './queries/get-medias'
+import createMedia from './mutations/create-media'
 
 const typeDefs = gql`
   type Media {
@@ -71,7 +72,7 @@ const resolvers: Resolvers = {
   },
 
   Mutation: {
-    //   createMedia,
+    createMedia
     //   deleteMedia,
     //   updateMedia,
     //   createMultipleMedia

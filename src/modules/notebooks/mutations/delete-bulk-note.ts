@@ -23,8 +23,9 @@ export default async (
 
     const [deletedNote] = await prisma.$transaction([
       // // Delete the notes.
-      prisma.note.deleteMany({
+      prisma.content.deleteMany({
         where: {
+          status: 'DRAFT',
           id: {
             in: input.ids
           }

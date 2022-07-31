@@ -21,7 +21,7 @@ export default async (
       throw new ApolloError('Invalid input', '422')
     }
 
-    const note = await prisma.note.findUnique({
+    const note = await prisma.content.findUnique({
       where: { id }
     })
 
@@ -35,11 +35,11 @@ export default async (
     }
 
     const [result, countNotes] = await prisma.$transaction([
-      prisma.note.delete({
+      prisma.content.delete({
         where: { id }
       }),
 
-      prisma.note.count({
+      prisma.content.count({
         where: { id: user.id }
       })
     ])

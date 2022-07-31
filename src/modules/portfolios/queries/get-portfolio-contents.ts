@@ -47,7 +47,7 @@ export default async (
         where: {
           visibility: 'PUBLIC',
           ...where,
-          OR: [
+          AND: [
             { clientId: portfolio?.clientId! ?? undefined },
             { categoryId: portfolio?.categoryId ?? undefined },
             {
@@ -65,9 +65,9 @@ export default async (
         where: {
           visibility: 'PUBLIC',
           ...where,
-          OR: [
+          AND: [
             { clientId: portfolio?.clientId! ?? undefined },
-            { categoryId: portfolio.categoryId },
+            { categoryId: portfolio?.categoryId ?? undefined },
             {
               tags: {
                 path: [],

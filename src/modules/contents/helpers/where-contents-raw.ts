@@ -61,6 +61,7 @@ export const whereContentRaw = (
 
   const query = `
     AND c."userId" = $1
+    AND c."notebookId" IS NULL
     
     AND (
       ${args[1] === null ? 'True' : 'False'} OR

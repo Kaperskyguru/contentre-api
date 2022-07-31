@@ -3,9 +3,10 @@ import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
 import { Content, MutationCreateContentArgs } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
-import getOrCreateCategoryId from '../helpers/getOrCreateCategory'
 import sendToSegment from '@extensions/segment-service/segment'
 import Plugins from '@/helpers/plugins'
+import { Topic } from '@prisma/client'
+import { getOrCreateCategoryId } from '@/modules/categories/helpers'
 
 export default async (
   _parent: unknown,
@@ -32,7 +33,10 @@ export default async (
       excerpt,
       title,
       tags,
+      topics,
+      noteId,
       category,
+      featuredImage,
       status,
       apps
     } = input
@@ -40,9 +44,22 @@ export default async (
     const categoryId =
       (await getOrCreateCategoryId(category, { user, prisma })) ?? undefined
 
+    // const topicId =
+    // (await getOrCreateTopicId(category, { user, prisma })) ?? undefined
+
+    // Share to App
+    if (apps !== undefined) {
+      // Check for Canonical LINK
+
+      await Plugins(input, { user, prisma })
+    }
+
     const data: Record<string, unknown> = {}
     if (clientId !== undefined) {
       data.client = { connect: { id: clientId } }
+    }
+    if (categoryId !== undefined) {
+      data.category = { connect: { id: categoryId } }
     }
     //Generate excerpt
     let defaultExcerpt: string | null = null
@@ -56,15 +73,56 @@ export default async (
         title,
         excerpt: defaultExcerpt!,
         content,
+        featuredImage,
         visibility: visibility ?? 'PRIVATE',
         status: status ?? 'PUBLISHED',
-        category: { connect: { id: categoryId } },
         tags: tags?.length ? tags : undefined,
         user: { connect: { id: user.id } },
         team: { connect: { id: user.activeTeamId! } },
         ...data
       }
     })
+
+    if (topics?.length) {
+      // Get all existing topics
+      const availableTopics = await prisma.topic.findMany({
+        where: {
+          name: {
+            in: topics?.map((item) => item)
+          },
+          teamId: user.activeTeamId
+        },
+        select: { name: true }
+      })
+      const mappedTopics = availableTopics.map((item) => item.name)
+
+      // Remove existing topics from new topic's array
+      const newTopics = topics?.filter((item) => !mappedTopics.includes(item))
+
+      // Create the remaining topics
+      const topicNames = Object.values(newTopics).map((name: any) => ({
+        name,
+        contentId: newContent.id,
+        teamId: user.activeTeamId! ?? undefined
+        // team: { connect: { id: user.activeTeamId! } }
+      }))
+
+      console.log(topicNames)
+
+      await prisma.topic.createMany({
+        data: topicNames
+      })
+
+      await sendToSegment({
+        operation: 'track',
+        eventName: 'bulk_create_new_topic',
+        userId: user.id,
+        data: {
+          userEmail: user.email,
+          topics: topics
+        }
+      })
+    }
 
     if (tags?.length) {
       const tagNames = Object.values(tags).map((name: any) => ({
@@ -89,15 +147,11 @@ export default async (
       })
     }
 
-    // Share to App
-    if (apps !== undefined) {
-      if (apps?.medium) {
-        apps.medium.title = newContent.title
-        apps.medium.content = newContent?.content ?? newContent.excerpt
-        apps.medium.tags = input.tags
-      }
-
-      await Plugins(apps, { user, prisma })
+    // Delete Note
+    if (noteId) {
+      await prisma.note.delete({
+        where: { id: noteId }
+      })
     }
 
     // Send data to segment
