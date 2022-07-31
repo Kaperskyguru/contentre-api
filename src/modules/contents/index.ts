@@ -202,6 +202,7 @@ const typeDefs = gql`
     featuredImage: String
     likes: Int
     shares: Int
+    shareable: Boolean
     status: StatusType
     paymentType: String
     amount: Float

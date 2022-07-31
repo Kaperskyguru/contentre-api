@@ -931,6 +931,7 @@ export type Note = {
   id?: Maybe<Scalars['ID']>;
   link?: Maybe<Scalars['String']>;
   notebookId?: Maybe<Scalars['ID']>;
+  shareLink?: Maybe<Scalars['String']>;
   shareable?: Maybe<Scalars['Boolean']>;
   teamId?: Maybe<Scalars['ID']>;
   title?: Maybe<Scalars['String']>;
@@ -1527,6 +1528,7 @@ export type UpdateContentInput = {
   featuredImage?: InputMaybe<Scalars['String']>;
   likes?: InputMaybe<Scalars['Int']>;
   paymentType?: InputMaybe<Scalars['String']>;
+  shareable?: InputMaybe<Scalars['Boolean']>;
   shares?: InputMaybe<Scalars['Int']>;
   status?: InputMaybe<StatusType>;
   tags?: InputMaybe<Array<Scalars['String']>>;
@@ -1549,6 +1551,7 @@ export type UpdateNoteInput = {
 
 export type UpdateNotebookInput = {
   name?: InputMaybe<Scalars['String']>;
+  shareable?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type UpdatePortfolioInput = {
@@ -2285,6 +2288,7 @@ export type NoteResolvers<ContextType = any, ParentType extends ResolversParentT
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   notebookId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  shareLink?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   shareable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   teamId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

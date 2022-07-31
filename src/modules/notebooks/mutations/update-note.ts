@@ -1,3 +1,4 @@
+import { environment } from '@/helpers/environment'
 import { useErrorParser } from '@helpers'
 import { logError, logMutation } from '@helpers/logger'
 import { Note, MutationUpdateNoteArgs } from '@modules-types'
@@ -28,13 +29,31 @@ export default async (
       throw new ApolloError('Invalid input', '422')
     }
 
+    const note = await prisma.content.findUnique({
+      where: { id }
+    })
+
+    if (!note) {
+      throw new ApolloError('content not found', '404')
+    }
+
     // Prepare data for the update, checking and filling each possible field.
     const data: Record<string, unknown> = {}
 
     if (title !== undefined) data.title = title
-    if (shareable !== undefined) data.shareable = shareable
     if (content !== undefined) data.content = content
     if (notebookId !== undefined) data.notebookId = notebookId
+
+    if (input.shareable !== undefined) {
+      data.shareable = input.shareable
+      if (!note.shareLink) {
+        // Generate link
+        const link = `${environment.domain}/content/${String(
+          Math.floor(100000 + Math.random() * 900000)
+        )}`
+        data.shareLink = link
+      }
+    }
 
     // Finally update the Note.
     return await prisma.content.update({

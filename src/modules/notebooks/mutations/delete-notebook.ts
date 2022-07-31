@@ -29,9 +29,8 @@ export default async (
       throw new ApolloError('notebook not found', '404')
     }
 
-    // Check if the user is authorized to delete the notebook.
-    if (notebook.userId !== user.id) {
-      throw new Error('unauthorized')
+    if (notebook.name.includes('Personal Notebook')) {
+      throw new ApolloError("You can't delete a default notebook", '200')
     }
 
     const [result, countNotebooks] = await prisma.$transaction([
