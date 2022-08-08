@@ -15,7 +15,7 @@ export default async (
 
     const content = await prisma.content.findUnique({
       where: { id },
-      include: { client: true, category: true, topics: true }
+      include: { client: true, category: true }
     })
 
     if (!content) throw new Error('content not found')

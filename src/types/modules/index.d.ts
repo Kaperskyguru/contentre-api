@@ -184,7 +184,7 @@ export type Content = {
   status?: Maybe<StatusType>;
   tags?: Maybe<Scalars['JSON']>;
   title: Scalars['String'];
-  topics?: Maybe<Array<Topic>>;
+  topics?: Maybe<Scalars['JSON']>;
   type: ContentType;
   updatedAt: Scalars['Time'];
   url?: Maybe<Scalars['String']>;
@@ -557,6 +557,8 @@ export type Mutation = {
   inviteFriends: Scalars['Boolean'];
   loginUser: User;
   logoutUser: Scalars['Boolean'];
+  removeContentTag?: Maybe<Content>;
+  removeContentTopic: Scalars['Boolean'];
   resetPassword: User;
   sendEmailCode: Scalars['Boolean'];
   sendPasswordResetCode: Scalars['Boolean'];
@@ -777,6 +779,18 @@ export type MutationInviteFriendsArgs = {
 
 export type MutationLoginUserArgs = {
   data: LoginUserInput;
+};
+
+
+export type MutationRemoveContentTagArgs = {
+  id: Scalars['ID'];
+  tags?: InputMaybe<Array<Scalars['String']>>;
+};
+
+
+export type MutationRemoveContentTopicArgs = {
+  id: Scalars['ID'];
+  topics?: InputMaybe<Array<Scalars['String']>>;
 };
 
 
@@ -1533,6 +1547,7 @@ export type UpdateContentInput = {
   status?: InputMaybe<StatusType>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   title?: InputMaybe<Scalars['String']>;
+  topics?: InputMaybe<Array<Scalars['String']>>;
   url?: InputMaybe<Scalars['String']>;
   visibility?: InputMaybe<Scalars['String']>;
 };
@@ -2118,7 +2133,7 @@ export type ContentResolvers<ContextType = any, ParentType extends ResolversPare
   status?: Resolver<Maybe<ResolversTypes['StatusType']>, ParentType, ContextType>;
   tags?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  topics?: Resolver<Maybe<Array<ResolversTypes['Topic']>>, ParentType, ContextType>;
+  topics?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes['ContentType'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2253,6 +2268,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   inviteFriends?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationInviteFriendsArgs, 'data'>>;
   loginUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'data'>>;
   logoutUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  removeContentTag?: Resolver<Maybe<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<MutationRemoveContentTagArgs, 'id'>>;
+  removeContentTopic?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationRemoveContentTopicArgs, 'id'>>;
   resetPassword?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'newPassword'>>;
   sendEmailCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendEmailCodeArgs, 'email'>>;
   sendPasswordResetCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendPasswordResetCodeArgs, 'email'>>;
