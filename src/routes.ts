@@ -1,6 +1,7 @@
 import { environment } from '@helpers/environment'
 import cors from 'cors'
 import express from 'express'
+import automateUserEmail from './rest/automate-user-email'
 
 export const app = express()
 
@@ -13,7 +14,7 @@ const origins: Readonly<{
     /https:\/\/deploy-preview-.*--contentre-app\.netlify\.app$/,
     /https:\/\/deploy-preview-.*--develop-app-contentre\.netlify\.app$/
   ],
-  STAGING: ['http://localhost:3000', /\.*contentre\.io$/], // remove *
+  STAGING: ['http://localhost:3000', /https:\/\/staging.contentre\.io$/], // remove *
   PRODUCTION: /\.*contentre\.io$/
 })
 
@@ -26,5 +27,11 @@ app.use(corsOptions)
 
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ extended: false, limit: '50mb' }))
+
+// Create REST API here to communicate with GraphQL
+app.post('/sendOnboardingMail', (req, res) => {
+  automateUserEmail()
+  res.end('API under development')
+})
 
 export default { app }

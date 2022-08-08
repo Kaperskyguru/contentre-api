@@ -31,6 +31,7 @@ const typeDefs = gql`
     id: ID
     title: String
     content: String
+    shareLink: String
     userId: ID
     teamId: ID
     notebookId: ID
@@ -52,6 +53,7 @@ const typeDefs = gql`
 
   input UpdateNotebookInput {
     name: String
+    shareable: Boolean
   }
 
   input UpdateNoteInput {

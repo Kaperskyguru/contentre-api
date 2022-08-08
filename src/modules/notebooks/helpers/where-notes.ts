@@ -6,13 +6,14 @@ export const whereNotes = (
   user: User,
   filters?: Maybe<NoteFiltersInput>
 ): {
-  AND: Prisma.NoteWhereInput[]
+  AND: Prisma.ContentWhereInput[]
 } => {
   return {
     AND: [
       {
         userId: user.id,
-        teamId: user.activeTeamId
+        teamId: user.activeTeamId,
+        status: 'DRAFT'
       },
 
       filters?.terms

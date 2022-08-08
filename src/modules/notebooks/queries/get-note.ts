@@ -15,7 +15,7 @@ export default async (
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
     // Grab the desired row by its compound primary key.
-    const note = await prisma.note.findUnique({
+    const note = await prisma.content.findUnique({
       where: { id: id }
     })
 

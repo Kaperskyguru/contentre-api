@@ -21,6 +21,7 @@ export default async (
 
     // Prepare data for the update, checking and filling each possible field.
     const data: Record<string, unknown> = {}
+    let isProfileCompleted = 0
     if (input.avatarURL !== undefined) {
       await prisma.media.create({
         data: {
@@ -54,7 +55,7 @@ export default async (
     // }
 
     // Finally update the user.
-    const updatedUser = await prisma.user.update({
+    let updatedUser = await prisma.user.update({
       where: { id: user.id },
       data,
       include: { activeSubscription: true }
@@ -85,6 +86,42 @@ export default async (
         email: user.email
       }
     })
+
+    // Update hasCompletedOnboarding
+    if (updatedUser.name) isProfileCompleted += 10
+    if (updatedUser.bio) isProfileCompleted += 20
+    if (updatedUser.avatarURL) isProfileCompleted += 20
+    if (updatedUser.phoneNumber) isProfileCompleted += 5
+    if (updatedUser.jobTitle) isProfileCompleted += 20
+    if (updatedUser.homeAddress) isProfileCompleted += 5
+
+    const contentCount = await prisma.content.count({
+      where: { userId: updatedUser.id, notebookId: null }
+    })
+
+    if (contentCount > 0) if (updatedUser.homeAddress) isProfileCompleted += 20
+
+    if (isProfileCompleted > 90) {
+      updatedUser = await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          hasFinishedOnboarding: true
+        },
+        include: { activeSubscription: true }
+      })
+
+      await sendToSegment({
+        operation: 'track',
+        eventName: 'has_completed_onboarding',
+        userId: user.id,
+        data: {
+          ...segmentData,
+          hasCompletedOnboarding: true,
+          name: updatedUser.name,
+          email: user.email
+        }
+      })
+    }
 
     // If the user needs to confirm the email after a change.
     if (!updatedUser.emailConfirmed && updatedUser.email) {
