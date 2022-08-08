@@ -109,16 +109,16 @@ export default async (
 
       // Get Tags
       let topics: any = []
-      contents.forEach((content) => {
-        if (content.topics) topics.push(...Object.values(content.topics))
-      })
+      // contents.forEach((content) => {
+      //   if (content.topics) topics.push(...Object.values(content.topics))
+      // })
 
-      topics = topics.map((item: string, i: number) => ({
-        name: item,
-        id: i
-      }))
+      // topics = topics.map((item: string, i: number) => ({
+      //   name: item,
+      //   id: i
+      // }))
 
-      topics = uniq_fast(topics)
+      // topics = uniq_fast(topics)
 
       return {
         contents: {
