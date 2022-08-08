@@ -184,7 +184,7 @@ export type Content = {
   status?: Maybe<StatusType>;
   tags?: Maybe<Scalars['JSON']>;
   title: Scalars['String'];
-  topics?: Maybe<Array<Topic>>;
+  topics?: Maybe<Scalars['JSON']>;
   type: ContentType;
   updatedAt: Scalars['Time'];
   url?: Maybe<Scalars['String']>;
@@ -1035,6 +1035,7 @@ export type PortfolioContent = {
   clients?: Maybe<Array<Client>>;
   contents?: Maybe<ContentResponse>;
   tags?: Maybe<Array<Tag>>;
+  topics?: Maybe<Array<Topic>>;
 };
 
 export type PortfolioContentFilters = {
@@ -2137,7 +2138,7 @@ export type ContentResolvers<ContextType = any, ParentType extends ResolversPare
   status?: Resolver<Maybe<ResolversTypes['StatusType']>, ParentType, ContextType>;
   tags?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  topics?: Resolver<Maybe<Array<ResolversTypes['Topic']>>, ParentType, ContextType>;
+  topics?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes['ContentType'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2387,6 +2388,7 @@ export type PortfolioContentResolvers<ContextType = any, ParentType extends Reso
   clients?: Resolver<Maybe<Array<ResolversTypes['Client']>>, ParentType, ContextType>;
   contents?: Resolver<Maybe<ResolversTypes['ContentResponse']>, ParentType, ContextType>;
   tags?: Resolver<Maybe<Array<ResolversTypes['Tag']>>, ParentType, ContextType>;
+  topics?: Resolver<Maybe<Array<ResolversTypes['Topic']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

@@ -26,7 +26,7 @@ const typeDefs = gql`
     lastUpdated: Time
     url: String
     tags: JSON
-    topics: [Topic!]
+    topics: JSON
     type: ContentType!
     user: User
     excerpt: String!
