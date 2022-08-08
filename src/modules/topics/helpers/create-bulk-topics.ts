@@ -5,7 +5,6 @@ import sendToSegment from '@extensions/segment-service/segment'
 
 export const createBulkTopics = async (
   topics: Maybe<string[]> | undefined,
-  contentId: Scalars['ID'],
   { user, prisma }: { user: User; prisma: PrismaClient }
 ) => {
   try {
@@ -29,7 +28,6 @@ export const createBulkTopics = async (
     // Create the remaining topics
     const topicNames = Object.values(newTopics).map((name: any) => ({
       name,
-      contentId: contentId,
       teamId: user.activeTeamId! ?? undefined
       // team: { connect: { id: user.activeTeamId! } }
     }))

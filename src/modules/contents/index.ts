@@ -16,6 +16,7 @@ import getBoxStats from './queries/get-box-stats'
 import deleteBulkContent from './mutations/delete-bulk-content'
 import getContentStats from './queries/get-content-stats'
 import convertNoteContent from './mutations/convert-note-content'
+import removeContentTag from './mutations/remove-content-tags'
 
 const typeDefs = gql`
   type Content {
@@ -26,7 +27,7 @@ const typeDefs = gql`
     lastUpdated: Time
     url: String
     tags: JSON
-    topics: [Topic!]
+    topics: JSON
     type: ContentType!
     user: User
     excerpt: String!
@@ -207,6 +208,7 @@ const typeDefs = gql`
     paymentType: String
     amount: Float
     tags: [String!]
+    topics: [String!]
     apps: Apps
     clientId: ID
     category: String
@@ -272,6 +274,8 @@ const typeDefs = gql`
     deleteContent(id: ID!): Boolean!
     deleteBulkContent(input: DeleteBulkContentInput!): Boolean!
     updateContent(id: ID!, input: UpdateContentInput!): Content!
+    removeContentTag(id: ID!, tags: [String!]): Content
+    removeContentTopic(id: ID!, topics: [String!]): Boolean!
   }
 `
 // [Tags!]
@@ -294,7 +298,8 @@ const resolvers: Resolvers = {
     deleteContent,
     updateContent,
     deleteBulkContent,
-    uploadMultipleContent
+    uploadMultipleContent,
+    removeContentTag
   },
 
   Content: {

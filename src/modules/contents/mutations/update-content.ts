@@ -7,6 +7,9 @@ import { ApolloError } from 'apollo-server-errors'
 import sendToSegment from '@extensions/segment-service/segment'
 import Plugins from '@/helpers/plugins'
 import { environment } from '@/helpers/environment'
+import createBulkTopics from '@/modules/topics/helpers/create-bulk-topics'
+import createBulkTags from '@/modules/tags/helpers/create-bulk-tags'
+import { Prisma } from '@prisma/client'
 
 export default async (
   _parent: unknown,
@@ -47,7 +50,6 @@ export default async (
       })
       data.featuredImage = input.featuredImage
     }
-    if (input.tags !== undefined) data.tags = input.tags
     if (input.url !== undefined) data.url = input.url
     if (input.excerpt !== undefined) data.excerpt = input.excerpt
     if (input.content !== undefined || input.content)
@@ -83,32 +85,66 @@ export default async (
     }
 
     // Finally update the category.
-    const updatedContent = await prisma.content.update({
+    let updatedContent = await prisma.content.update({
       where: { id },
       data,
       include: { category: true, client: true }
     })
 
+    if (input.topics?.length) {
+      // Create bulk topics
+      await createBulkTopics(input.topics, { user, prisma })
+
+      if (
+        updatedContent?.topics &&
+        typeof updatedContent?.topics === 'object' &&
+        Array.isArray(updatedContent?.topics)
+      ) {
+        const topicsObject = updatedContent?.topics as Prisma.JsonArray
+        const newTopics = Object.values(input?.topics)
+
+        const oldTopics = Array.from(topicsObject)
+        const topics = [...oldTopics, ...newTopics]
+
+        updatedContent = await prisma.content.update({
+          where: { id },
+          data: {
+            topics
+          },
+          include: { category: true, client: true }
+        })
+      }
+    }
+
     if (input.tags?.length) {
-      const tagNames = Object.values(input.tags).map((name: any) => ({
-        name,
-        userId: user.id,
-        team: { connect: { id: user.activeTeamId! } }
-      }))
+      // Create bulk tags
+      await createBulkTags(input.tags, { user, prisma })
 
-      await prisma.tag.createMany({
-        data: tagNames
-      })
+      if (
+        updatedContent?.tags &&
+        typeof updatedContent?.tags === 'object' &&
+        Array.isArray(updatedContent?.tags)
+      ) {
+        const tagsObject = updatedContent?.tags as Prisma.JsonArray
+        const newTags = Object.values(input?.tags)
 
-      await sendToSegment({
-        operation: 'track',
-        eventName: 'bulk_create_new_tag',
-        userId: user.id,
-        data: {
-          userEmail: user.email,
-          tags: input.tags
-        }
-      })
+        const oldTags = Array.from(tagsObject)
+
+        // Remove existing topics from new topic's array
+        const newTopics = newTags?.filter((item) => !oldTags.includes(item))
+
+        const tags = [...oldTags, ...newTopics]
+
+        console.log(tags, newTags, oldTags)
+
+        updatedContent = await prisma.content.update({
+          where: { id },
+          data: {
+            tags
+          },
+          include: { category: true, client: true }
+        })
+      }
     }
 
     // Share to App
