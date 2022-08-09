@@ -4,9 +4,10 @@ import { logError, logMutation } from '@helpers/logger'
 import { Content, MutationUpdateContentArgs } from '@modules-types'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
-import sendToSegment from '@extensions/segment-service/segment'
 import Plugins from '@/helpers/plugins'
 import { environment } from '@/helpers/environment'
+import createBulkTopics from '@/modules/topics/helpers/create-bulk-topics'
+import createBulkTags from '@/modules/tags/helpers/create-bulk-tags'
 
 export default async (
   _parent: unknown,
@@ -34,6 +35,10 @@ export default async (
 
     const data: Record<string, unknown> = {}
 
+    if (input.topics !== undefined && input.topics?.length)
+      data.topics = Object.values(input?.topics!)
+    if (input.tags !== undefined && input.tags?.length)
+      data.tags = Object.values(input?.tags!)
     if (input.comments !== undefined) data.comments = input.comments
     if (input.title !== undefined) data.title = input.title
     if (input.visibility !== undefined) data.visibility = input.visibility
@@ -47,7 +52,6 @@ export default async (
       })
       data.featuredImage = input.featuredImage
     }
-    if (input.tags !== undefined) data.tags = input.tags
     if (input.url !== undefined) data.url = input.url
     if (input.excerpt !== undefined) data.excerpt = input.excerpt
     if (input.content !== undefined || input.content)
@@ -83,44 +87,28 @@ export default async (
     }
 
     // Finally update the category.
-    const updatedContent = await prisma.content.update({
+    let updatedContent = await prisma.content.update({
       where: { id },
       data,
       include: { category: true, client: true }
     })
 
+    if (input.topics?.length) {
+      // Create bulk topics
+      await createBulkTopics(input.topics, { user, prisma })
+    }
+
     if (input.tags?.length) {
-      const tagNames = Object.values(input.tags).map((name: any) => ({
-        name,
-        userId: user.id,
-        team: { connect: { id: user.activeTeamId! } }
-      }))
-
-      await prisma.tag.createMany({
-        data: tagNames
-      })
-
-      await sendToSegment({
-        operation: 'track',
-        eventName: 'bulk_create_new_tag',
-        userId: user.id,
-        data: {
-          userEmail: user.email,
-          tags: input.tags
-        }
-      })
+      // Create bulk tags
+      await createBulkTags(input.tags, { user, prisma })
     }
 
     // Share to App
     if (input.apps !== undefined) {
-      // if (input.apps?.medium) {
-      //   input.apps.medium.title = updatedContent.title
       input.content =
         !updatedContent?.content || updatedContent?.content === ''
           ? updatedContent.excerpt
           : updatedContent?.content
-      //   input.apps.medium.tags = input.tags
-      // }
 
       await Plugins(input, { user, prisma })
     }

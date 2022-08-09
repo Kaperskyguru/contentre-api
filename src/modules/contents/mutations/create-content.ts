@@ -7,6 +7,8 @@ import sendToSegment from '@extensions/segment-service/segment'
 import Plugins from '@/helpers/plugins'
 import { Topic } from '@prisma/client'
 import { getOrCreateCategoryId } from '@/modules/categories/helpers'
+import createBulkTopics from '@/modules/topics/helpers/create-bulk-topics'
+import createBulkTags from '@/modules/tags/helpers/create-bulk-tags'
 
 export default async (
   _parent: unknown,
@@ -77,74 +79,21 @@ export default async (
         visibility: visibility ?? 'PRIVATE',
         status: status ?? 'PUBLISHED',
         tags: tags?.length ? tags : undefined,
+        topics: topics?.length ? topics : undefined,
         user: { connect: { id: user.id } },
         team: { connect: { id: user.activeTeamId! } },
         ...data
       }
     })
 
-    if (topics?.length) {
-      // Get all existing topics
-      const availableTopics = await prisma.topic.findMany({
-        where: {
-          name: {
-            in: topics?.map((item) => item)
-          },
-          teamId: user.activeTeamId
-        },
-        select: { name: true }
-      })
-      const mappedTopics = availableTopics.map((item) => item.name)
-
-      // Remove existing topics from new topic's array
-      const newTopics = topics?.filter((item) => !mappedTopics.includes(item))
-
-      // Create the remaining topics
-      const topicNames = Object.values(newTopics).map((name: any) => ({
-        name,
-        contentId: newContent.id,
-        teamId: user.activeTeamId! ?? undefined
-        // team: { connect: { id: user.activeTeamId! } }
-      }))
-
-      console.log(topicNames)
-
-      await prisma.topic.createMany({
-        data: topicNames
-      })
-
-      await sendToSegment({
-        operation: 'track',
-        eventName: 'bulk_create_new_topic',
-        userId: user.id,
-        data: {
-          userEmail: user.email,
-          topics: topics
-        }
-      })
+    if (input.topics?.length) {
+      // Create bulk topics
+      await createBulkTopics(input.topics, { user, prisma })
     }
 
-    if (tags?.length) {
-      const tagNames = Object.values(tags).map((name: any) => ({
-        name,
-        userId: user.id,
-        teamId: user.activeTeamId! ?? undefined,
-        team: { connect: { id: user.activeTeamId! } }
-      }))
-
-      await prisma.tag.createMany({
-        data: tagNames
-      })
-
-      await sendToSegment({
-        operation: 'track',
-        eventName: 'bulk_create_new_tag',
-        userId: user.id,
-        data: {
-          userEmail: user.email,
-          tags: tags
-        }
-      })
+    if (input.tags?.length) {
+      // Create bulk tags
+      await createBulkTags(input.tags, { user, prisma })
     }
 
     // Delete Note
