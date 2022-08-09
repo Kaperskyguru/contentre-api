@@ -11,7 +11,6 @@ import interactions from './fields/interactions'
 import getIndexMetadata from './queries/get-index-metadata'
 import getOverallStats from './queries/get-overall-stats'
 import getCategoryStats from './queries/get-category-stats'
-import getTopicStats from './queries/get-topic-stats'
 import getBoxStats from './queries/get-box-stats'
 import deleteBulkContent from './mutations/delete-bulk-content'
 import getContentStats from './queries/get-content-stats'
@@ -113,7 +112,7 @@ const typeDefs = gql`
 
   type Performance {
     totalInteractions: Int!
-    totalAmount: Int!
+    totalAmount: Float!
     totalContents: Int!
   }
 
@@ -136,7 +135,7 @@ const typeDefs = gql`
     totalShares: Int!
 
     totalInteractions: Int!
-    totalAmount: Int!
+    totalAmount: Float!
     totalClients: Int!
   }
 
@@ -262,7 +261,6 @@ const typeDefs = gql`
     getOverallStats(filters: ContentFiltersInput): OverallStatsResponse
     getContentStats(filters: ContentFiltersInput): IndexMetadataResponse
     getCategoryStats(filters: ContentFiltersInput): OverallStatResponse
-    getTopicStats(filters: ContentFiltersInput): OverallStatResponse
     getBoxStats(filters: ContentFiltersInput): BoxStats
   }
 
@@ -278,7 +276,6 @@ const typeDefs = gql`
     removeContentTopic(id: ID!, topics: [String!]): Boolean!
   }
 `
-// [Tags!]
 const resolvers: Resolvers = {
   Query: {
     getContents,
@@ -287,7 +284,7 @@ const resolvers: Resolvers = {
     getIndexMetadata,
     getOverallStats,
     getCategoryStats,
-    getTopicStats,
+
     getBoxStats
   },
 

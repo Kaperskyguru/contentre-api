@@ -996,7 +996,7 @@ export type NotebookResponse = {
 export type OverallStatResponse = {
   __typename?: 'OverallStatResponse';
   name: Scalars['String'];
-  totalAmount: Scalars['Int'];
+  totalAmount: Scalars['Float'];
   totalClients: Scalars['Int'];
   totalComments: Scalars['Int'];
   totalContents: Scalars['Int'];
@@ -1023,7 +1023,7 @@ export type PaymentType =
 
 export type Performance = {
   __typename?: 'Performance';
-  totalAmount: Scalars['Int'];
+  totalAmount: Scalars['Float'];
   totalContents: Scalars['Int'];
   totalInteractions: Scalars['Int'];
 };
@@ -1432,7 +1432,7 @@ export type Tag = {
   createdAt: Scalars['Time'];
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
-  totalAmount?: Maybe<Scalars['Int']>;
+  totalAmount?: Maybe<Scalars['Float']>;
   totalContents?: Maybe<Scalars['Int']>;
   updatedAt: Scalars['Time'];
   userId?: Maybe<Scalars['ID']>;
@@ -2361,7 +2361,7 @@ export type NotebookResponseResolvers<ContextType = any, ParentType extends Reso
 
 export type OverallStatResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['OverallStatResponse'] = ResolversParentTypes['OverallStatResponse']> = {
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  totalAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalAmount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   totalClients?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   totalComments?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   totalContents?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -2379,7 +2379,7 @@ export type OverallStatsResponseResolvers<ContextType = any, ParentType extends 
 };
 
 export type PerformanceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Performance'] = ResolversParentTypes['Performance']> = {
-  totalAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalAmount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   totalContents?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   totalInteractions?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -2517,7 +2517,7 @@ export type TagResolvers<ContextType = any, ParentType extends ResolversParentTy
   createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  totalAmount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  totalAmount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   totalContents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
