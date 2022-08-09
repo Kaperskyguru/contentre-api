@@ -47,6 +47,7 @@ const typeDefs = gql`
     clients: [Client!]
     categories: [Category!]
     tags: [Tag!]
+    topics: [Topic!]
   }
 
   type AllPortfoliosResponse {

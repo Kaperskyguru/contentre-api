@@ -1045,6 +1045,7 @@ export type PortfolioContent = {
   clients?: Maybe<Array<Client>>;
   contents?: Maybe<ContentResponse>;
   tags?: Maybe<Array<Tag>>;
+  topics?: Maybe<Array<Topic>>;
 };
 
 export type PortfolioContentFilters = {
@@ -2385,6 +2386,7 @@ export type PortfolioContentResolvers<ContextType = any, ParentType extends Reso
   clients?: Resolver<Maybe<Array<ResolversTypes['Client']>>, ParentType, ContextType>;
   contents?: Resolver<Maybe<ResolversTypes['ContentResponse']>, ParentType, ContextType>;
   tags?: Resolver<Maybe<Array<ResolversTypes['Tag']>>, ParentType, ContextType>;
+  topics?: Resolver<Maybe<Array<ResolversTypes['Topic']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

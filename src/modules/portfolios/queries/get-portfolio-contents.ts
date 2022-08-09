@@ -2,6 +2,7 @@ import whereContents from '@/modules/contents/helpers/where-contents'
 import { useErrorParser } from '@helpers'
 import { logError, logQuery } from '@helpers/logger'
 import { PortfolioContent, QueryGetPortfolioContentArgs } from '@modules-types'
+import { Tag } from '@prisma/client'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 
@@ -45,36 +46,32 @@ export default async (
 
       const contentWithTotal = await prisma.content.count({
         where: {
-          visibility: 'PUBLIC',
           ...where,
-          AND: [
-            { clientId: portfolio?.clientId! ?? undefined },
-            { categoryId: portfolio?.categoryId ?? undefined },
-            {
-              tags: {
-                path: [],
-                array_contains: portfolio.tags
-              }
-            }
-          ]
+          visibility: 'PUBLIC',
+
+          clientId: portfolio?.clientId! ?? undefined,
+          categoryId: portfolio?.categoryId ?? undefined,
+
+          tags: {
+            path: [],
+            array_contains: portfolio.tags
+          }
         },
         select: { id: true }
       })
 
       const contents = await prisma.content.findMany({
         where: {
-          visibility: 'PUBLIC',
           ...where,
-          AND: [
-            { clientId: portfolio?.clientId! ?? undefined },
-            { categoryId: portfolio?.categoryId ?? undefined },
-            {
-              tags: {
-                path: [],
-                array_contains: portfolio.tags
-              }
-            }
-          ]
+          visibility: 'PUBLIC',
+
+          clientId: portfolio?.clientId! ?? undefined,
+          categoryId: portfolio?.categoryId ?? undefined,
+
+          tags: {
+            path: [],
+            array_contains: portfolio.tags
+          }
         },
         include: { client: true, category: true },
         skip: skip ?? 0,
@@ -82,33 +79,46 @@ export default async (
       })
 
       // Get Public clients
-      const clients = await prisma.client.findMany({
-        where: {
-          userId: user.id,
-          visibility: 'PUBLIC',
-          id: portfolio?.clientId! ?? undefined
-        }
+      let clients: any = []
+      contents.forEach((content) => {
+        if (content.client) clients.push(content.client)
       })
+
+      clients = uniq_fast(clients)
+
       // Get Categories
-      const categories = await prisma.category.findMany({
-        where: { userId: user.id, id: portfolio?.categoryId! ?? undefined }
+      let categories: any = []
+      contents.forEach((content) => {
+        if (content.category) categories.push(content.category)
       })
-      // Get Topics
-      // const topics = await prisma.topic.findMany({
-      //   where: { userId: user?.id }
-      // })
+
+      categories = uniq_fast(categories)
+
       // Get Tags
-      const tags = await prisma.tag.findMany({
-        where: {
-          userId: user?.id,
-          AND: {
-            name: {
-              in: portfolio.tags?.toString().split(' '),
-              mode: 'insensitive'
-            }
-          }
-        }
+      let tags: any = []
+      contents.forEach((content) => {
+        if (content.tags) tags.push(...Object.values(content.tags))
       })
+
+      tags = tags.map((item: string, i: number) => ({
+        name: item,
+        id: i
+      }))
+
+      tags = uniq_fast(tags)
+
+      // Get Tags
+      let topics: any = []
+      // contents.forEach((content) => {
+      //   if (content.topics) topics.push(...Object.values(content.topics))
+      // })
+
+      // topics = topics.map((item: string, i: number) => ({
+      //   name: item,
+      //   id: i
+      // }))
+
+      // topics = uniq_fast(topics)
 
       return {
         contents: {
@@ -119,6 +129,7 @@ export default async (
         },
         categories,
         tags,
+        topics,
         clients
       }
     }
@@ -147,9 +158,9 @@ export default async (
       where: { userId: user.id }
     })
     // Get Topics
-    // const topics = await prisma.topic.findMany({
-    //   where: { userId: user?.id }
-    // })
+    const topics = await prisma.topic.findMany({
+      where: { teamId: user?.activeTeamId }
+    })
     // Get Tags
     const tags = await prisma.tag.findMany({
       where: { userId: user?.id }
@@ -164,6 +175,7 @@ export default async (
       },
       categories,
       tags,
+      topics,
       clients
     }
   } catch (e) {
@@ -172,4 +184,19 @@ export default async (
     const message = useErrorParser(e)
     throw new ApolloError(message, e.code ?? '500', { sentryId })
   }
+}
+
+function uniq_fast(a: any) {
+  var seen: any = {}
+  var out = []
+  var len = a.length
+  var j = 0
+  for (var i = 0; i < len; i++) {
+    var item = a[i].name
+    if (seen[item] !== 1) {
+      seen[item] = 1
+      out[j++] = a[i]
+    }
+  }
+  return out
 }
