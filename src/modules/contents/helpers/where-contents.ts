@@ -74,6 +74,15 @@ export const whereContents = (
           : undefined
       },
 
+      {
+        topics: filters?.topics?.length
+          ? {
+              path: [],
+              array_contains: filters.topics
+            }
+          : undefined
+      },
+
       filters?.clients?.length && filters?.clients.includes('Personal')
         ? {
             clientId: null

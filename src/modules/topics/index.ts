@@ -8,6 +8,7 @@ import deleteBulkTopic from './mutations/delete-bulk-topic'
 import updateTopic from './mutations/update-topic'
 import totalContents from './fields/total-contents'
 import totalAmount from './fields/total-amount'
+import getTopicStats from './queries/get-topic-stats'
 
 const typeDefs = gql`
   type Topic {
@@ -71,7 +72,8 @@ const typeDefs = gql`
 const resolvers: Resolvers = {
   Query: {
     getTopics,
-    getTopic
+    getTopic,
+    getTopicStats
   },
   Mutation: {
     createTopic,

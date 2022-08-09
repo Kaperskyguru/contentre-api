@@ -15,7 +15,7 @@ const typeDefs = gql`
     id: ID
     name: String!
     totalContents: Int
-    totalAmount: Int
+    totalAmount: Float
     userId: ID
     createdAt: Time!
     updatedAt: Time!
