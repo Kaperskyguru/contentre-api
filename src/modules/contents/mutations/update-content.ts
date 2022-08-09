@@ -35,8 +35,10 @@ export default async (
 
     const data: Record<string, unknown> = {}
 
-    if (input.topics !== undefined) data.topics = Object.values(input?.topics!)
-    if (input.tags !== undefined) data.tags = Object.values(input?.tags!)
+    if (input.topics !== undefined && input.topics?.length)
+      data.topics = Object.values(input?.topics!)
+    if (input.tags !== undefined && input.tags?.length)
+      data.tags = Object.values(input?.tags!)
     if (input.comments !== undefined) data.comments = input.comments
     if (input.title !== undefined) data.title = input.title
     if (input.visibility !== undefined) data.visibility = input.visibility
@@ -103,14 +105,10 @@ export default async (
 
     // Share to App
     if (input.apps !== undefined) {
-      // if (input.apps?.medium) {
-      //   input.apps.medium.title = updatedContent.title
       input.content =
         !updatedContent?.content || updatedContent?.content === ''
           ? updatedContent.excerpt
           : updatedContent?.content
-      //   input.apps.medium.tags = input.tags
-      // }
 
       await Plugins(input, { user, prisma })
     }
