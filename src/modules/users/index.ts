@@ -11,6 +11,7 @@ import totalContents from './fields/total-contents'
 import totalPortfolios from './fields/total-contents'
 import isPaying from './fields/is-paying'
 import isTrial from './fields/is-trial'
+import getSubscriptionUrl from './queries/get-subscription-url'
 
 const typeDefs = gql`
   type User {
@@ -69,6 +70,10 @@ const typeDefs = gql`
     features: [Feature!]
   }
 
+  type SubscriptionURL {
+    url: String
+  }
+
   type Feature {
     id: ID!
     feature: String!
@@ -78,6 +83,11 @@ const typeDefs = gql`
   enum SignedUpThrough {
     CONTENTRE
     GOOGLE
+  }
+
+  enum PaymentChannel {
+    PAYSTACK
+    STRIPE
   }
 
   input UserInput {
@@ -110,6 +120,7 @@ const typeDefs = gql`
   extend type Query {
     getUser(uuid: String!): User!
     getCurrentUser: User
+    getSubscriptionUrl(plan: String, service: PaymentChannel): SubscriptionURL
   }
 
   extend type Mutation {
@@ -124,7 +135,8 @@ const typeDefs = gql`
 const resolvers: Resolvers = {
   Query: {
     getUser,
-    getCurrentUser
+    getCurrentUser,
+    getSubscriptionUrl
   },
 
   Mutation: {
