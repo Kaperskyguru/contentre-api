@@ -9,6 +9,7 @@ class Paddle {
 
   async webhook(data: any) {
     try {
+      console.log(data, 'Paddle hook')
       const event = await this.Paddle.parseWebhookEvent(data)
       console.log(event)
 
