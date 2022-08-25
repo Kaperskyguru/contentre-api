@@ -42,6 +42,7 @@ class Paddle {
         this.processSubscriptionPaymentFailed(data)
         return true
       }
+      console.log(error)
       return false
     }
   }
