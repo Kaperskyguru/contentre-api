@@ -1,5 +1,6 @@
 import { environment } from '@/helpers/environment'
 import Axios from 'axios'
+import { PaddleSdk, stringifyMetadata } from '@devoxa/paddle-sdk'
 
 export default ({ service }: any) => {
   switch (service) {
@@ -18,7 +19,7 @@ export default ({ service }: any) => {
 
 const PaystackConfig = () => {
   const axios = Axios.create({
-    baseURL: environment.paystack.url ?? 'https://api.medium.com/v1',
+    baseURL: environment.paystack.url ?? '',
     headers: {
       Authorization: `Bearer ${environment.paystack.token}`,
       'Content-Type': 'application/json',
@@ -31,15 +32,10 @@ const PaystackConfig = () => {
 }
 
 const PaddleConfig = () => {
-  const axios = Axios.create({
-    baseURL: environment.paystack.url ?? 'https://api.medium.com/v1',
-    headers: {
-      Authorization: `Bearer ${environment.paystack.token}`,
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      'Accept-Charset': 'utf-8'
-    }
+  return new PaddleSdk<{}>({
+    publicKey: environment.paddle.publicKey ?? '',
+    vendorId: environment.paddle.vendorId,
+    vendorAuthCode: environment.paddle.vendorAuthCode,
+    metadataCodec: stringifyMetadata()
   })
-
-  return axios
 }

@@ -1,5 +1,5 @@
 import { useErrorParser } from '@/helpers'
-import Payment from '@extensions/payment-service'
+import Payment from '@extensions/payment'
 import { logError, logQuery } from '@helpers/logger'
 import { QueryGetSubscriptionUrlArgs, SubscriptionUrl } from '@modules-types'
 import { Context } from '@types'
