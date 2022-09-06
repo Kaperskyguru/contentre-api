@@ -47,11 +47,12 @@ class Payment {
 
   async cancel() {}
   async webhook(data: any) {
-    const payment = this.service.webhook(data)
+    const payment = await this.service.webhook(data)
     if (payment) {
-      switch (payment) {
+      switch (payment.status.toLowerCase()) {
         case 'subscription_payment_succeeded':
           // Create new Subscription
+
           return this.subscriptionSuccessful(payment)
 
         case 'subscription_cancelled':
@@ -64,6 +65,7 @@ class Payment {
 
         case 'subscription_payment_failed':
           // Do nothing, alert user
+          console.log('ere')
           break
 
         case 'subscription_updated':
@@ -104,7 +106,7 @@ class Payment {
           userId: user?.id!,
           teamId: user.activeTeamId,
           planId: plan?.id!,
-          paymentChannelId: planChannel?.paymentPlanId,
+          paymentChannelId: planChannel?.id!,
           expiry: payment.nextPaymentDate
         }
       })
@@ -112,12 +114,14 @@ class Payment {
       await prisma.user.update({
         where: { email: payment.customerEmail },
         data: {
-          subscriptionId: sub.id
-        },
-        include: { activeSubscription: true }
+          subscriptionId: sub.id,
+          activeSubscriptionId: sub.id
+        }
       })
+
       return true
     } catch (error) {
+      console.log(error)
       return false
     }
   }

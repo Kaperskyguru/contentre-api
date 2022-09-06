@@ -39,10 +39,10 @@ class Paddle {
         error.message.includes('Implementation missing:') &&
         data.alert_name === 'subscription_payment_failed'
       ) {
-        this.processSubscriptionPaymentFailed(data)
-        return true
+        return this.processSubscriptionPaymentFailed(data)
       }
-      console.log(error)
+
+      // console.log(error)
       return false
     }
   }
@@ -53,7 +53,7 @@ class Paddle {
       customerEmail: data.customerEmail,
       subscriptionId: data.subscriptionId,
       price: data.price,
-      nextPaymentDate: format(data.nextPaymentDate, 'MM/dd/yyyy')
+      nextPaymentDate: data.nextPaymentDate
     }
   }
 
