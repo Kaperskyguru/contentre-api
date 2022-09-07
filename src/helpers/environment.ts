@@ -100,22 +100,7 @@ export const environment: Environment = {
     token: process.env.PAYSTACK_TOKEN as string
   },
   paddle: {
-    publicKey:
-      process.env.PADDLE_PUBLIC_KEY ??
-      `-----BEGIN PUBLIC KEY-----
-    MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAnP2cCMNoH92dnfot213X
-    SR9hUTsIT5U9Y/HcCqe1KvHWgRIIIFljtVx8QCE24hpmnTh6qoJm0T6tw4B28VY5
-    AcKL2Mwr6hr0Axj6xItoqV9iy0H21B8QcTYUcqcDek1G7+gUUFdYSop7r6JRiZsd
-    Y5LgKseHcl684N6xNOElrTAUBtrK4Lawkhmz3C93YTl1dO6Vnm2QJgAWed81v4wl
-    SeKhYZSJRrpq1B59ZjAdGe6FRTVzsT6FNxClW30r1NmxllY0mkYD17RRXc4mvkUp
-    VOWqNjyX+h9bYUng3Sa/icqrUTqOuErvHxcRed14dXyia9M+lKEBE3OAyD18zzqL
-    LCqY7AqAjGr0OqM4/wd+9WUipC3UVj/b2lLJnpf4j4/ANo9Tez+0GTGx9jB8lEJY
-    A/Z8JNIP529+FOHb+uNJow71pThpV01f3dj5fQFRKHlsWlaPCI6NOhCsKDIk6DGX
-    5kOPLyV6v/6lXwddH546tLWuDvN7cmX1Mw7dGxEkjYSuw5oatUUKIUxJhekXwUoI
-    RSVohCLG1MDAPjJIrkLr3KyYp9dLOszJII3GGPEc2RGNZ7DTaUQWyARtdqnc9/9I
-    oweSVBKm9HahLI9ZkS4pEtqtEaKeajXbR4lEItQQYeGvD6egUfK9OrSmszLGPZvR
-    N0f6I3SyxlkY+sPbZlYqgE0CAwEAAQ==
------END PUBLIC KEY-----`,
+    publicKey: process.env.PADDLE_PUBLIC_KEY as string,
     vendorId: Number(process.env.PADDLE_VENDOR_ID),
     vendorAuthCode: process.env.PADDLE_VENDOR_AUTH_CODE as string
   },
