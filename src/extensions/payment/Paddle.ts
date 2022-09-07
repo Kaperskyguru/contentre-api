@@ -8,7 +8,11 @@ class Paddle {
 
   async webhook(data: any) {
     try {
-      return this.processPayment(await this.Paddle.parseWebhookEvent(data))
+      const event = this.processPayment(
+        await this.Paddle.parseWebhookEvent(data)
+      )
+      console.log(event, 'event')
+      return event
     } catch (error) {
       if (
         error.message.includes('Implementation missing:') &&
@@ -16,6 +20,7 @@ class Paddle {
       ) {
         return this.processSubscriptionPaymentFailed(data)
       }
+      console.log(error, 'error')
       return false
     }
   }
