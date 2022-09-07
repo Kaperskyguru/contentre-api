@@ -54,7 +54,6 @@ class Payment {
   async cancel() {}
   async webhook(data: any) {
     const payment = await this.service.webhook(data)
-    console.log(payment, 'payment')
     if (payment) {
       switch (payment.status.toLowerCase()) {
         case 'subscription_payment_succeeded':
@@ -147,7 +146,6 @@ class Payment {
           expiry: payment.nextPaymentDate
         }
       })
-      console.log(subscription, 'sub')
       return true
     } catch (error) {
       return false

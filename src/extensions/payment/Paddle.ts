@@ -16,7 +16,6 @@ class Paddle {
       ) {
         return this.processSubscriptionPaymentFailed(data)
       }
-      console.log(error)
       return false
     }
   }
