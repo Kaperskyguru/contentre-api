@@ -32,7 +32,6 @@ const PaystackConfig = () => {
 }
 
 const PaddleConfig = () => {
-  console.log(environment.paddle.publicKey)
   return new PaddleSdk<{}>({
     publicKey: environment.paddle.publicKey ?? '',
     vendorId: environment.paddle.vendorId,
