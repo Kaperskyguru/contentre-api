@@ -54,12 +54,10 @@ class Payment {
   async cancel() {}
   async webhook(data: any) {
     const payment = await this.service.webhook(data)
-    console.log(payment, 'payment before success')
     if (payment) {
       switch (payment.status.toLowerCase()) {
         case 'subscription_payment_succeeded':
           // Create new Subscription
-          console.log(payment, 'payment')
           return this.subscriptionSuccessful(payment)
 
         case 'subscription_cancelled':
@@ -133,8 +131,6 @@ class Payment {
         where: { email: { equals: payment.customerEmail, mode: 'insensitive' } }
       })
 
-      console.log(user, 'user')
-
       if (!user) return false
 
       const subscription = await this.getOrCreateSubscription(user, payment)
@@ -150,8 +146,6 @@ class Payment {
           expiry: payment.nextPaymentDate
         }
       })
-
-      console.log(subscription, 'subscription')
       return true
     } catch (error) {
       return false

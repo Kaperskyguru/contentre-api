@@ -8,10 +8,11 @@ class Paddle {
 
   async webhook(data: any) {
     try {
+      //TODO: Check for duplicate subscription with SubscriptionID from the event variable
+
       const event = this.processPayment(
         await this.Paddle.parseWebhookEvent(data)
       )
-      console.log(event, 'event')
       return event
     } catch (error) {
       if (
@@ -20,7 +21,6 @@ class Paddle {
       ) {
         return this.processSubscriptionPaymentFailed(data)
       }
-      console.log(error, 'error')
       return false
     }
   }
