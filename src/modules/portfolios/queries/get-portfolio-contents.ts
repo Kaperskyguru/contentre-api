@@ -16,7 +16,7 @@ export default async (
     // Select user details
 
     const user = await prisma.user.findFirst({
-      where: { username: filters.username }
+      where: { username: { equals: filters.username, mode: 'insensitive' } }
     })
 
     if (!user) {

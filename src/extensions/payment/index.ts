@@ -129,7 +129,7 @@ class Payment {
   private async subscriptionSuccessful(payment: any) {
     try {
       const user = await prisma.user.findFirst({
-        where: { email: payment.customerEmail }
+        where: { email: { equals: payment.customerEmail, mode: 'insensitive' } }
       })
 
       console.log(user, 'user')
