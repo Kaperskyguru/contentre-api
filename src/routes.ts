@@ -38,11 +38,11 @@ app.use(express.urlencoded({ extended: false, limit: '50mb' }))
 app.post(
   '/subscription/paddle/webhook',
   async (req: express.Request, res: express.Response) => {
-    const payment = new Payment('PADDLE', 'Premium')
+    const payment = new Payment('PADDLE')
     const isSuccessful = await payment.webhook(req.body)
 
-    if (isSuccessful) res.status(200).end()
-    res.sendStatus(403)
+    if (isSuccessful) return res.status(200).end()
+    return res.sendStatus(403).end()
   }
 )
 

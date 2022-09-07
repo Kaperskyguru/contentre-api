@@ -1,18 +1,27 @@
 import { prisma } from '@/config'
+import { Subscription, User } from '@/types/modules'
 import { ApolloError } from 'apollo-server-errors'
 import Paddle from './Paddle'
 import Paystack from './Paystack'
 
-interface Subscription {
+interface SubscriptionPlan {
   amount: string
   plan_id: string
   email: string
 }
 
+interface Sub {
+  id?: string
+  name?: string
+  paymentChannelId?: string
+  planId?: string
+  error: boolean
+}
+
 class Payment {
   service: any
-  plan: string
-  constructor(paymentService: String, plan: string = '') {
+
+  constructor(paymentService: String) {
     switch (paymentService) {
       case 'PAYSTACK':
         this.service = new Paystack(paymentService)
@@ -24,10 +33,7 @@ class Payment {
       default:
         break
     }
-    this.plan = plan
   }
-
-  //   PLN_pm8vah8nlzpdb5m
 
   async getPlan(id: string) {
     try {
@@ -37,7 +43,7 @@ class Payment {
     }
   }
 
-  async subscribe(data: Subscription) {
+  async subscribe(data: SubscriptionPlan) {
     try {
       return this.service.subscribe(data)
     } catch (error) {
@@ -48,11 +54,11 @@ class Payment {
   async cancel() {}
   async webhook(data: any) {
     const payment = await this.service.webhook(data)
+
     if (payment) {
       switch (payment.status.toLowerCase()) {
         case 'subscription_payment_succeeded':
           // Create new Subscription
-
           return this.subscriptionSuccessful(payment)
 
         case 'subscription_cancelled':
@@ -77,10 +83,50 @@ class Payment {
     return false
   }
 
-  private async subscriptionSuccessful(payment: any) {
-    // If new, create
-    // else update
+  private async getOrCreateSubscription(
+    user: User,
+    payment: any
+  ): Promise<Sub> {
+    const planChannel = await prisma.paymentChannel.findFirst({
+      where: {
+        paymentPlanId: payment.metadata?.plan.trim(),
+        channel: payment.metadata?.channel
+      },
+      include: { plan: true }
+    })
 
+    if (!planChannel)
+      return {
+        error: true
+      }
+
+    let subscription = await prisma.subscription.findFirst({
+      where: { userId: user.id }
+    })
+
+    if (!subscription) {
+      subscription = await prisma.subscription.create({
+        data: {
+          name: planChannel.plan?.name!,
+          teamId: user.activeTeamId,
+          planId: planChannel.plan?.id!,
+          userId: user?.id,
+          paymentChannelId: planChannel?.id!,
+          expiry: payment.nextPaymentDate
+        }
+      })
+    }
+
+    return {
+      id: subscription.id,
+      name: planChannel.plan?.name!,
+      paymentChannelId: planChannel?.id!,
+      planId: planChannel.plan?.id!,
+      error: false
+    }
+  }
+
+  private async subscriptionSuccessful(payment: any) {
     try {
       const user = await prisma.user.findFirst({
         where: { email: payment.customerEmail }
@@ -88,40 +134,22 @@ class Payment {
 
       if (!user) return false
 
-      const plan = await prisma.plan.findFirst({
-        where: { name: this.plan }
-      })
+      const subscription = await this.getOrCreateSubscription(user, payment)
+      if (subscription.error) return false
 
-      if (!plan) return false
-
-      const planChannel = await prisma.paymentChannel.findFirst({
-        where: { planId: plan?.id }
-      })
-
-      if (!planChannel) return false
-
-      const sub = await prisma.subscription.create({
+      await prisma.subscription.update({
+        where: { id: subscription?.id! },
         data: {
-          name: plan?.name!, // remove Plan Name
-          userId: user?.id!,
+          name: subscription?.name!,
           teamId: user.activeTeamId,
-          planId: plan?.id!,
-          paymentChannelId: planChannel?.id!,
+          planId: subscription?.planId!,
+          paymentChannelId: subscription?.paymentChannelId!,
           expiry: payment.nextPaymentDate
-        }
-      })
-
-      await prisma.user.update({
-        where: { email: payment.customerEmail },
-        data: {
-          subscriptionId: sub.id,
-          activeSubscriptionId: sub.id
         }
       })
 
       return true
     } catch (error) {
-      console.log(error)
       return false
     }
   }

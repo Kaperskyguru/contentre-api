@@ -100,7 +100,9 @@ export const environment: Environment = {
     token: process.env.PAYSTACK_TOKEN as string
   },
   paddle: {
-    publicKey: `-----BEGIN PUBLIC KEY-----
+    publicKey:
+      process.env.PADDLE_PUBLIC_KEY ??
+      `-----BEGIN PUBLIC KEY-----
     MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAnP2cCMNoH92dnfot213X
     SR9hUTsIT5U9Y/HcCqe1KvHWgRIIIFljtVx8QCE24hpmnTh6qoJm0T6tw4B28VY5
     AcKL2Mwr6hr0Axj6xItoqV9iy0H21B8QcTYUcqcDek1G7+gUUFdYSop7r6JRiZsd
