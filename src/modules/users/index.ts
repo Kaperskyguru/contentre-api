@@ -8,10 +8,11 @@ import deleteUser from './mutations/delete-user'
 import getUser from './queries/getUser'
 import usersReferred from './fields/users-referred'
 import totalContents from './fields/total-contents'
-import totalPortfolios from './fields/total-contents'
+import totalPortfolios from './fields/total-portfolios'
 import isPaying from './fields/is-paying'
 import isTrial from './fields/is-trial'
 import getSubscriptionUrl from './queries/get-subscription-url'
+import getSubscriptionPlans from './queries/get-subscription-plans'
 
 const typeDefs = gql`
   type User {
@@ -20,6 +21,7 @@ const typeDefs = gql`
     name: String!
     bio: String
     homeAddress: String
+    country: String
     portfolioURL: String
     jobTitle: String
     username: String
@@ -70,6 +72,22 @@ const typeDefs = gql`
     features: [Feature!]
   }
 
+  type SubscriptionPlan {
+    id: ID!
+    channel: String!
+    plan: Plan
+    paymentPlanId: String
+    createdAt: Time!
+    updatedAt: Time!
+  }
+
+  type Plan {
+    id: ID!
+    name: String
+    createdAt: Time!
+    updatedAt: Time!
+  }
+
   type SubscriptionURL {
     url: String
   }
@@ -88,6 +106,7 @@ const typeDefs = gql`
   enum PaymentChannel {
     PAYSTACK
     STRIPE
+    PADDLE
   }
 
   input UserInput {
@@ -112,6 +131,7 @@ const typeDefs = gql`
     homeAddress: String
     phoneNumber: String
     bio: String
+    country: String
     portfolio: String
     email: String
     avatarURL: String
@@ -121,6 +141,7 @@ const typeDefs = gql`
     getUser(uuid: String!): User!
     getCurrentUser: User
     getSubscriptionUrl(plan: String, service: PaymentChannel): SubscriptionURL
+    getSubscriptionPlans: [SubscriptionPlan!]!
   }
 
   extend type Mutation {
@@ -136,7 +157,8 @@ const resolvers: Resolvers = {
   Query: {
     getUser,
     getCurrentUser,
-    getSubscriptionUrl
+    getSubscriptionUrl,
+    getSubscriptionPlans
   },
 
   Mutation: {

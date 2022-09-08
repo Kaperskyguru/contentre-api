@@ -35,6 +35,7 @@ export default async (
     if (input.jobTitle !== undefined) data.jobTitle = input.jobTitle
     if (input.homeAddress !== undefined) data.homeAddress = input.homeAddress
     if (input.bio !== undefined) data.bio = input.bio
+    if (input.country !== undefined) data.country = input.country
     if (input.portfolio !== undefined) data.portfolio = input.portfolio
 
     if (input.email !== undefined) {

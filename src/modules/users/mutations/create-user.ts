@@ -25,8 +25,8 @@ export default async (
 
   try {
     // Checking if user already exists, but did not verify email
-    user = await prisma.user.findUnique({
-      where: { email: input.email },
+    user = await prisma.user.findFirst({
+      where: { email: { equals: input.email, mode: 'insensitive' } },
       include: { activeSubscription: true }
     })
 
@@ -43,7 +43,7 @@ export default async (
 
     if (input.referrer) {
       const referredUser = await prisma.user.findFirst({
-        where: { username: input.referrer }
+        where: { username: { equals: input.referrer, mode: 'insensitive' } }
       })
       if (referredUser) data.referrerId = referredUser.id
     }

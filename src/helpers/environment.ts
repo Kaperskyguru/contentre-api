@@ -23,6 +23,11 @@ export interface Environment {
     url: string
     token: string
   }
+  paddle: {
+    publicKey: string
+    vendorId: number
+    vendorAuthCode: string
+  }
   database: {
     url: string
   }
@@ -93,6 +98,11 @@ export const environment: Environment = {
   paystack: {
     url: process.env.PAYSTACK_BASE_URL as string,
     token: process.env.PAYSTACK_TOKEN as string
+  },
+  paddle: {
+    publicKey: process.env.PADDLE_PUBLIC_KEY as string,
+    vendorId: Number(process.env.PADDLE_VENDOR_ID),
+    vendorAuthCode: process.env.PADDLE_VENDOR_AUTH_CODE as string
   },
   medium: {
     BASE_URL: process.env.MEDIUM_BASE_URL as string

@@ -19,6 +19,7 @@ model User {
   lastname              String?              @db.VarChar(35)
   jobTitle              String?              @db.VarChar(60)
   homeAddress           String?              @db.VarChar(2048)
+  country               String?              @db.VarChar(35)
   bio                   String?              @db.VarChar(2048)
   portfolioURL          String?              @db.VarChar(2048)
   emailConfirmed        Boolean              @default(false)
@@ -290,6 +291,7 @@ model PaymentChannel {
 enum PaymentChannelType {
   PAYSTACK
   STRIPE
+  PADDLE
 }
 
 model Feature {

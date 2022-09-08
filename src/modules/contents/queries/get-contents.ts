@@ -22,6 +22,14 @@ export default async (
       select: { id: true }
     })
 
+    const contentWithNetTotal = await prisma.content.count({
+      where: {
+        userId: user.id,
+        notebookId: null
+      },
+      select: { id: true }
+    })
+
     const contents = await prisma.content.findMany({
       orderBy: [
         filters?.sortBy
@@ -55,7 +63,8 @@ export default async (
     })
     return {
       meta: {
-        total: contentWithTotal.id ?? 0
+        total: contentWithTotal.id ?? 0,
+        netTotal: contentWithNetTotal?.id ?? 0
       },
       contents
     }

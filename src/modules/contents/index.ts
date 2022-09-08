@@ -243,6 +243,7 @@ const typeDefs = gql`
 
   type Meta {
     total: Int!
+    netTotal: Int
   }
 
   type ContentResponse {
