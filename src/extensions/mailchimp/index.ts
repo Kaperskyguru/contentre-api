@@ -1,8 +1,7 @@
-import { useErrorParser } from '@/helpers'
 import { logError, logHelper } from '@/helpers/logger'
-import { ApolloError } from 'apollo-server-errors'
 import MailChimp from '@mailchimp/mailchimp_marketing'
 import { environment } from '@/helpers/environment'
+import crypto from 'crypto'
 
 interface MailChimp {
   name: string
@@ -26,22 +25,29 @@ export default async (data: MailChimp): Promise<boolean> => {
       server: environment.mailchimp.server || 'us1'
     })
 
-    await MailChimp.lists.addListMember(environment.mailchimp.id, {
+    const emailHash = crypto.createHash('md5').update(data.email).digest('hex')
+    await MailChimp.lists.setListMember(environment.mailchimp.id, emailHash, {
+      status_if_new: 'subscribed',
       email_address: data.email,
-      status: 'subscribed',
       merge_fields: {
         FNAME: data.name.split(' ')[0] ?? '',
         LNAME: data.name.split(' ')[1] ?? '',
         NAME: data.name
-      },
-      tags: data.tags ? data.tags : []
+      }
     })
+
+    await MailChimp.lists.updateListMemberTags(
+      environment.mailchimp.id,
+      emailHash,
+      {
+        tags: data.tags
+          ? data.tags.map((tag) => ({ name: tag, status: 'active' }))
+          : []
+      }
+    )
     return true
   } catch (e) {
     logError('MailChimp %o', e)
-
-    const message = useErrorParser(e)
-
-    throw new ApolloError(message, e.code ?? '500', {})
+    return false
   }
 }

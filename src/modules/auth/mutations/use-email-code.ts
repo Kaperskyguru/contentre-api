@@ -40,7 +40,9 @@ export default async (
     if (!validIntents.length) throw new Error('invalid code')
 
     // Check if all intents are for the same user.
-    const userIds = [...new Set(validIntents.map((intent) => intent.userId))]
+    const userIds = [
+      ...new Set(validIntents.map((intent: any) => intent.userId))
+    ]
     if (userIds.length > 1) throw new Error('invalid code')
 
     // Check if the code was not for the logged in user.
@@ -83,11 +85,13 @@ export default async (
 
     if (!isDevelop) {
       //Subscribe mailchimp
-      await mailchimp({
-        name: updatedUser.name,
-        email: updatedUser.email,
-        tags: ['contentre_welcome_signup']
-      })
+      try {
+        await mailchimp({
+          name: updatedUser.name,
+          email: updatedUser.email,
+          tags: ['contentre_welcome_signup']
+        })
+      } catch (error) {}
 
       await sendEmail({
         to: updatedUser.email,
