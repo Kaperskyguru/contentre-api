@@ -27,7 +27,9 @@ export default {
   },
   plugins: [
     peerDepsExternal({ includeDependencies: true }),
-    commonjs(),
+    commonjs({
+      ignoreDynamicRequires: true
+    }),
     typescript({
       rollupCommonJSResolveHack: true,
       exclude: ['*.d.ts', '**/*.d.ts', '**/__tests__/**'],

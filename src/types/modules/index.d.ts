@@ -501,6 +501,7 @@ export type MemberRole =
 
 export type Meta = {
   __typename?: 'Meta';
+  netTotal?: Maybe<Scalars['Int']>;
   total: Scalars['Int'];
   totalUsers?: Maybe<Scalars['Int']>;
 };
@@ -1100,6 +1101,12 @@ export type PortfolioFiltersInput = {
   terms?: InputMaybe<Scalars['String']>;
 };
 
+export type PortfolioResponse = {
+  __typename?: 'PortfolioResponse';
+  meta: Meta;
+  portfolios: Array<Portfolio>;
+};
+
 export type Query = {
   __typename?: 'Query';
   getAllPortfolios?: Maybe<AllPortfoliosResponse>;
@@ -1127,7 +1134,7 @@ export type Query = {
   getPortfolio: Portfolio;
   getPortfolioContent?: Maybe<PortfolioContent>;
   getPortfolioDetail: PortfolioDetail;
-  getPortfolios: Array<Portfolio>;
+  getPortfolios: PortfolioResponse;
   getSocial: Social;
   getSocials: SocialResponse;
   getSubscriptionPlans: Array<SubscriptionPlan>;
@@ -1885,6 +1892,7 @@ export type ResolversTypes = {
   PortfolioDetail: ResolverTypeWrapper<PortfolioDetail>;
   PortfolioDetailsFilters: PortfolioDetailsFilters;
   PortfolioFiltersInput: PortfolioFiltersInput;
+  PortfolioResponse: ResolverTypeWrapper<PortfolioResponse>;
   Query: ResolverTypeWrapper<{}>;
   RegisterUserInput: RegisterUserInput;
   RevenueChart: ResolverTypeWrapper<RevenueChart>;
@@ -2019,6 +2027,7 @@ export type ResolversParentTypes = {
   PortfolioDetail: PortfolioDetail;
   PortfolioDetailsFilters: PortfolioDetailsFilters;
   PortfolioFiltersInput: PortfolioFiltersInput;
+  PortfolioResponse: PortfolioResponse;
   Query: {};
   RegisterUserInput: RegisterUserInput;
   RevenueChart: RevenueChart;
@@ -2258,6 +2267,7 @@ export type MemberResolvers<ContextType = any, ParentType extends ResolversParen
 };
 
 export type MetaResolvers<ContextType = any, ParentType extends ResolversParentTypes['Meta'] = ResolversParentTypes['Meta']> = {
+  netTotal?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   totalUsers?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -2458,6 +2468,12 @@ export type PortfolioDetailResolvers<ContextType = any, ParentType extends Resol
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type PortfolioResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['PortfolioResponse'] = ResolversParentTypes['PortfolioResponse']> = {
+  meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
+  portfolios?: Resolver<Array<ResolversTypes['Portfolio']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getAllPortfolios?: Resolver<Maybe<ResolversTypes['AllPortfoliosResponse']>, ParentType, ContextType, RequireFields<QueryGetAllPortfoliosArgs, never>>;
   getApp?: Resolver<ResolversTypes['App'], ParentType, ContextType, RequireFields<QueryGetAppArgs, 'id'>>;
@@ -2484,7 +2500,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getPortfolio?: Resolver<ResolversTypes['Portfolio'], ParentType, ContextType, RequireFields<QueryGetPortfolioArgs, 'id'>>;
   getPortfolioContent?: Resolver<Maybe<ResolversTypes['PortfolioContent']>, ParentType, ContextType, RequireFields<QueryGetPortfolioContentArgs, 'filters'>>;
   getPortfolioDetail?: Resolver<ResolversTypes['PortfolioDetail'], ParentType, ContextType, RequireFields<QueryGetPortfolioDetailArgs, 'filters'>>;
-  getPortfolios?: Resolver<Array<ResolversTypes['Portfolio']>, ParentType, ContextType, RequireFields<QueryGetPortfoliosArgs, never>>;
+  getPortfolios?: Resolver<ResolversTypes['PortfolioResponse'], ParentType, ContextType, RequireFields<QueryGetPortfoliosArgs, never>>;
   getSocial?: Resolver<ResolversTypes['Social'], ParentType, ContextType, RequireFields<QueryGetSocialArgs, 'id'>>;
   getSocials?: Resolver<ResolversTypes['SocialResponse'], ParentType, ContextType, RequireFields<QueryGetSocialsArgs, never>>;
   getSubscriptionPlans?: Resolver<Array<ResolversTypes['SubscriptionPlan']>, ParentType, ContextType>;
@@ -2702,6 +2718,7 @@ export type Resolvers<ContextType = any> = {
   Portfolio?: PortfolioResolvers<ContextType>;
   PortfolioContent?: PortfolioContentResolvers<ContextType>;
   PortfolioDetail?: PortfolioDetailResolvers<ContextType>;
+  PortfolioResponse?: PortfolioResponseResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RevenueChart?: RevenueChartResolvers<ContextType>;
   Social?: SocialResolvers<ContextType>;

@@ -49,7 +49,10 @@ const typeDefs = gql`
     tags: [Tag!]
     topics: [Topic!]
   }
-
+  type PortfolioResponse {
+    meta: Meta!
+    portfolios: [Portfolio!]!
+  }
   type AllPortfoliosResponse {
     portfolios: [Portfolio!]!
     meta: Meta!
@@ -155,7 +158,7 @@ const typeDefs = gql`
       size: Int
       skip: Int
       filters: PortfolioFiltersInput
-    ): [Portfolio!]!
+    ): PortfolioResponse!
 
     getAllPortfolios(
       size: Int
