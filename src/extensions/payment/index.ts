@@ -1,8 +1,9 @@
 import { prisma } from '@/config'
-import { Subscription, User } from '@/types/modules'
+import { User } from '@/types/modules'
 import { ApolloError } from 'apollo-server-errors'
 import Paddle from './Paddle'
 import Paystack from './Paystack'
+import sendToSegment from '@extensions/segment-service/segment'
 
 interface SubscriptionPlan {
   amount: string
@@ -58,7 +59,7 @@ class Payment {
       switch (payment.status.toLowerCase()) {
         case 'subscription_payment_succeeded':
           // Create new Subscription
-          return this.subscriptionSuccessful(payment)
+          return await this.subscriptionSuccessful(payment)
 
         case 'subscription_cancelled':
           // Add a time to revert to free account
@@ -70,8 +71,8 @@ class Payment {
 
         case 'subscription_payment_failed':
           // Do nothing, alert user
-          console.log('ere')
-          break
+
+          return await this.subscriptionFailed(payment)
 
         case 'subscription_updated':
           // Update new Expiring date, check type for upgrade or downgrade
@@ -80,6 +81,21 @@ class Payment {
     }
 
     return false
+  }
+  async subscriptionFailed(payment: any) {
+    const user = await prisma.user.findFirst({
+      where: { email: { equals: payment.customerEmail, mode: 'insensitive' } }
+    })
+    if (!user) return false
+    await this.sendToSegment(user, 'user_subscription_failed', {
+      planChannel: payment.metadata?.plan.trim(),
+      channel: payment.metadata?.channel,
+      expiry: payment.nextPaymentDate,
+      price: payment.price,
+      paddleSubscriptionId: payment.subscriptionId,
+      message: 'Subscription failed from Paddle'
+    })
+    return true
   }
 
   private async getOrCreateSubscription(
@@ -94,10 +110,20 @@ class Payment {
       include: { plan: true }
     })
 
-    if (!planChannel)
+    if (!planChannel) {
+      await this.sendToSegment(user, 'user_subscription_failed', {
+        planChannel: payment.metadata?.plan.trim(),
+        channel: payment.metadata?.channel,
+        expiry: payment.nextPaymentDate,
+        price: payment.price,
+        paddleSubscriptionId: payment.subscriptionId,
+        message: 'Plan channel not found'
+      })
+
       return {
         error: true
       }
+    }
 
     let subscription = await prisma.subscription.findFirst({
       where: { userId: user.id }
@@ -146,10 +172,39 @@ class Payment {
           expiry: payment.nextPaymentDate
         }
       })
+
+      // Send to Segment
+      await this.sendToSegment(user, 'user_subscribed', {
+        planName: subscription?.name!,
+        channel: payment.metadata?.channel,
+        expiry: payment.nextPaymentDate,
+        price: payment.price,
+        paddleSubscriptionId: payment.subscriptionId
+      })
       return true
     } catch (error) {
       return false
     }
+  }
+
+  private async sendToSegment(user: User, eventName: string, data: any) {
+    await sendToSegment({
+      operation: 'identify',
+      userId: user.id,
+      data: {
+        ...user
+      }
+    })
+
+    await sendToSegment({
+      operation: 'track',
+      eventName,
+      userId: user.id,
+      data: {
+        ...data,
+        ...user
+      }
+    })
   }
 }
 export default Payment
