@@ -559,7 +559,6 @@ export type Mutation = {
   loginUser: User;
   logoutUser: Scalars['Boolean'];
   removeContentTag?: Maybe<Content>;
-  removeContentTopic: Scalars['Boolean'];
   resetPassword: User;
   sendEmailCode: Scalars['Boolean'];
   sendPasswordResetCode: Scalars['Boolean'];
@@ -786,12 +785,6 @@ export type MutationLoginUserArgs = {
 export type MutationRemoveContentTagArgs = {
   id: Scalars['ID'];
   tags?: InputMaybe<Array<Scalars['String']>>;
-};
-
-
-export type MutationRemoveContentTopicArgs = {
-  id: Scalars['ID'];
-  topics?: InputMaybe<Array<Scalars['String']>>;
 };
 
 
@@ -1425,6 +1418,7 @@ export type StatusType =
 
 export type Subscription = {
   __typename?: 'Subscription';
+  channel?: Maybe<Scalars['String']>;
   expiry?: Maybe<Scalars['Time']>;
   features?: Maybe<Array<Feature>>;
   id: Scalars['ID'];
@@ -2313,7 +2307,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   loginUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'data'>>;
   logoutUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   removeContentTag?: Resolver<Maybe<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<MutationRemoveContentTagArgs, 'id'>>;
-  removeContentTopic?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationRemoveContentTopicArgs, 'id'>>;
   resetPassword?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'newPassword'>>;
   sendEmailCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendEmailCodeArgs, 'email'>>;
   sendPasswordResetCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendPasswordResetCodeArgs, 'email'>>;
@@ -2539,6 +2532,7 @@ export type StatResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type SubscriptionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = {
+  channel?: SubscriptionResolver<Maybe<ResolversTypes['String']>, "channel", ParentType, ContextType>;
   expiry?: SubscriptionResolver<Maybe<ResolversTypes['Time']>, "expiry", ParentType, ContextType>;
   features?: SubscriptionResolver<Maybe<Array<ResolversTypes['Feature']>>, "features", ParentType, ContextType>;
   id?: SubscriptionResolver<ResolversTypes['ID'], "id", ParentType, ContextType>;
