@@ -1138,7 +1138,6 @@ export type Query = {
   getSocial: Social;
   getSocials: SocialResponse;
   getSubscriptionPlans: Array<SubscriptionPlan>;
-  getSubscriptionUrl?: Maybe<SubscriptionUrl>;
   getTag: Tag;
   getTagStats?: Maybe<OverallStatResponse>;
   getTags: TagResponse;
@@ -1309,12 +1308,6 @@ export type QueryGetSocialsArgs = {
 };
 
 
-export type QueryGetSubscriptionUrlArgs = {
-  plan?: InputMaybe<Scalars['String']>;
-  service?: InputMaybe<PaymentChannel>;
-};
-
-
 export type QueryGetTagArgs = {
   id: Scalars['ID'];
 };
@@ -1437,6 +1430,7 @@ export type Subscription = {
   id: Scalars['ID'];
   name: Scalars['String'];
   planId?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['Time']>;
 };
 
 export type SubscriptionPlan = {
@@ -1447,11 +1441,6 @@ export type SubscriptionPlan = {
   paymentPlanId?: Maybe<Scalars['String']>;
   plan?: Maybe<Plan>;
   updatedAt: Scalars['Time'];
-};
-
-export type SubscriptionUrl = {
-  __typename?: 'SubscriptionURL';
-  url?: Maybe<Scalars['String']>;
 };
 
 export type Tag = {
@@ -1674,6 +1663,7 @@ export type User = {
   hasTrial?: Maybe<Scalars['Boolean']>;
   homeAddress?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  isPremium?: Maybe<Scalars['Boolean']>;
   isTrial?: Maybe<Scalars['Boolean']>;
   jobTitle?: Maybe<Scalars['String']>;
   lastActivityAt: Scalars['Time'];
@@ -1907,7 +1897,6 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   Subscription: ResolverTypeWrapper<{}>;
   SubscriptionPlan: ResolverTypeWrapper<SubscriptionPlan>;
-  SubscriptionURL: ResolverTypeWrapper<SubscriptionUrl>;
   Tag: ResolverTypeWrapper<Tag>;
   TagFiltersInput: TagFiltersInput;
   TagResponse: ResolverTypeWrapper<TagResponse>;
@@ -2039,7 +2028,6 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   Subscription: {};
   SubscriptionPlan: SubscriptionPlan;
-  SubscriptionURL: SubscriptionUrl;
   Tag: Tag;
   TagFiltersInput: TagFiltersInput;
   TagResponse: TagResponse;
@@ -2504,7 +2492,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getSocial?: Resolver<ResolversTypes['Social'], ParentType, ContextType, RequireFields<QueryGetSocialArgs, 'id'>>;
   getSocials?: Resolver<ResolversTypes['SocialResponse'], ParentType, ContextType, RequireFields<QueryGetSocialsArgs, never>>;
   getSubscriptionPlans?: Resolver<Array<ResolversTypes['SubscriptionPlan']>, ParentType, ContextType>;
-  getSubscriptionUrl?: Resolver<Maybe<ResolversTypes['SubscriptionURL']>, ParentType, ContextType, RequireFields<QueryGetSubscriptionUrlArgs, never>>;
   getTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<QueryGetTagArgs, 'id'>>;
   getTagStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetTagStatsArgs, never>>;
   getTags?: Resolver<ResolversTypes['TagResponse'], ParentType, ContextType, RequireFields<QueryGetTagsArgs, never>>;
@@ -2557,6 +2544,7 @@ export type SubscriptionResolvers<ContextType = any, ParentType extends Resolver
   id?: SubscriptionResolver<ResolversTypes['ID'], "id", ParentType, ContextType>;
   name?: SubscriptionResolver<ResolversTypes['String'], "name", ParentType, ContextType>;
   planId?: SubscriptionResolver<Maybe<ResolversTypes['String']>, "planId", ParentType, ContextType>;
+  updatedAt?: SubscriptionResolver<Maybe<ResolversTypes['Time']>, "updatedAt", ParentType, ContextType>;
 };
 
 export type SubscriptionPlanResolvers<ContextType = any, ParentType extends ResolversParentTypes['SubscriptionPlan'] = ResolversParentTypes['SubscriptionPlan']> = {
@@ -2566,11 +2554,6 @@ export type SubscriptionPlanResolvers<ContextType = any, ParentType extends Reso
   paymentPlanId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   plan?: Resolver<Maybe<ResolversTypes['Plan']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type SubscriptionUrlResolvers<ContextType = any, ParentType extends ResolversParentTypes['SubscriptionURL'] = ResolversParentTypes['SubscriptionURL']> = {
-  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2646,6 +2629,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   hasTrial?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   homeAddress?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isPremium?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   isTrial?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   jobTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastActivityAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
@@ -2726,7 +2710,6 @@ export type Resolvers<ContextType = any> = {
   Stat?: StatResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
   SubscriptionPlan?: SubscriptionPlanResolvers<ContextType>;
-  SubscriptionURL?: SubscriptionUrlResolvers<ContextType>;
   Tag?: TagResolvers<ContextType>;
   TagResponse?: TagResponseResolvers<ContextType>;
   Team?: TeamResolvers<ContextType>;

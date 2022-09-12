@@ -5,10 +5,10 @@ import { Content, MutationCreateContentArgs } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
 import sendToSegment from '@extensions/segment-service/segment'
 import Plugins from '@/helpers/plugins'
-import { Topic } from '@prisma/client'
 import { getOrCreateCategoryId } from '@/modules/categories/helpers'
 import createBulkTopics from '@/modules/topics/helpers/create-bulk-topics'
 import createBulkTags from '@/modules/tags/helpers/create-bulk-tags'
+import totalContents from '@/modules/users/fields/total-contents'
 
 export default async (
   _parent: unknown,
@@ -26,6 +26,9 @@ export default async (
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
     // Check if content exceeded
+    const totalContent = await totalContents(user)
+    if (!user.isPremium && (totalContent ?? 0) >= 12)
+      throw new ApolloError('You have exceeded your content limit.', '401')
 
     const {
       url,
@@ -76,6 +79,7 @@ export default async (
         excerpt: defaultExcerpt!,
         content,
         featuredImage,
+        isPremium: user.isPremium,
         visibility: visibility ?? 'PRIVATE',
         status: status ?? 'PUBLISHED',
         tags: tags?.length ? tags : undefined,

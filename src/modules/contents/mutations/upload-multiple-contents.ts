@@ -5,6 +5,8 @@ import { Content, MutationUploadMultipleContentArgs } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
 import ImportContent from '../helpers/import-content'
 import sendToSegment from '@/extensions/segment-service/segment'
+import { User as DBUser } from '@prisma/client'
+import totalContents from '@/modules/users/fields/total-contents'
 
 interface Multiple {
   contents: Array<Content>
@@ -25,9 +27,17 @@ export default async (
   try {
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
-    // Check if content exceeded
+    const totalContent = await totalContents(user)
 
     const { urls } = input
+
+    // Check if content exceeded
+    const lengthOfURLs = urls.length
+    const total = (totalContent ?? 0) + lengthOfURLs
+
+    if (!user.isPremium && total >= 12)
+      throw new ApolloError('You have exceeded your content limit.', '401')
+
     const contentData: any = []
     let multipleContent: Multiple | any
 
@@ -70,6 +80,7 @@ export default async (
             create: {
               name: content.client.name,
               website: content.client.website,
+
               icon: content.client.icon,
               user: { connect: { id: user.id } },
               team: { connect: { id: user.activeTeamId! } }
@@ -93,6 +104,7 @@ export default async (
             featuredImage: content.featuredImage,
             publishedDate: content.publishedDate,
             tags: content.tags!,
+            isPremium: user.isPremium,
             user: { connect: { id: user.id } },
             client: { connect: { id: client?.id } },
             team: { connect: { id: user.activeTeamId! } }

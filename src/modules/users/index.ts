@@ -11,7 +11,6 @@ import totalContents from './fields/total-contents'
 import totalPortfolios from './fields/total-portfolios'
 import isPaying from './fields/is-paying'
 import isTrial from './fields/is-trial'
-import getSubscriptionUrl from './queries/get-subscription-url'
 import getSubscriptionPlans from './queries/get-subscription-plans'
 
 const typeDefs = gql`
@@ -35,6 +34,7 @@ const typeDefs = gql`
     phoneNumber: String
     totalUsersReferred: String
     hasFinishedOnboarding: Boolean
+    isPremium: Boolean
     totalContents: Int
     totalPortfolios: Int
     avatarURL: String
@@ -68,6 +68,7 @@ const typeDefs = gql`
     id: ID!
     name: String!
     expiry: Time
+    updatedAt: Time
     planId: String
     features: [Feature!]
   }
@@ -86,10 +87,6 @@ const typeDefs = gql`
     name: String
     createdAt: Time!
     updatedAt: Time!
-  }
-
-  type SubscriptionURL {
-    url: String
   }
 
   type Feature {
@@ -140,7 +137,6 @@ const typeDefs = gql`
   extend type Query {
     getUser(uuid: String!): User!
     getCurrentUser: User
-    getSubscriptionUrl(plan: String, service: PaymentChannel): SubscriptionURL
     getSubscriptionPlans: [SubscriptionPlan!]!
   }
 
@@ -157,7 +153,6 @@ const resolvers: Resolvers = {
   Query: {
     getUser,
     getCurrentUser,
-    getSubscriptionUrl,
     getSubscriptionPlans
   },
 

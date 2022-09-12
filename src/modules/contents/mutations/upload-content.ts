@@ -5,6 +5,7 @@ import { Content, MutationUploadContentArgs } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
 import ImportContent from '../helpers/import-content'
 import sendToSegment from '@/extensions/segment-service/segment'
+import totalContents from '@/modules/users/fields/total-contents'
 
 export default async (
   _parent: unknown,
@@ -22,6 +23,9 @@ export default async (
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
     // Check if content exceeded
+    const totalContent = await totalContents(user)
+    if (!user.isPremium && (totalContent ?? 0) >= 12)
+      throw new ApolloError('You have exceeded your content limit.', '401')
 
     const { url } = input
 
@@ -64,6 +68,7 @@ export default async (
         excerpt: importedContent.excerpt,
         featuredImage: importedContent.image,
         publishedDate: importedContent.publishedDate,
+        isPremium: user.isPremium,
         tags: importedContent.tags!,
         user: { connect: { id: user.id } },
         client: { connect: { id: client.id } },
