@@ -274,7 +274,6 @@ const typeDefs = gql`
     deleteBulkContent(input: DeleteBulkContentInput!): Boolean!
     updateContent(id: ID!, input: UpdateContentInput!): Content!
     removeContentTag(id: ID!, tags: [String!]): Content
-    removeContentTopic(id: ID!, topics: [String!]): Boolean!
   }
 `
 const resolvers: Resolvers = {
@@ -285,7 +284,6 @@ const resolvers: Resolvers = {
     getIndexMetadata,
     getOverallStats,
     getCategoryStats,
-
     getBoxStats
   },
 
