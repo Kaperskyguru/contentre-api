@@ -40,8 +40,6 @@ export default async (
           .map((item) => item?.toString()!)
       }
 
-      console.log(tags, newTags, oldTags)
-
       data.tags = newTags
     }
 
