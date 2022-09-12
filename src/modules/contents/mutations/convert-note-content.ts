@@ -9,6 +9,7 @@ import { getOrCreateCategoryId } from '@/modules/categories/helpers'
 import createBulkTopics from '@/modules/topics/helpers/create-bulk-topics'
 import createBulkTags from '@/modules/tags/helpers/create-bulk-tags'
 import { Prisma } from '@prisma/client'
+import totalContents from '@/modules/users/fields/total-contents'
 
 export default async (
   _parent: unknown,
@@ -24,6 +25,10 @@ export default async (
   })
   try {
     if (!user) throw new ApolloError('You must be logged in.', '401')
+
+    const totalContent = await totalContents(user)
+    if (!user.isPremium && (totalContent ?? 0) >= 12)
+      throw new ApolloError('You have exceeded your content limit.', '401')
 
     // Share to App
     if (input.apps !== undefined) {
@@ -84,7 +89,8 @@ export default async (
         notebook: {
           disconnect: true
         },
-        ...data
+        ...data,
+        isPremium: user.isPremium
       },
       include: { category: true, client: true }
     })

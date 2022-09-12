@@ -1437,6 +1437,7 @@ export type Subscription = {
   id: Scalars['ID'];
   name: Scalars['String'];
   planId?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['Time']>;
 };
 
 export type SubscriptionPlan = {
@@ -1674,6 +1675,7 @@ export type User = {
   hasTrial?: Maybe<Scalars['Boolean']>;
   homeAddress?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  isPremium?: Maybe<Scalars['Boolean']>;
   isTrial?: Maybe<Scalars['Boolean']>;
   jobTitle?: Maybe<Scalars['String']>;
   lastActivityAt: Scalars['Time'];
@@ -2557,6 +2559,7 @@ export type SubscriptionResolvers<ContextType = any, ParentType extends Resolver
   id?: SubscriptionResolver<ResolversTypes['ID'], "id", ParentType, ContextType>;
   name?: SubscriptionResolver<ResolversTypes['String'], "name", ParentType, ContextType>;
   planId?: SubscriptionResolver<Maybe<ResolversTypes['String']>, "planId", ParentType, ContextType>;
+  updatedAt?: SubscriptionResolver<Maybe<ResolversTypes['Time']>, "updatedAt", ParentType, ContextType>;
 };
 
 export type SubscriptionPlanResolvers<ContextType = any, ParentType extends ResolversParentTypes['SubscriptionPlan'] = ResolversParentTypes['SubscriptionPlan']> = {
@@ -2646,6 +2649,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   hasTrial?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   homeAddress?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isPremium?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   isTrial?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   jobTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastActivityAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;

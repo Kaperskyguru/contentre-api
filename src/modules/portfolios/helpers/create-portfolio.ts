@@ -10,6 +10,7 @@ interface PortfolioInput {
   title: string
   templateId?: string
   clientId?: string
+  isPremium?: boolean
   categoryId?: string
   tags?: Array<string>
   shouldCustomize: boolean
@@ -24,6 +25,7 @@ export const createPortfolio = async (
     clientId,
     categoryId,
     tags,
+    isPremium,
     shouldCustomize
   }: PortfolioInput,
   { user, prisma }: { user: User | DBUser; prisma: PrismaClient }
@@ -64,6 +66,7 @@ export const createPortfolio = async (
       data: {
         url,
         title,
+        isPremium,
         template: { connect: { id: userTemplate.id } },
         description,
         user: { connect: { id: user.id } },

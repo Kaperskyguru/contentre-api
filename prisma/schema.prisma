@@ -42,6 +42,7 @@ model User {
   hasTrial              Boolean              @default(false)
   trialEndDate          DateTime?            @db.Timestamp(6)
   activeTeamId          String?              @db.Char(36)
+  isPremium             Boolean              @default(false)
   teams                 Member[]             @relation("UserMember")
   activeTeam            Member?              @relation("UserMemberActive", fields: [id, activeTeamId], references: [userId, teamId], onDelete: NoAction)
   referrer              User?                @relation("UserToUser", fields: [referrerId], references: [id])
@@ -72,6 +73,7 @@ model Team {
   billingId            String?        @db.Char(36)
   hasTrial             Boolean        @default(false)
   trialEndDate         DateTime?      @db.Timestamp(6)
+  isPremium            Boolean        @default(false)
   members              Member[]       @relation("TeamMember")
   clients              Client[]       @relation("TeamClient")
   contents             Content[]      @relation("TeamContent")
@@ -217,6 +219,7 @@ model Content {
   shareLink     String?     @db.VarChar(2048)
   featuredImage String?     @db.VarChar(2048)
   publishedDate DateTime?   @db.Timestamp(6)
+  isPremium     Boolean     @default(false)
   createdAt     DateTime    @default(now()) @db.Timestamp(6)
   updatedAt     DateTime    @default(now()) @updatedAt @db.Timestamp(6)
   topics        Json?       @db.Json
@@ -242,6 +245,7 @@ model Portfolio {
   type        String?      @db.VarChar(36)
   template    UserTemplate @relation("UserTemplatePortfolio", fields: [templateId], references: [id])
   templateId  String       @db.Char(36)
+  isPremium   Boolean      @default(false)
   createdAt   DateTime     @default(now()) @db.Timestamp(6)
   updatedAt   DateTime     @default(now()) @updatedAt @db.Timestamp(6)
 
@@ -249,20 +253,21 @@ model Portfolio {
 }
 
 model Subscription {
-  id               String              @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  name             String              @db.VarChar(120)
-  planId           String?             @db.Char(36)
-  userId           String?             @db.Char(36)
-  teamId           String?             @db.Char(36)
-  team             Team?               @relation("TeamSubscription", fields: [teamId], references: [id])
-  user             User?               @relation("UserSubscriptions", fields: [userId], references: [id])
-  channel          PaymentChannelType? // This should be removed, but think well well first
-  paymentChannelId String?             @db.Char(36)
-  expiry           DateTime?           @db.Timestamp(6)
-  createdAt        DateTime            @default(now()) @db.Timestamp(6)
-  updatedAt        DateTime            @default(now()) @updatedAt @db.Timestamp(6)
-  users            User[]              @relation("UserSubscription")
-  paymentChannel   PaymentChannel?     @relation("PaymentChannelSubscription", fields: [paymentChannelId], references: [id])
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  name              String              @db.VarChar(120)
+  planId            String?             @db.Char(36)
+  userId            String?             @db.Char(36)
+  teamId            String?             @db.Char(36)
+  team              Team?               @relation("TeamSubscription", fields: [teamId], references: [id])
+  user              User?               @relation("UserSubscriptions", fields: [userId], references: [id])
+  channel           PaymentChannelType? // This should be removed, but think well well first
+  paymentChannelId  String?             @db.Char(36)
+  expiry            DateTime?           @db.Timestamp(6)
+  createdAt         DateTime            @default(now()) @db.Timestamp(6)
+  updatedAt         DateTime            @default(now()) @updatedAt @db.Timestamp(6)
+  switchToBasicDate DateTime?           @db.Timestamp(6)
+  users             User[]              @relation("UserSubscription")
+  paymentChannel    PaymentChannel?     @relation("PaymentChannelSubscription", fields: [paymentChannelId], references: [id])
 
   activeUsers User[] @relation("UserSubscriptionActive")
   activeTeams Team[] @relation("TeamSubscriptionActive")

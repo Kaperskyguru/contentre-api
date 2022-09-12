@@ -6,6 +6,7 @@ export interface Environment {
   appName: string
   domain: string
   port: number | string
+  grace_period: number
   debug?: string
   apollo: {
     introspection: boolean
@@ -85,6 +86,7 @@ export const environment: Environment = {
   apiURL: process.env.API_URL as string,
   appName: process.env.APP_NAME as string,
   domain: process.env.FE_URL as string,
+  grace_period: Number(process.env.GRACE_PERIOD),
   debug: process.env.DEBUG,
   apollo: {
     introspection: ['LOCAL', 'DEVELOP'].includes(context),

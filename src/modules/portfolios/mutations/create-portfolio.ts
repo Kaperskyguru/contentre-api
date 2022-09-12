@@ -1,6 +1,7 @@
 import { useErrorParser } from '@/helpers'
 import { environment } from '@/helpers/environment'
 import { logError, logMutation } from '@/helpers/logger'
+import totalPortfolios from '@/modules/users/fields/total-portfolios'
 import { Context } from '@/types'
 import { Portfolio, MutationCreatePortfolioArgs } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
@@ -22,6 +23,9 @@ export default async (
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
     // Check if portfolio exceeded
+    const totalPortfolio = await totalPortfolios(user)
+    if (!user.isPremium && (totalPortfolio ?? 0) >= 2)
+      throw new ApolloError('You have exceeded your portfolio limit.', '401')
 
     const { title } = input
     let description = input.description ?? undefined
@@ -85,6 +89,7 @@ export default async (
         title,
         templateId,
         clientId,
+        isPremium: user.isPremium,
         categoryId,
         tags,
         shouldCustomize

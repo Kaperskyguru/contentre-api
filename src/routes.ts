@@ -9,7 +9,11 @@ export const app = express()
 const origins: Readonly<{
   [key: string]: (string | RegExp)[] | RegExp
 }> = Object.freeze({
-  LOCAL: ['http://localhost:3000', /\.contentre.io\.local$/],
+  LOCAL: [
+    'http://localhost:3000',
+    'https://bd3a-197-210-70-147.ngrok.io',
+    /\.contentre.io\.local$/
+  ],
   DEVELOP: [
     /\.contentre\.io$/,
     /https:\/\/deploy-preview-.*--contentre-app\.netlify\.app$/,
@@ -39,10 +43,17 @@ app.post(
   '/subscription/paddle/webhook',
   async (req: express.Request, res: express.Response) => {
     const payment = new Payment('PADDLE')
-    const isSuccessful = await payment.webhook(req.body)
+    await payment.webhook(req.body)
+    res.status(200).end()
+  }
+)
 
-    if (isSuccessful) return res.status(200).end()
-    return res.sendStatus(403).end()
+app.post(
+  '/subscription/paystack/webhook',
+  async (req: express.Request, res: express.Response) => {
+    const payment = new Payment('PAYSTACK')
+    await payment.webhook(req)
+    res.sendStatus(200)
   }
 )
 

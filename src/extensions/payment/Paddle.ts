@@ -13,6 +13,32 @@ class Paddle {
       const event = this.processPayment(
         await this.Paddle.parseWebhookEvent(data)
       )
+
+      // if (event) {
+      //   switch (event.status.toLowerCase()) {
+      //     case 'subscription_payment_succeeded':
+      //       // Create new Subscription
+      //       return event.event = "subscription_payment_succeeded"
+
+      //     case 'subscription_cancelled':
+      //       // Add a time to revert to free account
+      //       break
+
+      //     case 'payment_refunded':
+      //       // Update subscription to old Expiry date
+      //       break
+
+      //     case 'subscription_payment_failed':
+      //       // Do nothing, alert user
+      //       return event.event = "subscription_payment_failed"
+      //       // return await this.subscriptionFailed(event)
+
+      //     case 'subscription_updated':
+      //       // Update new Expiring date, check type for upgrade or downgrade
+      //       break
+      //   }
+      // }
+
       return event
     } catch (error) {
       if (

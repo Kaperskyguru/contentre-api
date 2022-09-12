@@ -4,6 +4,8 @@ import { ApolloError } from 'apollo-server-errors'
 import Paddle from './Paddle'
 import Paystack from './Paystack'
 import sendToSegment from '@extensions/segment-service/segment'
+import { addDays } from 'date-fns'
+import { environment } from '@/helpers/environment'
 
 interface SubscriptionPlan {
   amount: string
@@ -17,6 +19,7 @@ interface Sub {
   paymentChannelId?: string
   planId?: string
   error: boolean
+  switchToBasicDate?: Date
 }
 
 class Payment {
@@ -36,29 +39,14 @@ class Payment {
     }
   }
 
-  async getPlan(id: string) {
-    try {
-      return this.service.getPlan(id)
-    } catch (error) {
-      throw new ApolloError('Plan failed error')
-    }
-  }
-
-  async subscribe(data: SubscriptionPlan) {
-    try {
-      return this.service.subscribe(data)
-    } catch (error) {
-      throw new ApolloError('Payment subscription error')
-    }
-  }
-
-  async cancel() {}
   async webhook(data: any) {
     const payment = await this.service.webhook(data)
+    // console.log(payment)
     if (payment) {
       switch (payment.status.toLowerCase()) {
         case 'subscription_payment_succeeded':
           // Create new Subscription
+          // SEND ACTIVATION MAIL
           return await this.subscriptionSuccessful(payment)
 
         case 'subscription_cancelled':
@@ -71,12 +59,23 @@ class Payment {
 
         case 'subscription_payment_failed':
           // Do nothing, alert user
-
+          // SEND FAILED MAIL
           return await this.subscriptionFailed(payment)
 
-        case 'subscription_updated':
-          // Update new Expiring date, check type for upgrade or downgrade
-          break
+        case 'created':
+          // SUCCESSFULLY CREATED A PENDING SUBSCRIPTION
+          // SEND INVOICE NOTICE
+          return await this.createPendingSubscription(payment)
+
+        case 'success':
+          // SUCCESSFULLY SUBSCRIBED FIRST TIME
+          // SEND ACTIVATION MAIL
+          return await this.subscriptionSuccessful(payment)
+
+        case 'update':
+          // SUCCESSFULLY RE-SUBSCRIBED
+          // SEND RE-ACTIVATION MAIL
+          return await this.createPendingSubscription(payment)
       }
     }
 
@@ -88,13 +87,14 @@ class Payment {
     })
     if (!user) return false
     await this.sendToSegment(user, 'user_subscription_failed', {
-      planChannel: payment.metadata?.plan.trim(),
+      planChannel: payment.metadata?.plan?.trim(),
       channel: payment.metadata?.channel,
-      expiry: payment.nextPaymentDate,
+      expiry: payment?.nextPaymentDate,
       price: payment.price,
-      paddleSubscriptionId: payment.subscriptionId,
-      message: 'Subscription failed from Paddle'
+      channelSubscriptionId: payment?.subscriptionId,
+      message: `Subscription failed from ${payment.metadata?.channel}`
     })
+    await this.createPendingSubscription(payment)
     return true
   }
 
@@ -104,7 +104,7 @@ class Payment {
   ): Promise<Sub> {
     const planChannel = await prisma.paymentChannel.findFirst({
       where: {
-        paymentPlanId: payment.metadata?.plan.trim(),
+        paymentPlanId: payment.metadata?.plan?.trim(),
         channel: payment.metadata?.channel
       },
       include: { plan: true }
@@ -112,7 +112,7 @@ class Payment {
 
     if (!planChannel) {
       await this.sendToSegment(user, 'user_subscription_failed', {
-        planChannel: payment.metadata?.plan.trim(),
+        planChannel: payment.metadata?.plan?.trim(),
         channel: payment.metadata?.channel,
         expiry: payment.nextPaymentDate,
         price: payment.price,
@@ -147,6 +147,7 @@ class Payment {
       name: planChannel.plan?.name!,
       paymentChannelId: planChannel?.id!,
       planId: planChannel.plan?.id!,
+      switchToBasicDate: subscription?.switchToBasicDate ?? undefined,
       error: false
     }
   }
@@ -169,7 +170,16 @@ class Payment {
           teamId: user.activeTeamId,
           planId: subscription?.planId!,
           paymentChannelId: subscription?.paymentChannelId!,
-          expiry: payment.nextPaymentDate
+          expiry: payment.nextPaymentDate,
+          switchToBasicDate: null,
+          channel: payment.metadata?.channel
+        }
+      })
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          isPremium: true
         }
       })
 
@@ -179,12 +189,41 @@ class Payment {
         channel: payment.metadata?.channel,
         expiry: payment.nextPaymentDate,
         price: payment.price,
-        paddleSubscriptionId: payment.subscriptionId
+        channelSubscriptionId: payment.subscriptionId
       })
       return true
     } catch (error) {
+      console.log(error, 'error')
       return false
     }
+  }
+
+  private async createPendingSubscription(data: any) {
+    const user = await prisma.user.findFirst({
+      where: { email: { equals: data.customerEmail, mode: 'insensitive' } }
+    })
+
+    if (!user) return false
+
+    const subscription = await this.getOrCreateSubscription(user, data)
+
+    if (subscription.error) return false
+
+    const record: Record<string, unknown> = {}
+    if (subscription.switchToBasicDate === undefined) {
+      record.switchToBasicDate = addDays(new Date(), environment.grace_period)
+    }
+
+    await prisma.subscription.update({
+      where: { id: subscription?.id! },
+      data: {
+        ...record,
+        expiry: data?.nextPaymentDate
+      }
+
+      // Add a Date field to indicate the final date to switch to Basic Plan (plan !== null && switchToBasicDate <= now() = kill(set planID, channelID to null))
+      // Also, create a field in each premium feature to indicate what to delete when finally switching to Basic
+    })
   }
 
   private async sendToSegment(user: User, eventName: string, data: any) {

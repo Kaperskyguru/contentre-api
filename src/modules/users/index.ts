@@ -35,6 +35,7 @@ const typeDefs = gql`
     phoneNumber: String
     totalUsersReferred: String
     hasFinishedOnboarding: Boolean
+    isPremium: Boolean
     totalContents: Int
     totalPortfolios: Int
     avatarURL: String
@@ -68,6 +69,7 @@ const typeDefs = gql`
     id: ID!
     name: String!
     expiry: Time
+    updatedAt: Time
     planId: String
     features: [Feature!]
   }
