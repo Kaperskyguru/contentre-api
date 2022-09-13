@@ -1,12 +1,12 @@
 import { useErrorParser } from '@/helpers'
 import { logError, logQuery } from '@helpers/logger'
-import { App, QueryGetAppArgs } from '@modules-types'
+import { App, QueryGetConnectedAppArgs } from '@modules-types'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 
 export default async (
   _parent: unknown,
-  { id }: QueryGetAppArgs,
+  { id }: QueryGetConnectedAppArgs,
   { user, sentryId, prisma }: Context & Required<Context>
 ): Promise<App> => {
   logQuery('getApp %o', user)

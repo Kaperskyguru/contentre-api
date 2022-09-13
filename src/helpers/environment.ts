@@ -20,6 +20,9 @@ export interface Environment {
   medium: {
     BASE_URL: string
   }
+  hashnode: {
+    BASE_URL: string
+  }
   paystack: {
     url: string
     token: string
@@ -108,6 +111,9 @@ export const environment: Environment = {
   },
   medium: {
     BASE_URL: process.env.MEDIUM_BASE_URL as string
+  },
+  hashnode: {
+    BASE_URL: process.env.HASHNODE_BASE_URL as string
   },
   database: {
     url: process.env.DATABASE_URL as string
