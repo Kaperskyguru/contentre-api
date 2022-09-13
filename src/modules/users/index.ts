@@ -67,6 +67,7 @@ const typeDefs = gql`
   type Subscription {
     id: ID!
     name: String!
+    channel: String
     expiry: Time
     updatedAt: Time
     planId: String
