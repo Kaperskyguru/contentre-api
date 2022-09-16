@@ -12,6 +12,7 @@ const typeDefs = gql`
     name: String
     description: String
     icon: String
+    website: String
     createdAt: Time!
     updatedAt: Time!
   }
@@ -70,8 +71,8 @@ const typeDefs = gql`
   }
 
   enum Format {
-    html
-    markdown
+    HTML
+    MARKDOWN
   }
 
   enum AppStatus {

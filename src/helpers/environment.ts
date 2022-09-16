@@ -23,6 +23,9 @@ export interface Environment {
   hashnode: {
     BASE_URL: string
   }
+  devto: {
+    BASE_URL: string
+  }
   paystack: {
     url: string
     token: string
@@ -114,6 +117,9 @@ export const environment: Environment = {
   },
   hashnode: {
     BASE_URL: process.env.HASHNODE_BASE_URL as string
+  },
+  devto: {
+    BASE_URL: process.env.DEVTO_BASE_URL as string
   },
   database: {
     url: process.env.DATABASE_URL as string

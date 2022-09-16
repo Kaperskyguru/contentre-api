@@ -141,6 +141,7 @@ model App {
   name         String         @db.VarChar(60)
   description  String?        @db.VarChar(2048)
   website      String?        @db.VarChar(2048)
+  help         String?        @db.VarChar(2048)
   createdAt    DateTime       @default(now()) @db.Timestamp(6)
   updatedAt    DateTime       @default(now()) @updatedAt @db.Timestamp(6)
   connectedApp ConnectedApp[] @relation("AppConnectedApp")

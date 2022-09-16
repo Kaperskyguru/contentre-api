@@ -83,13 +83,18 @@ class Medium {
       throw new ApolloError('')
     }
 
-    const userInfo = await this.user()
-    if (!userInfo) {
-      throw new ApolloError('User not found', '404')
-    }
+    try {
+      const userInfo = await this.user()
+      if (!userInfo) {
+        throw new ApolloError('User not found', '404')
+      }
 
-    const res = await this.axios.get(`/users/${userInfo.id}/posts`)
-    return res.data.data
+      const res = await this.axios.get(`/users/${userInfo.id}/posts`)
+      return res.data.data
+    } catch (error) {
+      console.log(error)
+      throw new ApolloError(error)
+    }
   }
 
   async getPublicationPosts(

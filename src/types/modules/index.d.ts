@@ -44,8 +44,28 @@ export type App = {
   updatedAt: Scalars['Time'];
 };
 
+export type AppData = {
+  action: Scalars['String'];
+  canonicalUrl?: InputMaybe<Scalars['String']>;
+  contentFormat?: InputMaybe<Format>;
+  contentId?: InputMaybe<Scalars['Int']>;
+  contentStatus?: InputMaybe<StatusType>;
+  hostname?: InputMaybe<Scalars['String']>;
+  notifyFollowers?: InputMaybe<Scalars['Boolean']>;
+  page?: InputMaybe<Scalars['Int']>;
+  per_page?: InputMaybe<Scalars['Int']>;
+  publishedStatus?: InputMaybe<StatusType>;
+  slug?: InputMaybe<Scalars['String']>;
+  username?: InputMaybe<Scalars['String']>;
+};
+
 export type AppFiltersInput = {
   terms?: InputMaybe<Scalars['String']>;
+};
+
+export type AppInput = {
+  data: AppData;
+  name: Scalars['String'];
 };
 
 export type AppResponse = {
@@ -410,8 +430,8 @@ export type Feature = {
 };
 
 export type Format =
-  | 'html'
-  | 'markdown';
+  | 'HTML'
+  | 'MARKDOWN';
 
 export type IndexMetadataResponse = {
   __typename?: 'IndexMetadataResponse';
@@ -427,6 +447,7 @@ export type Integration = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Time'];
+  website?: Maybe<Scalars['String']>;
 };
 
 export type InviteFriendsInput = {
@@ -564,6 +585,7 @@ export type Mutation = {
   inviteFriends: Scalars['Boolean'];
   loginUser: User;
   logoutUser: Scalars['Boolean'];
+  pullMultipleContent?: Maybe<Array<Content>>;
   removeContentTag?: Maybe<Content>;
   resetPassword: User;
   sendEmailCode: Scalars['Boolean'];
@@ -785,6 +807,11 @@ export type MutationInviteFriendsArgs = {
 
 export type MutationLoginUserArgs = {
   data: LoginUserInput;
+};
+
+
+export type MutationPullMultipleContentArgs = {
+  input: PullContentInput;
 };
 
 
@@ -1104,6 +1131,10 @@ export type PortfolioResponse = {
   __typename?: 'PortfolioResponse';
   meta: Meta;
   portfolios: Array<Portfolio>;
+};
+
+export type PullContentInput = {
+  plugins: Array<AppInput>;
 };
 
 export type Query = {
@@ -1808,7 +1839,9 @@ export type ResolversTypes = {
   AllPortfolioFiltersInput: AllPortfolioFiltersInput;
   AllPortfoliosResponse: ResolverTypeWrapper<AllPortfoliosResponse>;
   App: ResolverTypeWrapper<App>;
+  AppData: AppData;
   AppFiltersInput: AppFiltersInput;
+  AppInput: AppInput;
   AppResponse: ResolverTypeWrapper<AppResponse>;
   AppStatus: AppStatus;
   Apps: Apps;
@@ -1892,6 +1925,7 @@ export type ResolversTypes = {
   PortfolioDetailsFilters: PortfolioDetailsFilters;
   PortfolioFiltersInput: PortfolioFiltersInput;
   PortfolioResponse: ResolverTypeWrapper<PortfolioResponse>;
+  PullContentInput: PullContentInput;
   Query: ResolverTypeWrapper<{}>;
   RegisterUserInput: RegisterUserInput;
   RevenueChart: ResolverTypeWrapper<RevenueChart>;
@@ -1949,7 +1983,9 @@ export type ResolversParentTypes = {
   AllPortfolioFiltersInput: AllPortfolioFiltersInput;
   AllPortfoliosResponse: AllPortfoliosResponse;
   App: App;
+  AppData: AppData;
   AppFiltersInput: AppFiltersInput;
+  AppInput: AppInput;
   AppResponse: AppResponse;
   Apps: Apps;
   Boolean: Scalars['Boolean'];
@@ -2027,6 +2063,7 @@ export type ResolversParentTypes = {
   PortfolioDetailsFilters: PortfolioDetailsFilters;
   PortfolioFiltersInput: PortfolioFiltersInput;
   PortfolioResponse: PortfolioResponse;
+  PullContentInput: PullContentInput;
   Query: {};
   RegisterUserInput: RegisterUserInput;
   RevenueChart: RevenueChart;
@@ -2233,6 +2270,7 @@ export type IntegrationResolvers<ContextType = any, ParentType extends Resolvers
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2328,6 +2366,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   inviteFriends?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationInviteFriendsArgs, 'data'>>;
   loginUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'data'>>;
   logoutUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  pullMultipleContent?: Resolver<Maybe<Array<ResolversTypes['Content']>>, ParentType, ContextType, RequireFields<MutationPullMultipleContentArgs, 'input'>>;
   removeContentTag?: Resolver<Maybe<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<MutationRemoveContentTagArgs, 'id'>>;
   resetPassword?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'newPassword'>>;
   sendEmailCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendEmailCodeArgs, 'email'>>;
