@@ -26,7 +26,7 @@ export default async (
 
     // Checking if social already exists
     const social = await prisma.social.findFirst({
-      where: { name, link, userId: user.id }
+      where: { name, userId: user.id }
     })
 
     if (social) throw new ApolloError('Social already created')

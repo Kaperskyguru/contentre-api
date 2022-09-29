@@ -3,6 +3,8 @@ import { gql } from 'apollo-server-express'
 // import getSocial from './queries/get-social'
 import getSocials from './queries/get-socials'
 import createSocial from './mutations/create-social'
+import getSocialByName from './queries/get-social-by-name'
+import updateSocial from './mutations/update-social'
 
 const typeDefs = gql`
   type Social {
@@ -22,6 +24,7 @@ const typeDefs = gql`
 
   input UpdateSocialInput {
     name: String
+    link: String
   }
 
   input SocialFiltersInput {
@@ -42,6 +45,7 @@ const typeDefs = gql`
       filters: SocialFiltersInput
     ): SocialResponse!
     getSocial(id: ID!): Social!
+    getSocialByName(name: String!): Social!
   }
 
   extend type Mutation {
@@ -53,13 +57,13 @@ const typeDefs = gql`
 
 const resolvers: Resolvers = {
   Query: {
-    getSocials
-    // getSocial
+    getSocials,
+    getSocialByName
   },
   Mutation: {
-    createSocial
+    createSocial,
     // deleteSocial,
-    // updateSocial
+    updateSocial
   }
 }
 export default { typeDefs, resolvers }

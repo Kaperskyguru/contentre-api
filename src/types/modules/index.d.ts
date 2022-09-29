@@ -1168,6 +1168,7 @@ export type Query = {
   getPortfolioDetail: PortfolioDetail;
   getPortfolios: PortfolioResponse;
   getSocial: Social;
+  getSocialByName: Social;
   getSocials: SocialResponse;
   getSubscriptionPlans: Array<SubscriptionPlan>;
   getTag: Tag;
@@ -1337,6 +1338,11 @@ export type QueryGetPortfoliosArgs = {
 
 export type QueryGetSocialArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryGetSocialByNameArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -1655,6 +1661,7 @@ export type UpdatePortfolioInput = {
 };
 
 export type UpdateSocialInput = {
+  link?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
 };
 
@@ -2552,6 +2559,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getPortfolioDetail?: Resolver<ResolversTypes['PortfolioDetail'], ParentType, ContextType, RequireFields<QueryGetPortfolioDetailArgs, 'filters'>>;
   getPortfolios?: Resolver<ResolversTypes['PortfolioResponse'], ParentType, ContextType, RequireFields<QueryGetPortfoliosArgs, never>>;
   getSocial?: Resolver<ResolversTypes['Social'], ParentType, ContextType, RequireFields<QueryGetSocialArgs, 'id'>>;
+  getSocialByName?: Resolver<ResolversTypes['Social'], ParentType, ContextType, RequireFields<QueryGetSocialByNameArgs, 'name'>>;
   getSocials?: Resolver<ResolversTypes['SocialResponse'], ParentType, ContextType, RequireFields<QueryGetSocialsArgs, never>>;
   getSubscriptionPlans?: Resolver<Array<ResolversTypes['SubscriptionPlan']>, ParentType, ContextType>;
   getTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<QueryGetTagArgs, 'id'>>;
