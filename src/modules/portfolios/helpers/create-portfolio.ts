@@ -13,6 +13,7 @@ interface PortfolioInput {
   isPremium?: boolean
   categoryId?: string
   tags?: Array<string>
+  topics?: Array<string>
   shouldCustomize: boolean
 }
 
@@ -25,6 +26,7 @@ export const createPortfolio = async (
     clientId,
     categoryId,
     tags,
+    topics,
     isPremium,
     shouldCustomize
   }: PortfolioInput,
@@ -60,6 +62,7 @@ export const createPortfolio = async (
   if (categoryId !== undefined) data.category = { connect: { id: categoryId } }
   if (clientId !== undefined) data.client = { connect: { id: clientId } }
   if (tags !== undefined) data.tags = tags
+  if (topics !== undefined) data.topics = topics
 
   const [result, countPortfolios] = await prisma.$transaction([
     prisma.portfolio.create({

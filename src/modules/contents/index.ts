@@ -16,6 +16,7 @@ import deleteBulkContent from './mutations/delete-bulk-content'
 import getContentStats from './queries/get-content-stats'
 import convertNoteContent from './mutations/convert-note-content'
 import removeContentTag from './mutations/remove-content-tags'
+import pullMultipleContent from './mutations/pull-multiple-content'
 
 const typeDefs = gql`
   type Content {
@@ -250,6 +251,29 @@ const typeDefs = gql`
     meta: Meta!
     contents: [Content!]!
   }
+  input AppData {
+    action: String!
+    contentFormat: Format
+    notifyFollowers: Boolean
+    canonicalUrl: String
+    publishedStatus: StatusType
+    page: Int
+    username: String
+    contentStatus: StatusType
+    slug: String
+    per_page: Int
+    contentId: Int
+    hostname: String
+  }
+
+  input AppInput {
+    name: String!
+    data: AppData!
+  }
+
+  input PullContentInput {
+    plugins: [AppInput!]!
+  }
 
   extend type Query {
     getContents(
@@ -274,6 +298,7 @@ const typeDefs = gql`
     deleteBulkContent(input: DeleteBulkContentInput!): Boolean!
     updateContent(id: ID!, input: UpdateContentInput!): Content!
     removeContentTag(id: ID!, tags: [String!]): Content
+    pullMultipleContent(input: PullContentInput!): [Content!]
   }
 `
 const resolvers: Resolvers = {
@@ -295,7 +320,8 @@ const resolvers: Resolvers = {
     updateContent,
     deleteBulkContent,
     uploadMultipleContent,
-    removeContentTag
+    removeContentTag,
+    pullMultipleContent
   },
 
   Content: {

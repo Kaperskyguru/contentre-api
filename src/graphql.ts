@@ -14,8 +14,25 @@ import {
   ApolloServerPluginLandingPageDisabled
 } from 'apollo-server-core'
 import { getUserByToken } from './helpers/getUser'
+import Devto from '@extensions/medium'
 
 async function startApolloServer() {
+  // console.log(
+  //   await new Devto({
+  //     token:
+  //       '2d70de98a4a6c0318f6c049945d120890f460fe93de781e095afc5192e692ba64',
+  //     name: 'hashnode',
+  //     id: 'wsd',
+  //     secret: 'as',
+  //     isActivated: true,
+  //     slug: 'as',
+  //     appId: 'asa',
+  //     teamId: 'asa',
+  //     updatedAt: new Date(),
+  //     createdAt: new Date()
+  //   }).getPublications()
+  // )
+
   const server = new ApolloServer({
     schema,
     introspection: ['LOCAL', 'DEVELOP'].includes(environment.context),

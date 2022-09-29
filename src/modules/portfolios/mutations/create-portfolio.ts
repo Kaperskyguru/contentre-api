@@ -34,6 +34,7 @@ export default async (
     let categoryId = input.categoryId ?? undefined
     let tags = input.tags ?? undefined
     let shouldCustomize = input.shouldCustomize ?? false
+    let topics = input.topics ?? undefined
 
     const countPortfolio = await prisma.portfolio.count({
       where: { userId: user.id }
@@ -48,6 +49,7 @@ export default async (
           title,
           templateId,
           clientId,
+          topics,
           categoryId,
           tags,
           shouldCustomize
@@ -92,6 +94,7 @@ export default async (
         isPremium: user.isPremium,
         categoryId,
         tags,
+        topics,
         shouldCustomize
       },
       { user, prisma }

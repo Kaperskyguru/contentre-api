@@ -1,12 +1,12 @@
 import { useErrorParser } from '@helpers'
 import { logError, logMutation } from '@helpers/logger'
-import { App, MutationUpdateAppArgs } from '@modules-types'
+import { App, MutationUpdateConnectedAppArgs } from '@modules-types'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 
 export default async (
   _parent: unknown,
-  { id, input }: MutationUpdateAppArgs,
+  { id, input }: MutationUpdateConnectedAppArgs,
   { user, sentryId, prisma, ipAddress, requestURL }: Context & Required<Context>
 ): Promise<App> => {
   logMutation('updateApp %o', {

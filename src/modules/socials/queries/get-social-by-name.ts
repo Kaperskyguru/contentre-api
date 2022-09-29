@@ -1,29 +1,28 @@
 import { useErrorParser } from '@/helpers'
 import { logError, logQuery } from '@helpers/logger'
-import { App, QueryGetAppArgs } from '@modules-types'
+import { Social, QueryGetSocialByNameArgs } from '@modules-types'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 
 export default async (
   _parent: unknown,
-  { id }: QueryGetAppArgs,
+  { name }: QueryGetSocialByNameArgs,
   { user, sentryId, prisma }: Context & Required<Context>
-): Promise<App> => {
-  logQuery('getApp %o', user)
+): Promise<Social> => {
+  logQuery('getSocialByName %o', user)
   try {
     // User must be logged in before performing the operation.
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
     // Grab the desired row by its compound primary key.
-    const app = await prisma.connectedApp.findUnique({
-      where: { id: id },
-      include: { app: true }
+    const social = await prisma.social.findFirst({
+      where: { name }
     })
 
-    if (!app) throw new ApolloError('App not found')
-    return app
+    if (!social) throw new ApolloError('Social not found')
+    return social
   } catch (e) {
-    logError('getApp %o', e)
+    logError('getSocialByName %o', e)
 
     const message = useErrorParser(e)
     throw new ApolloError(message, e.code ?? '500', { sentryId })

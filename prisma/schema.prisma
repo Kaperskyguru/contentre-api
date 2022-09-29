@@ -141,6 +141,7 @@ model App {
   name         String         @db.VarChar(60)
   description  String?        @db.VarChar(2048)
   website      String?        @db.VarChar(2048)
+  help         String?        @db.VarChar(2048)
   createdAt    DateTime       @default(now()) @db.Timestamp(6)
   updatedAt    DateTime       @default(now()) @updatedAt @db.Timestamp(6)
   connectedApp ConnectedApp[] @relation("AppConnectedApp")
@@ -242,6 +243,7 @@ model Portfolio {
   category    Category?    @relation("CategoryPortfolio", fields: [categoryId], references: [id])
   categoryId  String?      @db.Char(36)
   tags        Json?        @db.Json
+  topics      Json?        @db.Json
   type        String?      @db.VarChar(36)
   template    UserTemplate @relation("UserTemplatePortfolio", fields: [templateId], references: [id])
   templateId  String       @db.Char(36)

@@ -1,9 +1,10 @@
 import { Resolvers } from '@/types/modules'
 import { gql } from 'apollo-server-core'
-import createApp from './mutations/create-app'
-import updateApp from './mutations/update-app'
+import createConnectedApp from './mutations/create-connected-app'
+import updateConnectedApp from './mutations/update-connected-app'
+import getConnectedApps from './queries/get-connected-apps'
+import getConnectedApp from './queries/get-connected-app'
 import getApps from './queries/get-apps'
-import getApp from './queries/get-app'
 
 const typeDefs = gql`
   type Integration {
@@ -11,6 +12,7 @@ const typeDefs = gql`
     name: String
     description: String
     icon: String
+    website: String
     createdAt: Time!
     updatedAt: Time!
   }
@@ -54,8 +56,13 @@ const typeDefs = gql`
     terms: String
   }
 
-  type AppResponse {
+  type ConnectedAppResponse {
     apps: [App!]!
+    meta: Meta!
+  }
+
+  type AppResponse {
+    apps: [Integration!]!
     meta: Meta!
   }
 
@@ -64,8 +71,8 @@ const typeDefs = gql`
   }
 
   enum Format {
-    html
-    markdown
+    HTML
+    MARKDOWN
   }
 
   enum AppStatus {
@@ -75,26 +82,32 @@ const typeDefs = gql`
   }
 
   extend type Query {
+    getConnectedApps(
+      size: Int
+      skip: Int
+      filters: AppFiltersInput
+    ): ConnectedAppResponse!
     getApps(size: Int, skip: Int, filters: AppFiltersInput): AppResponse!
-    getApp(id: ID!): App!
+    getConnectedApp(id: ID!): App!
   }
 
   extend type Mutation {
-    createApp(input: CreateAppInput!): App
-    deleteApp(id: ID!): Boolean!
-    updateApp(id: ID!, input: UpdateAppInput!): App!
+    createConnectedApp(input: CreateAppInput!): App
+    deleteConnectedApp(id: ID!): Boolean!
+    updateConnectedApp(id: ID!, input: UpdateAppInput!): App!
   }
 `
 
 const resolvers: Resolvers = {
   Query: {
+    getConnectedApps,
     getApps,
-    getApp
+    getConnectedApp
   },
 
   Mutation: {
-    createApp,
-    updateApp
+    createConnectedApp,
+    updateConnectedApp
   }
 }
 

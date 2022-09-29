@@ -1,12 +1,12 @@
 import { useErrorParser } from '@/helpers'
 import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
-import { App, MutationCreateAppArgs } from '@/types/modules'
+import { App, MutationCreateConnectedAppArgs } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
 
 export default async (
   _parent: unknown,
-  { input }: MutationCreateAppArgs,
+  { input }: MutationCreateConnectedAppArgs,
   context: Context & Required<Context>
 ): Promise<App> => {
   const { prisma, user, ipAddress, requestURL, sentryId } = context
