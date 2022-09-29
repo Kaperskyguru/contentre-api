@@ -345,6 +345,7 @@ export type CreatePortfolioInput = {
   tags?: InputMaybe<Array<Scalars['String']>>;
   templateId?: InputMaybe<Scalars['ID']>;
   title: Scalars['String'];
+  topics?: InputMaybe<Array<Scalars['String']>>;
   url?: InputMaybe<Scalars['String']>;
 };
 
@@ -1642,8 +1643,14 @@ export type UpdateNotebookInput = {
 };
 
 export type UpdatePortfolioInput = {
+  categoryId?: InputMaybe<Scalars['ID']>;
+  clientId?: InputMaybe<Scalars['ID']>;
   description?: InputMaybe<Scalars['String']>;
+  shouldCustomize?: InputMaybe<Scalars['Boolean']>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  templateId?: InputMaybe<Scalars['ID']>;
   title?: InputMaybe<Scalars['String']>;
+  topics?: InputMaybe<Array<Scalars['String']>>;
   url?: InputMaybe<Scalars['String']>;
 };
 

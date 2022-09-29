@@ -90,6 +90,7 @@ const typeDefs = gql`
     clientId: ID
     categoryId: ID
     tags: [String!]
+    topics: [String!]
     shouldCustomize: Boolean
   }
 
@@ -112,6 +113,12 @@ const typeDefs = gql`
     title: String
     description: String
     url: String
+    templateId: ID
+    clientId: ID
+    categoryId: ID
+    tags: [String!]
+    topics: [String!]
+    shouldCustomize: Boolean
   }
 
   input UpdateUserTemplateInput {

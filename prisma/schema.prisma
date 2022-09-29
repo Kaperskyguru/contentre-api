@@ -243,6 +243,7 @@ model Portfolio {
   category    Category?    @relation("CategoryPortfolio", fields: [categoryId], references: [id])
   categoryId  String?      @db.Char(36)
   tags        Json?        @db.Json
+  topics      Json?        @db.Json
   type        String?      @db.VarChar(36)
   template    UserTemplate @relation("UserTemplatePortfolio", fields: [templateId], references: [id])
   templateId  String       @db.Char(36)
