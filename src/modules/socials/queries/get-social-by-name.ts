@@ -16,7 +16,7 @@ export default async (
 
     // Grab the desired row by its compound primary key.
     const social = await prisma.social.findFirst({
-      where: { name }
+      where: { name, userId: user.id }
     })
 
     if (!social) throw new ApolloError('Social not found')
