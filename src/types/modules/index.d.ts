@@ -1070,6 +1070,7 @@ export type Portfolio = {
   createdAt: Scalars['Time'];
   description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  isPremium?: Maybe<Scalars['Boolean']>;
   template?: Maybe<UserTemplate>;
   templateId: Scalars['ID'];
   title: Scalars['String'];
@@ -2489,6 +2490,7 @@ export type PortfolioResolvers<ContextType = any, ParentType extends ResolversPa
   createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isPremium?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   template?: Resolver<Maybe<ResolversTypes['UserTemplate']>, ParentType, ContextType>;
   templateId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

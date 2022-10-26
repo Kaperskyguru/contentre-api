@@ -19,6 +19,7 @@ const typeDefs = gql`
     user: User
     type: String
     url: String!
+    isPremium: Boolean
     description: String
     templateId: ID!
     template: UserTemplate
