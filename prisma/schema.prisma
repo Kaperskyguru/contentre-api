@@ -232,24 +232,27 @@ model Content {
 }
 
 model Portfolio {
-  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  title       String       @db.VarChar(2048)
-  userId      String       @db.Char(36)
-  user        User         @relation("UserPortfolio", fields: [userId], references: [id])
-  url         String       @db.VarChar(2048)
-  description String?      @db.Text
-  clientId    String?      @db.Char(36)
-  client      Client?      @relation("ClientPortfolio", fields: [clientId], references: [id])
-  category    Category?    @relation("CategoryPortfolio", fields: [categoryId], references: [id])
-  categoryId  String?      @db.Char(36)
-  tags        Json?        @db.Json
-  topics      Json?        @db.Json
-  type        String?      @db.VarChar(36)
-  template    UserTemplate @relation("UserTemplatePortfolio", fields: [templateId], references: [id])
-  templateId  String       @db.Char(36)
-  isPremium   Boolean      @default(false)
-  createdAt   DateTime     @default(now()) @db.Timestamp(6)
-  updatedAt   DateTime     @default(now()) @updatedAt @db.Timestamp(6)
+  id               String       @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  title            String       @db.VarChar(2048)
+  userId           String       @db.Char(36)
+  user             User         @relation("UserPortfolio", fields: [userId], references: [id])
+  url              String       @db.VarChar(2048)
+  description      String?      @db.Text
+  clientId         String?      @db.Char(36)
+  client           Client?      @relation("ClientPortfolio", fields: [clientId], references: [id])
+  category         Category?    @relation("CategoryPortfolio", fields: [categoryId], references: [id])
+  categoryId       String?      @db.Char(36)
+  tags             Json?        @db.Json
+  topics           Json?        @db.Json
+  googleAnalyticId String?      @db.Char(36)
+  password         String?      @db.VarChar(60)
+  domain           String?      @db.VarChar(2048)
+  type             String?      @db.VarChar(36)
+  userTemplate     UserTemplate @relation("UserTemplatePortfolio", fields: [templateId], references: [id])
+  templateId       String       @db.Char(36)
+  isPremium        Boolean      @default(false)
+  createdAt        DateTime     @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime     @default(now()) @updatedAt @db.Timestamp(6)
 
   @@unique([url], name: "uniqueURL", map: "uniqueURL")
 }
@@ -318,14 +321,16 @@ enum TemplateType {
 
 model Template {
   id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  title         String         @db.VarChar(2048)
-  slug          String         @default("Default") @db.VarChar(2048)
+  title         String         @db.VarChar(36)
+  slug          String         @default("Default") @db.VarChar(120)
   type          TemplateType   @default(TEMPLATE)
   userId        String?        @db.Char(36)
   user          User?          @relation("UserTemplate", fields: [userId], references: [id])
   content       String         @db.Text
   css           String?        @db.Text
   visibility    Visibility     @default(PUBLIC)
+  demoLink      String?        @db.VarChar(2048)
+  image         String?        @db.VarChar(2048)
   createdAt     DateTime       @default(now()) @db.Timestamp(6)
   updatedAt     DateTime       @default(now()) @updatedAt @db.Timestamp(6)
   userTemplates UserTemplate[] @relation("TemplateUserTemplate")

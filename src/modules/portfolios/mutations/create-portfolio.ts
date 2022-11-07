@@ -27,12 +27,24 @@ export default async (
     if (!user.isPremium && (totalPortfolio ?? 0) >= 2)
       throw new ApolloError('You have exceeded your portfolio limit.', '401')
 
+    if (!user.isPremium && input.googleAnalyticId)
+      throw new ApolloError('Google Analytic is a premium', '401')
+
+    if (!user.isPremium && input.domain)
+      throw new ApolloError('Custom Domain is a premium', '401')
+
+    if (!user.isPremium && input.password)
+      throw new ApolloError('Password Protection is a premium', '401')
+
     const { title } = input
     let description = input.description ?? undefined
     let templateId = input.templateId ?? undefined
     let clientId = input.clientId ?? undefined
     let categoryId = input.categoryId ?? undefined
     let tags = input.tags ?? undefined
+    let googleAnalyticId = input.googleAnalyticId ?? undefined
+    let password = input.password ?? undefined
+    let domain = input.domain ?? undefined
     let shouldCustomize = input.shouldCustomize ?? false
     let topics = input.topics ?? undefined
 
@@ -52,6 +64,9 @@ export default async (
           topics,
           categoryId,
           tags,
+          googleAnalyticId,
+          domain,
+          password,
           shouldCustomize
         },
         { user, prisma }
@@ -95,6 +110,9 @@ export default async (
         categoryId,
         tags,
         topics,
+        googleAnalyticId,
+        domain,
+        password,
         shouldCustomize
       },
       { user, prisma }

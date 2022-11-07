@@ -15,6 +15,9 @@ interface PortfolioInput {
   tags?: Array<string>
   topics?: Array<string>
   shouldCustomize: boolean
+  googleAnalyticId?: string
+  domain?: string
+  password?: string
 }
 
 export const createPortfolio = async (
@@ -28,7 +31,10 @@ export const createPortfolio = async (
     tags,
     topics,
     isPremium,
-    shouldCustomize
+    shouldCustomize,
+    domain,
+    password,
+    googleAnalyticId
   }: PortfolioInput,
   { user, prisma }: { user: User | DBUser; prisma: PrismaClient }
 ): Promise<Portfolio> => {
@@ -63,6 +69,9 @@ export const createPortfolio = async (
   if (clientId !== undefined) data.client = { connect: { id: clientId } }
   if (tags !== undefined) data.tags = tags
   if (topics !== undefined) data.topics = topics
+  if (googleAnalyticId !== undefined) data.googleAnalyticId = googleAnalyticId
+  if (domain !== undefined) data.domain = domain
+  if (password !== undefined) data.password = password
 
   const [result, countPortfolios] = await prisma.$transaction([
     prisma.portfolio.create({
@@ -70,11 +79,12 @@ export const createPortfolio = async (
         url,
         title,
         isPremium,
-        template: { connect: { id: userTemplate.id } },
+        userTemplate: { connect: { id: userTemplate.id } },
         description,
         user: { connect: { id: user.id } },
         ...data
-      }
+      },
+      include: { userTemplate: true }
     }),
 
     prisma.portfolio.count({

@@ -19,8 +19,14 @@ const typeDefs = gql`
     user: User
     type: String
     url: String!
+    isPremium: Boolean
     description: String
     templateId: ID!
+    isCustomized: Boolean
+    userTemplate: UserTemplate
+    googleAnalyticId: String
+    domain: String
+    password: String
     template: UserTemplate
     createdAt: Time!
     updatedAt: Time!
@@ -30,6 +36,8 @@ const typeDefs = gql`
     id: ID!
     title: String!
     slug: String!
+    image: String
+    demoLink: String
     type: TemplateType
   }
 
@@ -83,12 +91,14 @@ const typeDefs = gql`
   }
 
   input CreatePortfolioInput {
-    url: String
+    domain: String
     title: String!
     description: String
     templateId: ID
     clientId: ID
     categoryId: ID
+    googleAnalyticId: String
+    password: String
     tags: [String!]
     topics: [String!]
     shouldCustomize: Boolean
@@ -112,8 +122,10 @@ const typeDefs = gql`
   input UpdatePortfolioInput {
     title: String
     description: String
-    url: String
+    domain: String
     templateId: ID
+    googleAnalyticId: String
+    password: String
     clientId: ID
     categoryId: ID
     tags: [String!]
