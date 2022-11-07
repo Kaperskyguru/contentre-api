@@ -29,7 +29,7 @@ export default async (
         userId: user.id,
         url: { equals: formattedURL, mode: 'insensitive' }
       },
-      include: { template: { include: { template: true } } }
+      include: { userTemplate: { include: { template: true } } }
     })
 
     if (!portfolio) {
@@ -40,10 +40,10 @@ export default async (
       where: { userId: user.id }
     })
 
-    const template = portfolio?.template.template
+    const template = portfolio?.userTemplate.template
     return {
-      html: portfolio?.template?.content,
-      css: portfolio?.template?.css,
+      html: portfolio?.userTemplate?.content,
+      css: portfolio?.userTemplate?.css,
       templateType: template?.type,
       templateSlug: template?.slug,
       about: user.bio,

@@ -76,7 +76,7 @@ export default async (
       where: { id },
       data: {
         ...data,
-        template: { connect: { id: userTemplate.id } }
+        userTemplate: { connect: { id: userTemplate.id } }
       }
     })
   } catch (e) {

@@ -22,6 +22,8 @@ const typeDefs = gql`
     isPremium: Boolean
     description: String
     templateId: ID!
+    isCustomized: Boolean
+    userTemplate: UserTemplate
     googleAnalyticId: String
     domain: String
     password: String
@@ -34,6 +36,8 @@ const typeDefs = gql`
     id: ID!
     title: String!
     slug: String!
+    image: String
+    demoLink: String
     type: TemplateType
   }
 

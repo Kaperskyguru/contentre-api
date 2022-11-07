@@ -1,19 +1,17 @@
 import { useErrorParser } from '@/helpers'
 import { logError, logMutation } from '@helpers/logger'
 import { MutationUpdateUserArgs, User } from '@modules-types'
-import sendEmailCode from '@/modules/auth/mutations/send-email-code'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 import sendToSegment from '@/extensions/segment-service/segment'
 import { getUser } from '@/helpers/getUser'
-import { url } from 'inspector'
 
 export default async (
   _parent: unknown,
   { input }: MutationUpdateUserArgs,
   context: Context & Required<Context>
 ): Promise<User> => {
-  const { user, prisma, requestURL, requestOrigin } = context
+  const { user, prisma } = context
   logMutation('updateUser %o', user)
   try {
     // User must be logged in before performing the operation.
@@ -123,20 +121,6 @@ export default async (
         }
       })
     }
-
-    // If the user needs to confirm the email after a change.
-    if (!updatedUser.emailConfirmed && updatedUser.email) {
-      // Call the mutation to send the email verification code.
-      sendEmailCode(
-        _parent,
-        {
-          email: updatedUser.email,
-          template: 'email-verification'
-        },
-        context
-      )
-    }
-
     return getUser(updatedUser)
   } catch (e) {
     logError('updateUser %o', e)

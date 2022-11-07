@@ -81,7 +81,6 @@ export default async (
       requestURL,
       error: e
     })
-    console.log(e)
     const message = useErrorParser(e)
 
     throw new ApolloError(message, e.code ?? '500', { sentryId })

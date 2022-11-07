@@ -34,7 +34,7 @@ export default async (
         userId: user.id,
         url: { equals: formattedURL, mode: 'insensitive' }
       },
-      include: { template: true }
+      include: { userTemplate: true }
     })
 
     if (!portfolio) {

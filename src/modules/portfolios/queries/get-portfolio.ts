@@ -17,7 +17,7 @@ export default async (
     // Grab the desired row by its compound primary key.
     const portfolio = await prisma.portfolio.findUnique({
       where: { id: id },
-      include: { template: { include: { template: true } } }
+      include: { userTemplate: { include: { template: true } } }
     })
 
     if (!portfolio) throw new ApolloError('portfolio not found')

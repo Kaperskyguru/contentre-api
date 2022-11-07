@@ -248,7 +248,7 @@ model Portfolio {
   password         String?      @db.VarChar(60)
   domain           String?      @db.VarChar(2048)
   type             String?      @db.VarChar(36)
-  template         UserTemplate @relation("UserTemplatePortfolio", fields: [templateId], references: [id])
+  userTemplate     UserTemplate @relation("UserTemplatePortfolio", fields: [templateId], references: [id])
   templateId       String       @db.Char(36)
   isPremium        Boolean      @default(false)
   createdAt        DateTime     @default(now()) @db.Timestamp(6)

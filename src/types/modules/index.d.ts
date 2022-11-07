@@ -1074,6 +1074,7 @@ export type Portfolio = {
   domain?: Maybe<Scalars['String']>;
   googleAnalyticId?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  isCustomized?: Maybe<Scalars['Boolean']>;
   isPremium?: Maybe<Scalars['Boolean']>;
   password?: Maybe<Scalars['String']>;
   template?: Maybe<UserTemplate>;
@@ -1084,6 +1085,7 @@ export type Portfolio = {
   url: Scalars['String'];
   user?: Maybe<User>;
   userId?: Maybe<Scalars['ID']>;
+  userTemplate?: Maybe<UserTemplate>;
 };
 
 export type PortfolioContent = {
@@ -1546,7 +1548,9 @@ export type TeamMembersRelation = {
 
 export type Template = {
   __typename?: 'Template';
+  demoLink?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  image?: Maybe<Scalars['String']>;
   slug: Scalars['String'];
   title: Scalars['String'];
   type?: Maybe<TemplateType>;
@@ -2499,6 +2503,7 @@ export type PortfolioResolvers<ContextType = any, ParentType extends ResolversPa
   domain?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   googleAnalyticId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isCustomized?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   isPremium?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   password?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   template?: Resolver<Maybe<ResolversTypes['UserTemplate']>, ParentType, ContextType>;
@@ -2509,6 +2514,7 @@ export type PortfolioResolvers<ContextType = any, ParentType extends ResolversPa
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  userTemplate?: Resolver<Maybe<ResolversTypes['UserTemplate']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2667,7 +2673,9 @@ export type TeamResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type TemplateResolvers<ContextType = any, ParentType extends ResolversParentTypes['Template'] = ResolversParentTypes['Template']> = {
+  demoLink?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['TemplateType']>, ParentType, ContextType>;

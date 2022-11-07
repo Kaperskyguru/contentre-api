@@ -29,6 +29,7 @@ export default async (
     const portfolios = await prisma.portfolio.findMany({
       orderBy: [{ title: 'desc' }],
       where,
+      include: { userTemplate: { include: { template: true } } },
       take: size ?? undefined,
       skip: skip ?? 0
     })

@@ -79,11 +79,12 @@ export const createPortfolio = async (
         url,
         title,
         isPremium,
-        template: { connect: { id: userTemplate.id } },
+        userTemplate: { connect: { id: userTemplate.id } },
         description,
         user: { connect: { id: user.id } },
         ...data
-      }
+      },
+      include: { userTemplate: true }
     }),
 
     prisma.portfolio.count({
