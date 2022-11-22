@@ -1,15 +1,15 @@
 import { useErrorParser } from '@/helpers'
-import { logError } from '@/helpers/logger'
 import { prisma } from '@/config'
+import { logError } from '@/helpers/logger'
 import sendMailjetEmail from '@extensions/mail-service/send-mailjet-email'
 import { ApolloError } from 'apollo-server-errors'
 
 export default async (): Promise<number> => {
-  // get all users without completed profile
+  // get all users without added content
 
   try {
     const users = await prisma.user.findMany({
-      where: { hasFinishedOnboarding: false },
+      where: { contents: { none: {} } },
       select: { email: true, username: true, name: true }
     })
 
@@ -25,9 +25,9 @@ export default async (): Promise<number> => {
 
     const res = await sendMailjetEmail(
       {
-        templateId: '4371167',
+        templateId: '4371325',
         data: messageData,
-        subject: 'Stay fresh by updating your profile'
+        subject: "What's the #1 thing you need in your portfolio?"
       },
       true
     )
@@ -40,7 +40,7 @@ export default async (): Promise<number> => {
 
     return count.length
   } catch (error) {
-    logError('sendUpdateProfile %o', error)
+    logError('sendAddContent %o', error)
     console.error(error)
     const message = useErrorParser(error)
     throw new ApolloError(message, error.code ?? '500', { error })

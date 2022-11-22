@@ -42,7 +42,7 @@ export default async (
         To: [
           {
             Email: item.to,
-            Name: item.variables?.NAME ?? ''
+            Name: item.name ?? ''
           }
         ],
         Subject: subject ?? item.subject,

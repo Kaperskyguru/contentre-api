@@ -1,9 +1,10 @@
 import Payment from '@extensions/payment'
-import { prisma } from '@/config'
 import { environment } from '@helpers/environment'
 import cors from 'cors'
 import express from 'express'
 import sendUserUpdateProfile from './extensions/cron-tasks/send-update-profile'
+import sendAddContent from '@extensions/cron-tasks/send-add-content'
+import sendAnalytics from '@extensions/cron-tasks/send-analytics'
 
 export const app = express()
 
@@ -36,7 +37,17 @@ app.use(express.urlencoded({ extended: false, limit: '50mb' }))
 
 // Create REST API here to communicate with GraphQL
 app.post('/cronjob/profile-update', async (req, res) => {
-  const totalSent = await sendUserUpdateProfile(prisma)
+  const totalSent = await sendUserUpdateProfile()
+  res.status(200).end(`${totalSent} messages sent`)
+})
+
+app.post('/cronjob/analytics', async (req, res) => {
+  const totalSent = await sendAnalytics()
+  res.status(200).end(`${totalSent} messages sent`)
+})
+
+app.post('/cronjob/add-content', async (req, res) => {
+  const totalSent = await sendAddContent()
   res.status(200).end(`${totalSent} messages sent`)
 })
 
