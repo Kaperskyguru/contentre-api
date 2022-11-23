@@ -26,7 +26,7 @@ const origins: Readonly<{
 })
 
 const corsOptions = cors({
-  origin: '*', //origins[environment.context],
+  origin: origins[environment.context],
   credentials: true
 })
 
