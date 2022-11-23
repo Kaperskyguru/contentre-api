@@ -25,10 +25,12 @@ const origins: Readonly<{
   PRODUCTION: /\.*contentre\.io$/
 })
 
-const corsOptions = cors({
-  origin: origins[environment.context],
-  credentials: true
-})
+const corsOptions =
+  cors()
+  //   {
+  //   origin: origins[environment.context],
+  //   credentials: true
+  // }
 
 app.use(corsOptions)
 
