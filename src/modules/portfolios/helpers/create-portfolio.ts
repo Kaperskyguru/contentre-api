@@ -1,7 +1,6 @@
 import sendToSegment from '@extensions/segment-service/segment'
-import { Context } from '@/types'
-import { ApolloError } from 'apollo-server-core'
-import { Portfolio, User } from '@/types/modules'
+import { Portfolio } from '@/types/modules'
+
 import { PrismaClient, User as DBUser } from '@prisma/client'
 
 interface PortfolioInput {
@@ -36,7 +35,7 @@ export const createPortfolio = async (
     password,
     googleAnalyticId
   }: PortfolioInput,
-  { user, prisma }: { user: User | DBUser; prisma: PrismaClient }
+  { user, prisma }: { user: DBUser; prisma: PrismaClient }
 ): Promise<Portfolio> => {
   // Use Template or use Blank
   let template
@@ -96,7 +95,7 @@ export const createPortfolio = async (
     operation: 'identify',
     userId: user.id,
     data: {
-      email: user.email
+      ...user
     }
   })
 
