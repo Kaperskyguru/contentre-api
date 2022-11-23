@@ -9,6 +9,8 @@ import { MutationUseEmailCodeArgs, User } from '@/types/modules'
 import sendEmail from '@extensions/mail-service/send-email'
 import mailchimp from '@extensions/mailchimp'
 import { ApolloError } from 'apollo-server-core'
+import sendToSegment from '@/extensions/segment-service/segment'
+import { createPortfolio } from '@/modules/portfolios/helpers/create-portfolio'
 
 export default async (
   _parent: unknown,
@@ -25,7 +27,8 @@ export default async (
 
   try {
     // User must be logged or a refresh code should be present.
-    if (!user && !code) throw new ApolloError('You must be logged in.', '401')
+    if (!user) throw new ApolloError('You must be logged in.', '401')
+    if (!code) throw new ApolloError('invalid code', '422')
     if (!ipAddress?.address) throw new ApolloError('Forbidden.', '403')
 
     // Try to find valid email verification intents not expired with this code.
@@ -51,10 +54,16 @@ export default async (
       throw new Error('invalid code')
     }
 
+    const lowerCasedUsername = user?.username?.toLocaleLowerCase()
+    const portfolioURL = `${environment.domain}/${lowerCasedUsername}`
+
     // Store the user update operation for running in a transaction.
     const updateUser = prisma.user.update({
       where: { id: userId },
-      data: { emailConfirmed: true },
+      data: {
+        emailConfirmed: true,
+        portfolioURL
+      },
       include: { activeSubscription: true }
     })
 
@@ -70,6 +79,17 @@ export default async (
     setJWT(updatedUser, setCookies!)
     // Get the formatted updated user to return.
 
+    // Create Default portfolio
+    createPortfolio(
+      {
+        url: portfolioURL,
+        title: 'Default',
+        description: 'This is your default portfolio',
+        shouldCustomize: false
+      },
+      { user, prisma }
+    )
+
     //Create Personal Notebook
     await prisma.notebook.create({
       data: {
@@ -83,6 +103,7 @@ export default async (
     const isDevelop =
       !environment.mail && ['LOCAL', 'DEVELOP'].includes(environment.context)
 
+    // Send this to queue
     if (!isDevelop) {
       //Subscribe mailchimp
       try {
@@ -103,6 +124,27 @@ export default async (
         }
       })
     }
+
+    const segmentData = {
+      email: updatedUser.email,
+      emailConfirmed: true,
+      username: updatedUser.username,
+      portfolio: updatedUser.portfolioURL,
+      ipAddress
+    }
+
+    await sendToSegment({
+      operation: 'identify',
+      userId: updatedUser.id,
+      data: segmentData
+    })
+
+    await sendToSegment({
+      operation: 'track',
+      eventName: 'onboarding_email_confirmed',
+      userId: updatedUser.id,
+      data: segmentData
+    })
 
     return getUser(updatedUser)
   } catch (e) {

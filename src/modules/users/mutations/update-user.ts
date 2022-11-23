@@ -72,6 +72,8 @@ export default async (
       data: {
         ...segmentData,
         name: updatedUser.name,
+        username: updatedUser.username,
+        portfolio: updatedUser.portfolioURL,
         email: user.email
       }
     })
@@ -115,7 +117,7 @@ export default async (
         userId: user.id,
         data: {
           ...segmentData,
-          hasCompletedOnboarding: true,
+          hasCompletedOnboarding: updatedUser.hasFinishedOnboarding,
           name: updatedUser.name,
           email: user.email
         }

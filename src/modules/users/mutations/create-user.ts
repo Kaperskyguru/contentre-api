@@ -9,7 +9,6 @@ import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 import sendToSegment from '@/extensions/segment-service/segment'
 import { environment } from '@/helpers/environment'
-import { createPortfolio } from '@/modules/portfolios/helpers/create-portfolio'
 
 export default async (
   _parent: unknown,
@@ -62,7 +61,6 @@ export default async (
         billingId: 'BillingId',
         name: input.name,
         signedUpThrough: input.signedUpThrough!,
-        portfolioURL: `${environment.domain}/${lowerCasedUsername}`,
         password: await hashPassword(input.password),
         ...data
       },
@@ -142,22 +140,13 @@ export default async (
       userId: updateUser.id,
       data: {
         ...segmentData,
-        signedUpThrough: input.signedUpThrough
+        signedUpThrough: input.signedUpThrough,
+        username: updateUser.username,
+        portfolio: updateUser.portfolioURL
       }
     })
 
     setJWT(updateUser, setCookies)
-
-    // Create Default portfolio
-    createPortfolio(
-      {
-        url: updateUser.portfolioURL!,
-        title: 'Default',
-        description: 'This is your default portfolio',
-        shouldCustomize: false
-      },
-      { user, prisma }
-    )
 
     return getUser(updateUser)
   } catch (e) {
