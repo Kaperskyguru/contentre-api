@@ -63,19 +63,18 @@ export default async (
     })
 
     // If not in development mode, send the real email.
-    if (!isDevelop) {
-      await sendEmail({
-        to: email,
-        subject: 'Password reset request',
-        template: 'forgot-password',
-        variables: {
-          code: refreshCode,
-          email: user.email,
-          to_name: user.name,
-          BASE_URL: requestOrigin
-        }
-      })
-    }
+
+    await sendEmail({
+      to: email,
+      subject: 'Password reset request',
+      template: 'forgot-password',
+      variables: {
+        code: refreshCode,
+        email: user.email,
+        to_name: user.name,
+        BASE_URL: requestOrigin
+      }
+    })
 
     return !!intent
   } catch (e) {

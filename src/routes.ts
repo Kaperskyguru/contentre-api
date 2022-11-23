@@ -2,7 +2,9 @@ import Payment from '@extensions/payment'
 import { environment } from '@helpers/environment'
 import cors from 'cors'
 import express from 'express'
-// import automateUserEmail from './rest/automate-user-email'
+import sendUserUpdateProfile from './extensions/cron-tasks/send-update-profile'
+import sendAddContent from '@extensions/cron-tasks/send-add-content'
+import sendAnalytics from '@extensions/cron-tasks/send-analytics'
 
 export const app = express()
 
@@ -24,7 +26,7 @@ const origins: Readonly<{
 })
 
 const corsOptions = cors({
-  origin: origins[environment.context],
+  origin: ['*'], //origins[environment.context],
   credentials: true
 })
 
@@ -34,10 +36,20 @@ app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ extended: false, limit: '50mb' }))
 
 // Create REST API here to communicate with GraphQL
-// app.post('/sendOnboardingMail', (req, res) => {
-//   automateUserEmail()
-//   res.end('API under development')
-// })
+app.post('/cronjob/profile-update', async (req, res) => {
+  const totalSent = await sendUserUpdateProfile()
+  res.status(200).end(`${totalSent} messages sent`)
+})
+
+app.post('/cronjob/analytics', async (req, res) => {
+  const totalSent = await sendAnalytics()
+  res.status(200).end(`${totalSent} messages sent`)
+})
+
+app.post('/cronjob/add-content', async (req, res) => {
+  const totalSent = await sendAddContent()
+  res.status(200).end(`${totalSent} messages sent`)
+})
 
 app.post(
   '/subscription/paddle/webhook',
