@@ -125,6 +125,7 @@ export default async (): Promise<number> => {
     const groupingGreaterThanAllUsers = await calculateGroupingPercentGreater(
       grouping
     )
+
     const messageData = users.map((user) => {
       const totalGrouping = calculateGrouping({
         category,
@@ -210,9 +211,13 @@ async function calculateContentPercentGreater(
     ...contents.map((i) => ({ id: i.userId }.id))
   ])
 
+  const totalContent = contents.reduce((acc, a) => {
+    return acc + a._count.userId
+  }, 0)
+
   return contents.map((content, index) => ({
     email: filteredUsers.find((user) => user.id === content.userId)?.email,
-    percent: ((contents.length - (index + 1)) / contents.length) * 100
+    percent: Math.round((content._count.userId / totalContent) * 100)
   }))
 }
 
@@ -224,16 +229,24 @@ async function calculateClientPercentGreater(
     ...clients.map((i) => ({ id: i.userId }.id))
   ])
 
+  const totalClient = clients.reduce((acc, a) => {
+    return acc + a._count.userId
+  }, 0)
+
   return clients.map((client, index) => ({
     email: filteredUsers.find((user) => user.id === client.userId)?.email,
-    percent: ((clients.length - (index + 1)) / clients.length) * 100
+    percent: Math.round((client._count.userId / totalClient) * 100)
   }))
 }
 
 async function calculateGroupingPercentGreater(groupings: Array<any>) {
+  const totalGrouping = groupings.reduce((acc, a) => {
+    return acc + a.count
+  }, 0)
+
   return groupings.map((group, index) => ({
     email: group.email,
-    percent: ((groupings.length - (index + 1)) / groupings.length) * 100
+    percent: Math.round((group.count / totalGrouping) * 100)
   }))
 }
 
