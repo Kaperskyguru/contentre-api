@@ -32,7 +32,7 @@ const corsOptions = cors({
   credentials: true
 })
 
-app.use(corsOptions)
+app.use(cors())
 
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ extended: false, limit: '50mb' }))
@@ -54,6 +54,7 @@ app.post('/cronjob/test', async (req, res) => {
   try {
     await Promise.all(
       users.map(async (user) => {
+        console.log(user.emailConfirmed)
         const segmentData = {
           email: user.email,
           emailConfirmed: user.emailConfirmed,
