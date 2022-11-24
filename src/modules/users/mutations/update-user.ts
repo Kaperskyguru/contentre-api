@@ -74,7 +74,8 @@ export default async (
         name: updatedUser.name,
         username: updatedUser.username,
         portfolio: updatedUser.portfolioURL,
-        email: user.email
+        email: user.email,
+        emailConfirmed: user.emailConfirmed
       }
     })
     await sendToSegment({
@@ -84,7 +85,8 @@ export default async (
       data: {
         ...segmentData,
         name: updatedUser.name,
-        email: user.email
+        email: user.email,
+        emailConfirmed: user.emailConfirmed
       }
     })
 
