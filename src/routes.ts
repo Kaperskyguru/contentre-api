@@ -5,6 +5,8 @@ import express from 'express'
 import sendUserUpdateProfile from './extensions/cron-tasks/send-update-profile'
 import sendAddContent from '@extensions/cron-tasks/send-add-content'
 import sendAnalytics from '@extensions/cron-tasks/send-analytics'
+import { prisma } from './config'
+import sendToSegment from '@/extensions/segment-service/segment'
 
 export const app = express()
 
@@ -44,6 +46,47 @@ app.post('/cronjob/profile-update', async (req, res) => {
 app.post('/cronjob/analytics', async (req, res) => {
   const totalSent = await sendAnalytics()
   res.status(200).end(`${totalSent} messages sent`)
+})
+
+app.post('/cronjob/test', async (req, res) => {
+  const users = await prisma.user.findMany({})
+
+  try {
+    await Promise.all(
+      users.map(async (user) => {
+        const segmentData = {
+          email: user.email,
+          emailConfirmed: user.emailConfirmed,
+          username: user.username,
+          portfolio: user.portfolioURL
+        }
+
+        await sendToSegment({
+          operation: 'identify',
+          userId: user.id,
+          data: segmentData
+        })
+
+        await sendToSegment({
+          operation: 'track',
+          eventName: 'onboarding_email_confirmed',
+          userId: user.id,
+          data: segmentData
+        })
+
+        await sendToSegment({
+          operation: 'track',
+          eventName: 'user_updated',
+          userId: user.id,
+          data: segmentData
+        })
+      })
+    )
+
+    res.status(200).end(` messages sent`)
+  } catch (error) {
+    res.status(500).end(`error`)
+  }
 })
 
 app.post('/cronjob/add-content', async (req, res) => {
