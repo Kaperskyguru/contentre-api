@@ -1,10 +1,10 @@
-import { useErrorParser } from '@/helpers'
+import { chunkArray, useErrorParser } from '@/helpers'
 import { logError } from '@/helpers/logger'
 import { prisma } from '@/config'
 import sendMailjetEmail from '@extensions/mail-service/send-mailjet-email'
 import { ApolloError } from 'apollo-server-errors'
 
-export default async (): Promise<number> => {
+export default async (): Promise<void> => {
   // get all users without completed profile
 
   try {
@@ -23,22 +23,23 @@ export default async (): Promise<number> => {
       }
     }))
 
-    const res = await sendMailjetEmail(
-      {
-        templateId: '4371167',
-        data: messageData,
-        subject: 'Stay fresh by updating your profile'
-      },
-      true
+    const chunkValue = Math.floor(messageData.length / 4.4)
+    const newArrays = chunkArray(messageData, chunkValue)
+
+    //TODO: Use queues
+
+    await Promise.all(
+      newArrays.map(async (message: any) => {
+        const res = await sendMailjetEmail(
+          {
+            templateId: '4371167',
+            data: message,
+            subject: 'Stay fresh by updating your profile'
+          },
+          true
+        )
+      })
     )
-
-    if (!res?.body?.Messages) return 0
-
-    const count = res.body.Messages.filter(
-      (message: any) => message.Status === 'success'
-    )
-
-    return count.length
   } catch (error) {
     logError('sendUpdateProfile %o', error)
     console.error(error)
