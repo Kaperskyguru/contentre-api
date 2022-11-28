@@ -1,4 +1,4 @@
-import { useErrorParser } from '@/helpers'
+import { chunkArray, useErrorParser } from '@/helpers'
 import { prisma } from '@/config'
 import { logError } from '@/helpers/logger'
 import sendMailjetEmail from '@extensions/mail-service/send-mailjet-email'
@@ -6,7 +6,7 @@ import { ApolloError } from 'apollo-server-errors'
 import { User } from '@/types/modules'
 import { endOfMonth, startOfMonth } from 'date-fns'
 
-export default async (): Promise<number> => {
+export default async (): Promise<void> => {
   try {
     // get all users
     const users = await prisma.user.findMany({})
@@ -179,22 +179,22 @@ export default async (): Promise<number> => {
       }
     })
 
-    const res = await sendMailjetEmail(
-      {
-        templateId: '4374011',
-        data: messageData,
-        subject: 'Your Contentre Analytics'
-      },
-      true
+    //TODO: Use queues
+    const chunkValue = Math.floor(messageData.length / 4.4)
+    const newArrays = chunkArray(messageData, chunkValue)
+
+    await Promise.all(
+      newArrays.map(async (message: any) => {
+        const res = await sendMailjetEmail(
+          {
+            templateId: '4374011',
+            data: message,
+            subject: 'Your Contentre Analytics'
+          },
+          true
+        )
+      })
     )
-
-    if (!res?.body?.Messages) return 0
-
-    const count = res.body.Messages.filter(
-      (message: any) => message.Status === 'success'
-    )
-
-    return count.length
   } catch (error) {
     logError('sendAddContent %o', error)
     console.error(error)

@@ -38,15 +38,17 @@ app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ extended: false, limit: '50mb' }))
 
 // Create REST API here to communicate with GraphQL
-app.post('/cronjob/profile-update', async (req, res) => {
-  const totalSent = await sendUserUpdateProfile()
-  res.status(200).end(`${totalSent} messages sent`)
+app.get('/cronjob/profile-update', async (req, res) => {
+  await sendUserUpdateProfile()
+  res.status(200).end(`messages sent`)
 })
 
-app.post('/cronjob/analytics', async (req, res) => {
-  const totalSent = await sendAnalytics()
-  res.status(200).end(`${totalSent} messages sent`)
+app.get('/cronjob/analytics', async (req, res) => {
+  await sendAnalytics()
+  res.status(200).end(`messages sent`)
 })
+
+// TODO: Send users actionable tasks to do to complete onboarding
 
 app.post('/cronjob/test', async (req, res) => {
   const users = await prisma.user.findMany({})
@@ -54,10 +56,9 @@ app.post('/cronjob/test', async (req, res) => {
   try {
     await Promise.all(
       users.map(async (user) => {
-        console.log(user.emailConfirmed)
+        console.log(user.hasFinishedOnboarding)
         const segmentData = {
           email: user.email,
-          emailConfirmed: user.emailConfirmed,
           username: user.username,
           portfolio: user.portfolioURL
         }
@@ -70,16 +71,14 @@ app.post('/cronjob/test', async (req, res) => {
 
         await sendToSegment({
           operation: 'track',
-          eventName: 'onboarding_email_confirmed',
+          eventName: 'has_completed_onboarding',
           userId: user.id,
-          data: segmentData
-        })
-
-        await sendToSegment({
-          operation: 'track',
-          eventName: 'user_updated',
-          userId: user.id,
-          data: segmentData
+          data: {
+            ...segmentData,
+            hasCompletedOnboarding: user.hasFinishedOnboarding,
+            name: user.name,
+            email: user.email
+          }
         })
       })
     )
@@ -90,9 +89,9 @@ app.post('/cronjob/test', async (req, res) => {
   }
 })
 
-app.post('/cronjob/add-content', async (req, res) => {
-  const totalSent = await sendAddContent()
-  res.status(200).end(`${totalSent} messages sent`)
+app.get('/cronjob/add-content', async (req, res) => {
+  await sendAddContent()
+  res.status(200).end(`messages sent`)
 })
 
 app.post(

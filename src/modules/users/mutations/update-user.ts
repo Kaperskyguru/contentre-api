@@ -102,7 +102,7 @@ export default async (
       where: { userId: updatedUser.id, notebookId: null }
     })
 
-    if (contentCount > 0) if (updatedUser.homeAddress) isProfileCompleted += 20
+    if (contentCount > 0) isProfileCompleted += 20
 
     if (isProfileCompleted > 90) {
       updatedUser = await prisma.user.update({
