@@ -1,4 +1,4 @@
-import { chunkArray, useErrorParser } from '@/helpers'
+import { chunkArray, delay, useErrorParser } from '@/helpers'
 import { prisma } from '@/config'
 import { logError } from '@/helpers/logger'
 import sendMailjetEmail from '@extensions/mail-service/send-mailjet-email'
@@ -193,6 +193,7 @@ export default async (): Promise<void> => {
           },
           true
         )
+        await delay(10000)
       })
     )
   } catch (error) {
