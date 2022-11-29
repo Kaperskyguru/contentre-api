@@ -11,7 +11,7 @@ import sendToSegment from '@/extensions/segment-service/segment'
 export const app = express()
 
 const origins: Readonly<{
-  [key: string]: (string | RegExp)[] | RegExp
+  [key: string]: (string | RegExp)[] | RegExp | string
 }> = Object.freeze({
   LOCAL: [
     'http://localhost:3000',
@@ -24,7 +24,7 @@ const origins: Readonly<{
     /https:\/\/deploy-preview-.*--develop-app-contentre\.netlify\.app$/
   ],
   STAGING: ['http://localhost:3000', /https:\/\/staging.contentre\.io$/], // remove *
-  PRODUCTION: ['*', /\.*contentre\.io$/, /\.contentre\.io$/]
+  PRODUCTION: '*' //['*', /\.*contentre\.io$/, /\.contentre\.io$/]
 })
 
 const corsOptions = cors({
