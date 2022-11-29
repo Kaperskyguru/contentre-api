@@ -30,11 +30,11 @@ export default async (
     if (!user.isPremium && input.googleAnalyticId)
       throw new ApolloError('Google Analytic is a premium', '401')
 
-    if (!user.isPremium && input.domain)
-      throw new ApolloError('Custom Domain is a premium', '401')
-
     if (!user.isPremium && input.password)
       throw new ApolloError('Password Protection is a premium', '401')
+
+    if (!user.isPremium && input.customDomain)
+      throw new ApolloError('Custom Domain is a premium', '401')
 
     const { title } = input
     let description = input.description ?? undefined
@@ -44,9 +44,9 @@ export default async (
     let tags = input.tags ?? undefined
     let googleAnalyticId = input.googleAnalyticId ?? undefined
     let password = input.password ?? undefined
-    let domain = input.domain ?? undefined
     let shouldCustomize = input.shouldCustomize ?? false
     let topics = input.topics ?? undefined
+    let customDomain = input.customDomain ?? undefined
 
     const countPortfolio = await prisma.portfolio.count({
       where: { userId: user.id }
@@ -65,8 +65,8 @@ export default async (
           categoryId,
           tags,
           googleAnalyticId,
-          domain,
           password,
+          customDomain,
           shouldCustomize
         },
         { user, prisma }
@@ -111,7 +111,7 @@ export default async (
         tags,
         topics,
         googleAnalyticId,
-        domain,
+        customDomain,
         password,
         shouldCustomize
       },

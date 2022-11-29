@@ -340,8 +340,8 @@ export type CreateNotebookInput = {
 export type CreatePortfolioInput = {
   categoryId?: InputMaybe<Scalars['ID']>;
   clientId?: InputMaybe<Scalars['ID']>;
+  customDomain?: InputMaybe<Scalars['String']>;
   description?: InputMaybe<Scalars['String']>;
-  domain?: InputMaybe<Scalars['String']>;
   googleAnalyticId?: InputMaybe<Scalars['String']>;
   password?: InputMaybe<Scalars['String']>;
   shouldCustomize?: InputMaybe<Scalars['Boolean']>;
@@ -1101,14 +1101,16 @@ export type PortfolioContentFilters = {
   categories?: InputMaybe<Array<Scalars['String']>>;
   clients?: InputMaybe<Array<Scalars['String']>>;
   code?: InputMaybe<Scalars['String']>;
+  domain?: InputMaybe<Scalars['String']>;
   fromDate?: InputMaybe<Scalars['Time']>;
+  isCustomDomain?: InputMaybe<Scalars['Boolean']>;
   sortBy?: InputMaybe<Scalars['String']>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   terms?: InputMaybe<Scalars['String']>;
   toDate?: InputMaybe<Scalars['Time']>;
   topics?: InputMaybe<Array<Scalars['String']>>;
   url?: InputMaybe<Scalars['String']>;
-  username: Scalars['String'];
+  username?: InputMaybe<Scalars['String']>;
 };
 
 export type PortfolioDetail = {
@@ -1128,8 +1130,10 @@ export type PortfolioDetail = {
 
 export type PortfolioDetailsFilters = {
   code?: InputMaybe<Scalars['String']>;
+  domain?: InputMaybe<Scalars['String']>;
+  isCustomDomain?: InputMaybe<Scalars['Boolean']>;
   url?: InputMaybe<Scalars['String']>;
-  username: Scalars['String'];
+  username?: InputMaybe<Scalars['String']>;
 };
 
 export type PortfolioFiltersInput = {
@@ -1661,8 +1665,8 @@ export type UpdateNotebookInput = {
 export type UpdatePortfolioInput = {
   categoryId?: InputMaybe<Scalars['ID']>;
   clientId?: InputMaybe<Scalars['ID']>;
+  customDomain?: InputMaybe<Scalars['String']>;
   description?: InputMaybe<Scalars['String']>;
-  domain?: InputMaybe<Scalars['String']>;
   googleAnalyticId?: InputMaybe<Scalars['String']>;
   password?: InputMaybe<Scalars['String']>;
   shouldCustomize?: InputMaybe<Scalars['Boolean']>;

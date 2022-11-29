@@ -1,5 +1,6 @@
 import sendToSegment from '@extensions/segment-service/segment'
 import { Portfolio } from '@/types/modules'
+import { previsionCustomDomain } from '@extensions/cloudflare'
 
 import { PrismaClient, User as DBUser } from '@prisma/client'
 
@@ -15,8 +16,8 @@ interface PortfolioInput {
   topics?: Array<string>
   shouldCustomize: boolean
   googleAnalyticId?: string
-  domain?: string
   password?: string
+  customDomain?: string
 }
 
 export const createPortfolio = async (
@@ -31,8 +32,8 @@ export const createPortfolio = async (
     topics,
     isPremium,
     shouldCustomize,
-    domain,
     password,
+    customDomain,
     googleAnalyticId
   }: PortfolioInput,
   { user, prisma }: { user: DBUser; prisma: PrismaClient }
@@ -69,8 +70,8 @@ export const createPortfolio = async (
   if (tags !== undefined) data.tags = tags
   if (topics !== undefined) data.topics = topics
   if (googleAnalyticId !== undefined) data.googleAnalyticId = googleAnalyticId
-  if (domain !== undefined) data.domain = domain
   if (password !== undefined) data.password = password
+  if (customDomain !== undefined) data.domain = customDomain
 
   const [result, countPortfolios] = await prisma.$transaction([
     prisma.portfolio.create({
@@ -91,6 +92,9 @@ export const createPortfolio = async (
     })
   ])
 
+  // TODO: use queues
+  if (customDomain) await previsionCustomDomain(customDomain)
+
   await sendToSegment({
     operation: 'identify',
     userId: user.id,
@@ -109,6 +113,7 @@ export const createPortfolio = async (
       template: { ...template },
       userTemplate: { ...userTemplate },
       portfolioURL: url,
+      hasCustomDomain: !!customDomain,
       multiple: countPortfolios > 1 ? true : false,
       portfolioCount: countPortfolios
     }
