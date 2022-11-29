@@ -2,8 +2,8 @@ import whereContents from '@/modules/contents/helpers/where-contents'
 import { useErrorParser } from '@helpers'
 import { logError, logQuery } from '@helpers/logger'
 import { PortfolioContent, QueryGetPortfolioContentArgs } from '@modules-types'
-import { Tag } from '@prisma/client'
 import { Context } from '@types'
+import { prisma as prismaClient } from '@/config'
 import { ApolloError } from 'apollo-server-errors'
 
 export default async (
@@ -13,35 +13,41 @@ export default async (
 ): Promise<PortfolioContent> => {
   logQuery('getPortfolioContent %o', filters)
   try {
-    // Select user details
+    if (!filters.domain && !filters?.url) {
+      throw new ApolloError('URL not found', '404')
+    }
 
-    const user = await prisma.user.findFirst({
-      where: { username: { equals: filters.username, mode: 'insensitive' } }
-    })
+    let user
+    let portfolio
+
+    if (filters.isCustomDomain && filters.domain) {
+      const formattedURL = filters.domain.replace(/\/$/, '').trim()
+
+      portfolio = await getPortfolioFromCustomDomain(formattedURL)
+
+      if (!portfolio) throw new ApolloError('Portfolio not found', '404')
+
+      user = await getUserFromID(portfolio.userId)
+    }
+
+    if (filters.url && !filters.isCustomDomain) {
+      const formattedURL = filters.url.replace(/\/$/, '').trim()
+
+      user = await getUserFromUsername(filters.username!)
+
+      if (!user) throw new ApolloError('User not found', '404')
+
+      portfolio = await getPortfolioFromUserIdAndURL(user.id, formattedURL)
+    }
 
     if (!user) {
       throw new ApolloError('User not found', '404')
     }
 
-    if (!filters?.url) {
-      throw new ApolloError('URL not found', '404')
-    }
-
-    const formattedURL = filters?.url.replace(/\/$/, '').trim()
-
-    const portfolio = await prisma.portfolio.findFirst({
-      where: {
-        userId: user.id,
-        url: { equals: formattedURL, mode: 'insensitive' }
-      },
-      include: { userTemplate: true }
-    })
-
-    if (!portfolio) {
-      throw new ApolloError('Portfolio not found', '404')
-    }
-
-    if (filters?.code) {
+    if (user?.isPremium) {
+      if (!portfolio) {
+        throw new ApolloError('Portfolio not found', '404')
+      }
       const where = whereContents(user, filters)
 
       const contentWithTotal = await prisma.content.count({
@@ -134,52 +140,9 @@ export default async (
       }
     }
 
-    // Select Contents
-    const where = whereContents(user, filters)
-
-    const contentWithTotal = await prisma.content.count({
-      where: { ...where, visibility: 'PUBLIC' },
-      select: { id: true }
-    })
-
-    const contents = await prisma.content.findMany({
-      where: { ...where, visibility: 'PUBLIC' },
-      include: { client: true, category: true },
-      skip: skip ?? 0,
-      take: size ?? undefined
-    })
-
-    // Get Public clients
-    const clients = await prisma.client.findMany({
-      where: { userId: user.id, visibility: 'PUBLIC' }
-    })
-    // Get Categories
-    const categories = await prisma.category.findMany({
-      where: { userId: user.id }
-    })
-    // Get Topics
-    const topics = await prisma.topic.findMany({
-      where: { teamId: user?.activeTeamId }
-    })
-    // Get Tags
-    const tags = await prisma.tag.findMany({
-      where: { userId: user?.id }
-    })
-
-    return {
-      contents: {
-        contents,
-        meta: {
-          total: contentWithTotal?.id ?? 0
-        }
-      },
-      categories,
-      tags,
-      topics,
-      clients
-    }
+    return resolver(user, filters)
   } catch (e) {
-    logError('getPortfolioContent %o', e)
+    // logError('getPortfolioContent %o', e)
 
     const message = useErrorParser(e)
     throw new ApolloError(message, e.code ?? '500', { sentryId })
@@ -199,4 +162,77 @@ function uniq_fast(a: any) {
     }
   }
   return out
+}
+
+async function getPortfolioFromCustomDomain(domain: string) {
+  return await prismaClient.portfolio.findFirst({
+    where: { domain: { equals: domain, mode: 'insensitive' } },
+    include: { userTemplate: true }
+  })
+}
+
+async function getUserFromUsername(username: string) {
+  return await prismaClient.user.findFirst({
+    where: { username: { equals: username, mode: 'insensitive' } }
+  })
+}
+
+async function getUserFromID(id: string) {
+  return await prismaClient.user.findFirst({
+    where: { id }
+  })
+}
+
+async function getPortfolioFromUserIdAndURL(id: string, url: string) {
+  return await prismaClient.portfolio.findFirst({
+    where: { userId: id, url: { equals: url, mode: 'insensitive' } },
+    include: { userTemplate: true }
+  })
+}
+
+async function resolver(user: any, filters: any) {
+  // Select Contents
+  const where = whereContents(user, filters)
+
+  const contentWithTotal = await prismaClient.content.count({
+    where: { ...where, visibility: 'PUBLIC' },
+    select: { id: true }
+  })
+
+  const contents = await prismaClient.content.findMany({
+    where: { ...where, visibility: 'PUBLIC' },
+    include: { client: true, category: true },
+    skip: filters.skip ?? 0,
+    take: filters.size ?? undefined
+  })
+
+  // Get Public clients
+  const clients = await prismaClient.client.findMany({
+    where: { userId: user.id, visibility: 'PUBLIC' }
+  })
+  // Get Categories
+  const categories = await prismaClient.category.findMany({
+    where: { userId: user.id }
+  })
+  // Get Topics
+  const topics = await prismaClient.topic.findMany({
+    where: { teamId: user?.activeTeamId }
+  })
+  // Get Tags
+  const tags = await prismaClient.tag.findMany({
+    where: { userId: user?.id }
+  })
+
+  return {
+    contents: {
+      contents,
+      meta: {
+        total: contentWithTotal?.id ?? 0
+      }
+    },
+    categories,
+    tags,
+    topics,
+    clients
+  }
 }

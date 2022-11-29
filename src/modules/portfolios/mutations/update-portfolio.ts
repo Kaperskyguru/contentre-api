@@ -1,3 +1,5 @@
+import totalPortfolios from '@/modules/users/fields/total-portfolios'
+import { previsionCustomDomain } from '@extensions/cloudflare'
 import { useErrorParser } from '@helpers'
 import { logError, logMutation } from '@helpers/logger'
 import { MutationUpdatePortfolioArgs, Portfolio } from '@modules-types'
@@ -20,10 +22,19 @@ export default async (
     // User must be logged in before performing the operation.
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
-    // User must be with an active company set.
-    // if (!user.activeCompanyId) {
-    //   throw new AuthorizationError(Errors.ACTIVE_COMPANY)
-    // }
+    // Check if portfolio exceeded
+    const totalPortfolio = await totalPortfolios(user)
+    if (!user.isPremium && (totalPortfolio ?? 0) >= 2)
+      throw new ApolloError('You have exceeded your portfolio limit.', '401')
+
+    if (!user.isPremium && input.googleAnalyticId)
+      throw new ApolloError('Google Analytic is a premium', '401')
+
+    if (!user.isPremium && input.password)
+      throw new ApolloError('Password Protection is a premium', '401')
+
+    if (!user.isPremium && input.customDomain)
+      throw new ApolloError('Custom Domain is a premium', '401')
 
     // Extract fields from the mutation input.
     const { title, description, shouldCustomize, templateId } = input
@@ -68,8 +79,16 @@ export default async (
     if (input.categoryId !== undefined)
       data.category = { connect: { id: input.categoryId } }
 
+    if (input.googleAnalyticId !== undefined)
+      data.googleAnalyticId = input.googleAnalyticId
+    if (input.password !== undefined) data.password = input.password
+    if (input.customDomain !== undefined) data.domain = input.customDomain
+
     //Todo: Editing/Adding URL only for pro user
     // if (url !== undefined) data.url = url
+
+    // TODO: use queues
+    if (input.customDomain) await previsionCustomDomain(input.customDomain)
 
     // Finally update the category.
     return await prisma.portfolio.update({

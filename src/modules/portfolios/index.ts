@@ -91,12 +91,12 @@ const typeDefs = gql`
   }
 
   input CreatePortfolioInput {
-    domain: String
     title: String!
     description: String
     templateId: ID
     clientId: ID
     categoryId: ID
+    customDomain: String
     googleAnalyticId: String
     password: String
     tags: [String!]
@@ -122,9 +122,9 @@ const typeDefs = gql`
   input UpdatePortfolioInput {
     title: String
     description: String
-    domain: String
     templateId: ID
     googleAnalyticId: String
+    customDomain: String
     password: String
     clientId: ID
     categoryId: ID
@@ -154,7 +154,9 @@ const typeDefs = gql`
 
   input PortfolioContentFilters {
     terms: String
-    username: String!
+    isCustomDomain: Boolean
+    domain: String
+    username: String
     code: String
     url: String
     clients: [String!]
@@ -167,7 +169,9 @@ const typeDefs = gql`
   }
 
   input PortfolioDetailsFilters {
-    username: String!
+    isCustomDomain: Boolean
+    domain: String
+    username: String
     code: String
     url: String
   }
