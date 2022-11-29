@@ -29,7 +29,7 @@ const origins: Readonly<{
 
 const corsOptions = cors({
   origin: origins[environment.context],
-  credentials: true
+  credentials: environment.context === 'PRODUCTION' ? false : true
 })
 
 app.use(corsOptions)
