@@ -11,3 +11,4 @@ export const chunkArray = (array: any, size: number): any => {
   }
   return [array.slice(0, size), ...chunkArray(array.slice(size), size)]
 }
+export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms))
