@@ -41,6 +41,6 @@ export const previsionCustomDomain = async (domain: string) => {
     const { data } = response
     return data
   } catch (error) {
-    throw new Error(error && error?.response ? error.response.data : error)
+    throw error
   }
 }
