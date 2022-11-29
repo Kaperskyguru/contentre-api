@@ -33,7 +33,7 @@ export default async (
     if (filters.url && !filters.isCustomDomain) {
       const formattedURL = filters.url.replace(/\/$/, '').trim()
 
-      user = await getUserFromUsername(filters.username)
+      user = await getUserFromUsername(filters.username!)
 
       if (!user) throw new ApolloError('User not found', '404')
 

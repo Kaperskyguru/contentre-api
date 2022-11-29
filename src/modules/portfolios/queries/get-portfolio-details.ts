@@ -36,7 +36,7 @@ export default async (
 
     const formattedURL = filters.url.replace(/\/$/, '').trim()
 
-    const user = await getUserFromUsername(filters.username)
+    const user = await getUserFromUsername(filters.username!)
 
     if (!user) throw new ApolloError('User not found', '404')
 
