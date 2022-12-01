@@ -20,7 +20,7 @@ export default async (
     let user
     let portfolio
 
-    if (filters.isCustomDomain && filters.domain) {
+    if (filters?.isCustomDomain && filters?.domain) {
       const formattedURL = filters.domain.replace(/\/$/, '').trim()
 
       portfolio = await getPortfolioFromCustomDomain(formattedURL)
@@ -30,7 +30,7 @@ export default async (
       user = await getUserFromID(portfolio.userId)
     }
 
-    if (filters.url && !filters.isCustomDomain) {
+    if (filters?.url && !filters?.isCustomDomain) {
       const formattedURL = filters.url.replace(/\/$/, '').trim()
 
       user = await getUserFromUsername(filters.username!)
@@ -44,7 +44,7 @@ export default async (
       throw new ApolloError('User not found', '404')
     }
 
-    if (user?.isPremium) {
+    if (filters?.code) {
       if (!portfolio) {
         throw new ApolloError('Portfolio not found', '404')
       }
@@ -142,7 +142,7 @@ export default async (
 
     return resolver(user, filters)
   } catch (e) {
-    // logError('getPortfolioContent %o', e)
+    logError('getPortfolioContent %o', e)
 
     const message = useErrorParser(e)
     throw new ApolloError(message, e.code ?? '500', { sentryId })
