@@ -47,7 +47,7 @@ export default async (
     // Resolve and return
     return await resolver(user, portfolio)
   } catch (e) {
-    // logError('getPortfolioDetail %o', e)
+    logError('getPortfolioDetail %o', e)
 
     const message = useErrorParser(e)
     throw new ApolloError(message, e.code ?? '500', { sentryId })
