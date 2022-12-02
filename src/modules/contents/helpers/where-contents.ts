@@ -33,6 +33,10 @@ export const whereContents = (
             ]
           }
         : {},
+
+      {
+        visibility: filters?.visibility ?? 'PUBLIC'
+      },
       {
         category: filters?.categories?.length
           ? {

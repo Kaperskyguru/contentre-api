@@ -233,6 +233,7 @@ export type ContentFiltersInput = {
   toDate?: InputMaybe<Scalars['String']>;
   topicIds?: InputMaybe<Array<Scalars['ID']>>;
   topics?: InputMaybe<Array<Scalars['String']>>;
+  visibility?: InputMaybe<Visibility>;
 };
 
 export type ContentResponse = {

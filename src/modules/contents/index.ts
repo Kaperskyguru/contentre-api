@@ -232,6 +232,7 @@ const typeDefs = gql`
     topicIds: [ID!]
     duration: Int
     daily: Boolean
+    visibility: Visibility
     tags: [String!]
     fromAmount: Float
     toAmount: Float
