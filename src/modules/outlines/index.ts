@@ -2,11 +2,11 @@ import { Resolvers } from '@/types/modules'
 import { gql } from 'apollo-server-express'
 import getOutline from './queries/get-outline'
 import getOutlines from './queries/get-outlines'
-// import createOutline from './mutations/create-outline'
-// import deleteOutline from './mutations/delete-outline'
-// import updateOutline from './mutations/update-outline'
+import createOutline from './mutations/create-outline'
+import deleteOutline from './mutations/delete-outline'
+import updateOutline from './mutations/update-outline'
 // import totalOutlines from './fields/total-notes'
-// import deleteBulkOutline from './mutations/delete-bulk-outline'
+import deleteBulkOutline from './mutations/delete-bulk-outline'
 
 const typeDefs = gql`
   type Outline {
@@ -73,10 +73,10 @@ const resolvers: Resolvers = {
     getOutline
   },
   Mutation: {
-    //     createOutline,
-    //     deleteOutline,
-    //     updateOutline,
-    //     deleteBulkOutline
+    createOutline,
+    deleteOutline,
+    updateOutline,
+    deleteBulkOutline
   }
   //   Outline: {
   //     totalOutlines: totalOutlines
