@@ -96,6 +96,33 @@ export type BoxStats = {
   totalContents: Scalars['Int'];
 };
 
+export type Brief = {
+  __typename?: 'Brief';
+  content?: Maybe<Scalars['String']>;
+  createdAt: Scalars['Time'];
+  id?: Maybe<Scalars['ID']>;
+  link?: Maybe<Scalars['String']>;
+  shareLink?: Maybe<Scalars['String']>;
+  shareable?: Maybe<Scalars['Boolean']>;
+  teamId?: Maybe<Scalars['ID']>;
+  title?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['Time'];
+  userId?: Maybe<Scalars['ID']>;
+};
+
+export type BriefFiltersInput = {
+  fromDate?: InputMaybe<Scalars['String']>;
+  sortBy?: InputMaybe<Scalars['String']>;
+  terms?: InputMaybe<Scalars['String']>;
+  toDate?: InputMaybe<Scalars['String']>;
+};
+
+export type BriefResponse = {
+  __typename?: 'BriefResponse';
+  briefs: Array<Brief>;
+  meta: Meta;
+};
+
 export type Category = {
   __typename?: 'Category';
   color?: Maybe<Scalars['String']>;
@@ -285,6 +312,11 @@ export type CreateAppInput = {
   token?: InputMaybe<Scalars['String']>;
 };
 
+export type CreateBriefInput = {
+  content: Scalars['String'];
+  title: Scalars['String'];
+};
+
 export type CreateCategoryInput = {
   color?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
@@ -401,6 +433,10 @@ export type CreateUserTemplateInput = {
   templateId?: InputMaybe<Scalars['ID']>;
   title: Scalars['String'];
   url?: InputMaybe<Scalars['String']>;
+};
+
+export type DeleteBulkBriefInput = {
+  ids: Array<Scalars['ID']>;
 };
 
 export type DeleteBulkCategoryInput = {
@@ -561,6 +597,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   changePassword: User;
   convertNoteContent?: Maybe<Content>;
+  createBrief?: Maybe<Brief>;
   createCategory: Category;
   createClient: Client;
   createConnectedApp?: Maybe<App>;
@@ -576,6 +613,8 @@ export type Mutation = {
   createTeam: Team;
   createTopic?: Maybe<Topic>;
   createUser: User;
+  deleteBrief: Scalars['Boolean'];
+  deleteBulkBrief: Scalars['Boolean'];
   deleteBulkCategory: Scalars['Boolean'];
   deleteBulkClient: Scalars['Boolean'];
   deleteBulkContent: Scalars['Boolean'];
@@ -610,6 +649,7 @@ export type Mutation = {
   sendSegment: Scalars['Boolean'];
   switchTeam: Team;
   updateActiveTeam: Team;
+  updateBrief: Brief;
   updateCategory: Category;
   updateClient: Client;
   updateConnectedApp: App;
@@ -643,6 +683,11 @@ export type MutationChangePasswordArgs = {
 export type MutationConvertNoteContentArgs = {
   id: Scalars['ID'];
   input: ConvertContentInput;
+};
+
+
+export type MutationCreateBriefArgs = {
+  input: CreateBriefInput;
 };
 
 
@@ -718,6 +763,16 @@ export type MutationCreateTopicArgs = {
 
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
+};
+
+
+export type MutationDeleteBriefArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteBulkBriefArgs = {
+  input: DeleteBulkBriefInput;
 };
 
 
@@ -887,6 +942,12 @@ export type MutationSwitchTeamArgs = {
 
 export type MutationUpdateActiveTeamArgs = {
   input: TeamInput;
+};
+
+
+export type MutationUpdateBriefArgs = {
+  id: Scalars['ID'];
+  input: UpdateBriefInput;
 };
 
 
@@ -1217,6 +1278,8 @@ export type Query = {
   getAllPortfolios?: Maybe<AllPortfoliosResponse>;
   getApps: AppResponse;
   getBoxStats?: Maybe<BoxStats>;
+  getBrief: Brief;
+  getBriefs: BriefResponse;
   getCategories: CategoryResponse;
   getCategory: Category;
   getCategoryStats?: Maybe<OverallStatResponse>;
@@ -1276,6 +1339,18 @@ export type QueryGetAppsArgs = {
 
 export type QueryGetBoxStatsArgs = {
   filters?: InputMaybe<ContentFiltersInput>;
+};
+
+
+export type QueryGetBriefArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryGetBriefsArgs = {
+  filters?: InputMaybe<BriefFiltersInput>;
+  size?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1685,6 +1760,13 @@ export type UpdateAppInput = {
   token?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateBriefInput = {
+  content?: InputMaybe<Scalars['String']>;
+  shareable?: InputMaybe<Scalars['Boolean']>;
+  status?: InputMaybe<StatusType>;
+  title?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdateCategoryInput = {
   color?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
@@ -1960,6 +2042,9 @@ export type ResolversTypes = {
   Apps: Apps;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   BoxStats: ResolverTypeWrapper<BoxStats>;
+  Brief: ResolverTypeWrapper<Brief>;
+  BriefFiltersInput: BriefFiltersInput;
+  BriefResponse: ResolverTypeWrapper<BriefResponse>;
   Category: ResolverTypeWrapper<Category>;
   CategoryFiltersInput: CategoryFiltersInput;
   CategoryResponse: ResolverTypeWrapper<CategoryResponse>;
@@ -1977,6 +2062,7 @@ export type ResolversTypes = {
   Country: ResolverTypeWrapper<Country>;
   CountryInput: CountryInput;
   CreateAppInput: CreateAppInput;
+  CreateBriefInput: CreateBriefInput;
   CreateCategoryInput: CreateCategoryInput;
   CreateClientInput: CreateClientInput;
   CreateContentInput: CreateContentInput;
@@ -1993,6 +2079,7 @@ export type ResolversTypes = {
   CreateTopicInput: CreateTopicInput;
   CreateUserInput: CreateUserInput;
   CreateUserTemplateInput: CreateUserTemplateInput;
+  DeleteBulkBriefInput: DeleteBulkBriefInput;
   DeleteBulkCategoryInput: DeleteBulkCategoryInput;
   DeleteBulkClientInput: DeleteBulkClientInput;
   DeleteBulkContentInput: DeleteBulkContentInput;
@@ -2073,6 +2160,7 @@ export type ResolversTypes = {
   TopicFiltersInput: TopicFiltersInput;
   TopicResponse: ResolverTypeWrapper<TopicResponse>;
   UpdateAppInput: UpdateAppInput;
+  UpdateBriefInput: UpdateBriefInput;
   UpdateCategoryInput: UpdateCategoryInput;
   UpdateClientInput: UpdateClientInput;
   UpdateContentInput: UpdateContentInput;
@@ -2109,6 +2197,9 @@ export type ResolversParentTypes = {
   Apps: Apps;
   Boolean: Scalars['Boolean'];
   BoxStats: BoxStats;
+  Brief: Brief;
+  BriefFiltersInput: BriefFiltersInput;
+  BriefResponse: BriefResponse;
   Category: Category;
   CategoryFiltersInput: CategoryFiltersInput;
   CategoryResponse: CategoryResponse;
@@ -2125,6 +2216,7 @@ export type ResolversParentTypes = {
   Country: Country;
   CountryInput: CountryInput;
   CreateAppInput: CreateAppInput;
+  CreateBriefInput: CreateBriefInput;
   CreateCategoryInput: CreateCategoryInput;
   CreateClientInput: CreateClientInput;
   CreateContentInput: CreateContentInput;
@@ -2141,6 +2233,7 @@ export type ResolversParentTypes = {
   CreateTopicInput: CreateTopicInput;
   CreateUserInput: CreateUserInput;
   CreateUserTemplateInput: CreateUserTemplateInput;
+  DeleteBulkBriefInput: DeleteBulkBriefInput;
   DeleteBulkCategoryInput: DeleteBulkCategoryInput;
   DeleteBulkClientInput: DeleteBulkClientInput;
   DeleteBulkContentInput: DeleteBulkContentInput;
@@ -2213,6 +2306,7 @@ export type ResolversParentTypes = {
   TopicFiltersInput: TopicFiltersInput;
   TopicResponse: TopicResponse;
   UpdateAppInput: UpdateAppInput;
+  UpdateBriefInput: UpdateBriefInput;
   UpdateCategoryInput: UpdateCategoryInput;
   UpdateClientInput: UpdateClientInput;
   UpdateContentInput: UpdateContentInput;
@@ -2271,6 +2365,26 @@ export type BoxStatsResolvers<ContextType = any, ParentType extends ResolversPar
   interactionPercent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   totalClients?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   totalContents?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type BriefResolvers<ContextType = any, ParentType extends ResolversParentTypes['Brief'] = ResolversParentTypes['Brief']> = {
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  shareLink?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  shareable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  teamId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type BriefResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['BriefResponse'] = ResolversParentTypes['BriefResponse']> = {
+  briefs?: Resolver<Array<ResolversTypes['Brief']>, ParentType, ContextType>;
+  meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2454,6 +2568,7 @@ export type MetadataResolvers<ContextType = any, ParentType extends ResolversPar
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   changePassword?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'oldPassword'>>;
   convertNoteContent?: Resolver<Maybe<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<MutationConvertNoteContentArgs, 'id' | 'input'>>;
+  createBrief?: Resolver<Maybe<ResolversTypes['Brief']>, ParentType, ContextType, RequireFields<MutationCreateBriefArgs, 'input'>>;
   createCategory?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<MutationCreateCategoryArgs, 'input'>>;
   createClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationCreateClientArgs, 'input'>>;
   createConnectedApp?: Resolver<Maybe<ResolversTypes['App']>, ParentType, ContextType, RequireFields<MutationCreateConnectedAppArgs, 'input'>>;
@@ -2469,6 +2584,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createTeam?: Resolver<ResolversTypes['Team'], ParentType, ContextType, RequireFields<MutationCreateTeamArgs, 'input'>>;
   createTopic?: Resolver<Maybe<ResolversTypes['Topic']>, ParentType, ContextType, RequireFields<MutationCreateTopicArgs, 'input'>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'input'>>;
+  deleteBrief?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBriefArgs, 'id'>>;
+  deleteBulkBrief?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkBriefArgs, 'input'>>;
   deleteBulkCategory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkCategoryArgs, 'input'>>;
   deleteBulkClient?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkClientArgs, 'input'>>;
   deleteBulkContent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBulkContentArgs, 'input'>>;
@@ -2503,6 +2620,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   sendSegment?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendSegmentArgs, 'input'>>;
   switchTeam?: Resolver<ResolversTypes['Team'], ParentType, ContextType, RequireFields<MutationSwitchTeamArgs, 'id'>>;
   updateActiveTeam?: Resolver<ResolversTypes['Team'], ParentType, ContextType, RequireFields<MutationUpdateActiveTeamArgs, 'input'>>;
+  updateBrief?: Resolver<ResolversTypes['Brief'], ParentType, ContextType, RequireFields<MutationUpdateBriefArgs, 'id' | 'input'>>;
   updateCategory?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<MutationUpdateCategoryArgs, 'id' | 'input'>>;
   updateClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationUpdateClientArgs, 'id' | 'input'>>;
   updateConnectedApp?: Resolver<ResolversTypes['App'], ParentType, ContextType, RequireFields<MutationUpdateConnectedAppArgs, 'id' | 'input'>>;
@@ -2675,6 +2793,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getAllPortfolios?: Resolver<Maybe<ResolversTypes['AllPortfoliosResponse']>, ParentType, ContextType, RequireFields<QueryGetAllPortfoliosArgs, never>>;
   getApps?: Resolver<ResolversTypes['AppResponse'], ParentType, ContextType, RequireFields<QueryGetAppsArgs, never>>;
   getBoxStats?: Resolver<Maybe<ResolversTypes['BoxStats']>, ParentType, ContextType, RequireFields<QueryGetBoxStatsArgs, never>>;
+  getBrief?: Resolver<ResolversTypes['Brief'], ParentType, ContextType, RequireFields<QueryGetBriefArgs, 'id'>>;
+  getBriefs?: Resolver<ResolversTypes['BriefResponse'], ParentType, ContextType, RequireFields<QueryGetBriefsArgs, never>>;
   getCategories?: Resolver<ResolversTypes['CategoryResponse'], ParentType, ContextType, RequireFields<QueryGetCategoriesArgs, never>>;
   getCategory?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<QueryGetCategoryArgs, 'id'>>;
   getCategoryStats?: Resolver<Maybe<ResolversTypes['OverallStatResponse']>, ParentType, ContextType, RequireFields<QueryGetCategoryStatsArgs, never>>;
@@ -2888,6 +3008,8 @@ export type Resolvers<ContextType = any> = {
   App?: AppResolvers<ContextType>;
   AppResponse?: AppResponseResolvers<ContextType>;
   BoxStats?: BoxStatsResolvers<ContextType>;
+  Brief?: BriefResolvers<ContextType>;
+  BriefResponse?: BriefResponseResolvers<ContextType>;
   Category?: CategoryResolvers<ContextType>;
   CategoryResponse?: CategoryResponseResolvers<ContextType>;
   Chart?: ChartResolvers<ContextType>;
