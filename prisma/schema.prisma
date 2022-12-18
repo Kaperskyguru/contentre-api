@@ -192,41 +192,42 @@ enum Status {
 }
 
 model Content {
-  id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
-  title         String      @db.VarChar(2048)
-  clientId      String?     @db.Char(36)
-  client        Client?     @relation("ClientContent", fields: [clientId], references: [id])
-  userId        String      @db.Char(36)
-  user          User        @relation("UserContent", fields: [userId], references: [id])
-  team          Team?       @relation("TeamContent", fields: [teamId], references: [id])
-  teamId        String?     @db.Char(36)
-  status        StatusType  @default(PUBLISHED)
-  lastUpdated   DateTime    @default(now()) @db.Timestamp(6)
-  url           String?     @db.VarChar(2048)
-  type          ContentType @default(TEXT)
-  excerpt       String      @db.VarChar(2048)
-  content       String?     @db.Text
-  amount        Float       @default(0.0)
-  favourite     Boolean     @default(false)
-  bookmark      Boolean     @default(false)
-  comments      Int         @default(0)
-  visibility    Visibility  @default(PUBLIC)
-  paymentType   PaymentType @default(ARTICLE)
-  likes         Int         @default(0)
-  shares        Int         @default(0)
-  notebookId    String?     @db.Char(36)
-  notebook      Notebook?   @relation("NotebookContent", fields: [notebookId], references: [id])
-  shareable     Boolean     @default(false)
-  shareLink     String?     @db.VarChar(2048)
-  featuredImage String?     @db.VarChar(2048)
-  publishedDate DateTime?   @db.Timestamp(6)
-  isPremium     Boolean     @default(false)
-  createdAt     DateTime    @default(now()) @db.Timestamp(6)
-  updatedAt     DateTime    @default(now()) @updatedAt @db.Timestamp(6)
-  topics        Json?       @db.Json
-  categoryId    String?     @db.Char(36)
-  tags          Json?       @db.Json
-  category      Category?   @relation("ContentCategory", fields: [categoryId], references: [id])
+  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Char(36)
+  title         String       @db.VarChar(2048)
+  clientId      String?      @db.Char(36)
+  client        Client?      @relation("ClientContent", fields: [clientId], references: [id])
+  userId        String       @db.Char(36)
+  user          User         @relation("UserContent", fields: [userId], references: [id])
+  team          Team?        @relation("TeamContent", fields: [teamId], references: [id])
+  teamId        String?      @db.Char(36)
+  status        StatusType   @default(PUBLISHED)
+  lastUpdated   DateTime     @default(now()) @db.Timestamp(6)
+  url           String?      @db.VarChar(2048)
+  type          ContentType  @default(TEXT)
+  class         ContentClass @default(ARTICLE)
+  excerpt       String       @db.VarChar(2048)
+  content       String?      @db.Text
+  amount        Float        @default(0.0)
+  favourite     Boolean      @default(false)
+  bookmark      Boolean      @default(false)
+  comments      Int          @default(0)
+  visibility    Visibility   @default(PUBLIC)
+  paymentType   PaymentType  @default(ARTICLE)
+  likes         Int          @default(0)
+  shares        Int          @default(0)
+  notebookId    String?      @db.Char(36)
+  notebook      Notebook?    @relation("NotebookContent", fields: [notebookId], references: [id])
+  shareable     Boolean      @default(false)
+  shareLink     String?      @db.VarChar(2048)
+  featuredImage String?      @db.VarChar(2048)
+  publishedDate DateTime?    @db.Timestamp(6)
+  isPremium     Boolean      @default(false)
+  createdAt     DateTime     @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime     @default(now()) @updatedAt @db.Timestamp(6)
+  topics        Json?        @db.Json
+  categoryId    String?      @db.Char(36)
+  tags          Json?        @db.Json
+  category      Category?    @relation("ContentCategory", fields: [categoryId], references: [id])
 
   @@index([userId, teamId])
 }
@@ -373,6 +374,15 @@ enum ContentType {
   TEXT
   AUDIO
   VIDEO
+}
+
+enum ContentClass {
+  ARTICLE
+  OUTLINE
+  SNIPPET
+  BRIEF
+  NOTE
+  IDEA
 }
 
 model Tag {
