@@ -20,6 +20,7 @@ import topic from './topics'
 import notebooks from './notebooks'
 import outlines from './outlines'
 import briefs from './briefs'
+import snippets from './snippets'
 
 const typeDefs = gql`
   scalar Time
@@ -67,7 +68,8 @@ const schema = makeExecutableSchema({
     segment.typeDefs,
     apps.typeDefs,
     outlines.typeDefs,
-    briefs.typeDefs
+    briefs.typeDefs,
+    snippets.typeDefs
   ],
   resolvers: [
     resolvers,
@@ -87,7 +89,8 @@ const schema = makeExecutableSchema({
     segment.resolvers,
     apps.resolvers,
     outlines.resolvers,
-    briefs.resolvers
+    briefs.resolvers,
+    snippets.resolvers
   ]
 })
 
