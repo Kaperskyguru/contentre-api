@@ -2,11 +2,11 @@ import { Resolvers } from '@/types/modules'
 import { gql } from 'apollo-server-express'
 import getBrief from './queries/get-brief'
 import getBriefs from './queries/get-briefs'
-// import createBrief from './mutations/create-outline'
-// import deleteBrief from './mutations/delete-outline'
-// import updateBrief from './mutations/update-outline'
+import createBrief from './mutations/create-brief'
+import deleteBrief from './mutations/delete-brief'
+import updateBrief from './mutations/update-brief'
 // import totalBriefs from './fields/total-notes'
-// import deleteBulkBrief from './mutations/delete-bulk-outline'
+import deleteBulkBrief from './mutations/delete-bulk-brief'
 
 const typeDefs = gql`
   type Brief {
@@ -65,14 +65,14 @@ const typeDefs = gql`
 
 const resolvers: Resolvers = {
   Query: {
-    // getBriefs,
-    // getBrief
+    getBriefs,
+    getBrief
   },
   Mutation: {
-    //     createBrief,
-    //     deleteBrief,
-    //     updateBrief,
-    //     deleteBulkBrief
+    createBrief,
+    deleteBrief,
+    updateBrief,
+    deleteBulkBrief
   }
   //   Brief: {
   //     totalBriefs: totalBriefs
