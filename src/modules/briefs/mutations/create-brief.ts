@@ -30,7 +30,7 @@ export default async (
           title,
           content,
           status: 'DRAFT',
-          class: 'OUTLINE',
+          class: 'BRIEF',
           excerpt: '',
           team: { connect: { id: user.activeTeamId! } },
           user: { connect: { id: user.id } }
@@ -42,7 +42,7 @@ export default async (
           userId: user.id,
           teamId: user.activeTeamId!,
           status: 'DRAFT',
-          class: 'OUTLINE'
+          class: 'BRIEF'
         }
       })
     ])
