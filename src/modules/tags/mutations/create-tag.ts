@@ -30,7 +30,7 @@ export default async (
       where: { name, userId: user.id }
     })
 
-    if (tag) throw new ApolloError('Tag already created')
+    if (tag) return tag
 
     // If success, create a new tag in our DB.
     const [result, countTags] = await prisma.$transaction([

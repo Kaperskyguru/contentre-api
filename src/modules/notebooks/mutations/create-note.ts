@@ -42,6 +42,7 @@ export default async (
           title,
           content,
           status: 'DRAFT',
+          class: 'NOTE',
           excerpt: '',
           notebook: { connect: { id: notebookId ?? notebook?.id } },
           team: { connect: { id: user.activeTeamId! } },
