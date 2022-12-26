@@ -198,6 +198,14 @@ export type ClientFiltersInput = {
   topics?: InputMaybe<Array<Scalars['String']>>;
 };
 
+export type ClientLink = {
+  __typename?: 'ClientLink';
+  icon?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  profile: Scalars['String'];
+  website?: Maybe<Scalars['String']>;
+};
+
 export type ClientResponse = {
   __typename?: 'ClientResponse';
   clients: Array<Client>;
@@ -371,7 +379,7 @@ export type CreateNotebookInput = {
 };
 
 export type CreateOutlineInput = {
-  content: Scalars['String'];
+  content?: InputMaybe<Scalars['String']>;
   title: Scalars['String'];
 };
 
@@ -515,6 +523,21 @@ export type InviteFriendsInput = {
 export type LegalEntityInput = {
   countryCode?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
+};
+
+export type LinkFiltersInput = {
+  url?: InputMaybe<Scalars['String']>;
+  username: Scalars['String'];
+};
+
+export type LinkProfile = {
+  __typename?: 'LinkProfile';
+  avatar?: Maybe<Scalars['String']>;
+  bio?: Maybe<Scalars['String']>;
+  clients?: Maybe<Array<Maybe<ClientLink>>>;
+  jobTitle?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  socials?: Maybe<Array<Maybe<SocialLink>>>;
 };
 
 export type LoginUserInput = {
@@ -1326,6 +1349,7 @@ export type Query = {
   getContents: ContentResponse;
   getCurrentUser?: Maybe<User>;
   getIndexMetadata?: Maybe<IndexMetadataResponse>;
+  getLinkProfile: LinkProfile;
   getMedia: Media;
   getMedias: MediaResponse;
   getMembers?: Maybe<Array<Member>>;
@@ -1450,6 +1474,11 @@ export type QueryGetContentsArgs = {
 
 export type QueryGetIndexMetadataArgs = {
   filters?: InputMaybe<ContentFiltersInput>;
+};
+
+
+export type QueryGetLinkProfileArgs = {
+  filters?: InputMaybe<LinkFiltersInput>;
 };
 
 
@@ -1676,6 +1705,13 @@ export type SocialFiltersInput = {
   all?: InputMaybe<Scalars['Boolean']>;
   sortBy?: InputMaybe<Scalars['String']>;
   terms?: InputMaybe<Scalars['String']>;
+};
+
+export type SocialLink = {
+  __typename?: 'SocialLink';
+  icon?: Maybe<Scalars['String']>;
+  link: Scalars['String'];
+  name: Scalars['String'];
 };
 
 export type SocialResponse = {
@@ -2133,6 +2169,7 @@ export type ResolversTypes = {
   Chart: ResolverTypeWrapper<Chart>;
   Client: ResolverTypeWrapper<Client>;
   ClientFiltersInput: ClientFiltersInput;
+  ClientLink: ResolverTypeWrapper<ClientLink>;
   ClientResponse: ResolverTypeWrapper<ClientResponse>;
   ConnectedAppResponse: ResolverTypeWrapper<ConnectedAppResponse>;
   Contact: ResolverTypeWrapper<Contact>;
@@ -2182,6 +2219,8 @@ export type ResolversTypes = {
   InviteFriendsInput: InviteFriendsInput;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   LegalEntityInput: LegalEntityInput;
+  LinkFiltersInput: LinkFiltersInput;
+  LinkProfile: ResolverTypeWrapper<LinkProfile>;
   LoginUserInput: LoginUserInput;
   Media: ResolverTypeWrapper<Media>;
   MediaFiltersInput: MediaFiltersInput;
@@ -2225,6 +2264,7 @@ export type ResolversTypes = {
   SnippetResponse: ResolverTypeWrapper<SnippetResponse>;
   Social: ResolverTypeWrapper<Social>;
   SocialFiltersInput: SocialFiltersInput;
+  SocialLink: ResolverTypeWrapper<SocialLink>;
   SocialResponse: ResolverTypeWrapper<SocialResponse>;
   Stat: ResolverTypeWrapper<Stat>;
   Status: Status;
@@ -2294,6 +2334,7 @@ export type ResolversParentTypes = {
   Chart: Chart;
   Client: Client;
   ClientFiltersInput: ClientFiltersInput;
+  ClientLink: ClientLink;
   ClientResponse: ClientResponse;
   ConnectedAppResponse: ConnectedAppResponse;
   Contact: Contact;
@@ -2341,6 +2382,8 @@ export type ResolversParentTypes = {
   InviteFriendsInput: InviteFriendsInput;
   JSON: Scalars['JSON'];
   LegalEntityInput: LegalEntityInput;
+  LinkFiltersInput: LinkFiltersInput;
+  LinkProfile: LinkProfile;
   LoginUserInput: LoginUserInput;
   Media: Media;
   MediaFiltersInput: MediaFiltersInput;
@@ -2380,6 +2423,7 @@ export type ResolversParentTypes = {
   SnippetResponse: SnippetResponse;
   Social: Social;
   SocialFiltersInput: SocialFiltersInput;
+  SocialLink: SocialLink;
   SocialResponse: SocialResponse;
   Stat: Stat;
   String: Scalars['String'];
@@ -2524,6 +2568,14 @@ export type ClientResolvers<ContextType = any, ParentType extends ResolversParen
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ClientLinkResolvers<ContextType = any, ParentType extends ResolversParentTypes['ClientLink'] = ResolversParentTypes['ClientLink']> = {
+  icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  profile?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ClientResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['ClientResponse'] = ResolversParentTypes['ClientResponse']> = {
   clients?: Resolver<Array<ResolversTypes['Client']>, ParentType, ContextType>;
   meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
@@ -2610,6 +2662,16 @@ export type IntegrationResolvers<ContextType = any, ParentType extends Resolvers
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
   name: 'JSON';
 }
+
+export type LinkProfileResolvers<ContextType = any, ParentType extends ResolversParentTypes['LinkProfile'] = ResolversParentTypes['LinkProfile']> = {
+  avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  clients?: Resolver<Maybe<Array<Maybe<ResolversTypes['ClientLink']>>>, ParentType, ContextType>;
+  jobTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  socials?: Resolver<Maybe<Array<Maybe<ResolversTypes['SocialLink']>>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export type MediaResolvers<ContextType = any, ParentType extends ResolversParentTypes['Media'] = ResolversParentTypes['Media']> = {
   createdAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
@@ -2905,6 +2967,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getContents?: Resolver<ResolversTypes['ContentResponse'], ParentType, ContextType, RequireFields<QueryGetContentsArgs, never>>;
   getCurrentUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   getIndexMetadata?: Resolver<Maybe<ResolversTypes['IndexMetadataResponse']>, ParentType, ContextType, RequireFields<QueryGetIndexMetadataArgs, never>>;
+  getLinkProfile?: Resolver<ResolversTypes['LinkProfile'], ParentType, ContextType, RequireFields<QueryGetLinkProfileArgs, never>>;
   getMedia?: Resolver<ResolversTypes['Media'], ParentType, ContextType, RequireFields<QueryGetMediaArgs, 'id'>>;
   getMedias?: Resolver<ResolversTypes['MediaResponse'], ParentType, ContextType, RequireFields<QueryGetMediasArgs, never>>;
   getMembers?: Resolver<Maybe<Array<ResolversTypes['Member']>>, ParentType, ContextType, RequireFields<QueryGetMembersArgs, never>>;
@@ -2970,6 +3033,13 @@ export type SocialResolvers<ContextType = any, ParentType extends ResolversParen
   link?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SocialLinkResolvers<ContextType = any, ParentType extends ResolversParentTypes['SocialLink'] = ResolversParentTypes['SocialLink']> = {
+  icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  link?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3134,6 +3204,7 @@ export type Resolvers<ContextType = any> = {
   CategoryResponse?: CategoryResponseResolvers<ContextType>;
   Chart?: ChartResolvers<ContextType>;
   Client?: ClientResolvers<ContextType>;
+  ClientLink?: ClientLinkResolvers<ContextType>;
   ClientResponse?: ClientResponseResolvers<ContextType>;
   ConnectedAppResponse?: ConnectedAppResponseResolvers<ContextType>;
   Contact?: ContactResolvers<ContextType>;
@@ -3144,6 +3215,7 @@ export type Resolvers<ContextType = any> = {
   IndexMetadataResponse?: IndexMetadataResponseResolvers<ContextType>;
   Integration?: IntegrationResolvers<ContextType>;
   JSON?: GraphQLScalarType;
+  LinkProfile?: LinkProfileResolvers<ContextType>;
   Media?: MediaResolvers<ContextType>;
   MediaResponse?: MediaResponseResolvers<ContextType>;
   Member?: MemberResolvers<ContextType>;
@@ -3169,6 +3241,7 @@ export type Resolvers<ContextType = any> = {
   Snippet?: SnippetResolvers<ContextType>;
   SnippetResponse?: SnippetResponseResolvers<ContextType>;
   Social?: SocialResolvers<ContextType>;
+  SocialLink?: SocialLinkResolvers<ContextType>;
   SocialResponse?: SocialResponseResolvers<ContextType>;
   Stat?: StatResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
