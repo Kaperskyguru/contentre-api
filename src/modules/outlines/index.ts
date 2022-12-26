@@ -24,7 +24,7 @@ const typeDefs = gql`
 
   input CreateOutlineInput {
     title: String!
-    content: String!
+    content: String
   }
 
   input UpdateOutlineInput {

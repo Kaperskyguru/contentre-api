@@ -4,6 +4,7 @@ import { Context } from '@/types'
 import { MutationCreateOutlineArgs, Outline } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
 import sendToSegment from '@extensions/segment-service/segment'
+import openAi from '@extensions/openai'
 
 export default async (
   _parent: unknown,
@@ -23,12 +24,23 @@ export default async (
 
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
+    // Check if Content
+    let outline
+    if (!content) {
+      // Use AI
+
+      const res = await openAi.createOutline({
+        title: `Create an outline for ${title}`
+      })
+      const { choices }: any = res
+      outline = choices[0]?.text
+    }
     // If success, create a new outline in our DB
     const [result, countOutlines] = await prisma.$transaction([
       prisma.content.create({
         data: {
           title,
-          content,
+          content: content ?? outline,
           status: 'DRAFT',
           class: 'OUTLINE',
           excerpt: '',

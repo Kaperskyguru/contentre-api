@@ -50,6 +50,9 @@ export interface Environment {
     apiKey: string
     apiSecret: string
   }
+  openai: {
+    apiKey: string
+  }
   mail: {
     host: string
     port: number
@@ -119,6 +122,9 @@ export const environment: Environment = {
     publicKey: process.env.PADDLE_PUBLIC_KEY as string,
     vendorId: Number(process.env.PADDLE_VENDOR_ID),
     vendorAuthCode: process.env.PADDLE_VENDOR_AUTH_CODE as string
+  },
+  openai: {
+    apiKey: process.env.OPENAI_API_KEY as string
   },
   medium: {
     BASE_URL: process.env.MEDIUM_BASE_URL as string
