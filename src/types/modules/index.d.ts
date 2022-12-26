@@ -537,6 +537,7 @@ export type LinkProfile = {
   clients?: Maybe<Array<Maybe<ClientLink>>>;
   jobTitle?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
+  portfolios?: Maybe<Array<Maybe<PortfolioLink>>>;
   socials?: Maybe<Array<Maybe<SocialLink>>>;
 };
 
@@ -1318,6 +1319,12 @@ export type PortfolioDetailsFilters = {
 
 export type PortfolioFiltersInput = {
   terms?: InputMaybe<Scalars['String']>;
+};
+
+export type PortfolioLink = {
+  __typename?: 'PortfolioLink';
+  title: Scalars['String'];
+  url?: Maybe<Scalars['String']>;
 };
 
 export type PortfolioResponse = {
@@ -2252,6 +2259,7 @@ export type ResolversTypes = {
   PortfolioDetail: ResolverTypeWrapper<PortfolioDetail>;
   PortfolioDetailsFilters: PortfolioDetailsFilters;
   PortfolioFiltersInput: PortfolioFiltersInput;
+  PortfolioLink: ResolverTypeWrapper<PortfolioLink>;
   PortfolioResponse: ResolverTypeWrapper<PortfolioResponse>;
   PullContentInput: PullContentInput;
   Query: ResolverTypeWrapper<{}>;
@@ -2412,6 +2420,7 @@ export type ResolversParentTypes = {
   PortfolioDetail: PortfolioDetail;
   PortfolioDetailsFilters: PortfolioDetailsFilters;
   PortfolioFiltersInput: PortfolioFiltersInput;
+  PortfolioLink: PortfolioLink;
   PortfolioResponse: PortfolioResponse;
   PullContentInput: PullContentInput;
   Query: {};
@@ -2669,6 +2678,7 @@ export type LinkProfileResolvers<ContextType = any, ParentType extends Resolvers
   clients?: Resolver<Maybe<Array<Maybe<ResolversTypes['ClientLink']>>>, ParentType, ContextType>;
   jobTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  portfolios?: Resolver<Maybe<Array<Maybe<ResolversTypes['PortfolioLink']>>>, ParentType, ContextType>;
   socials?: Resolver<Maybe<Array<Maybe<ResolversTypes['SocialLink']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -2940,6 +2950,12 @@ export type PortfolioDetailResolvers<ContextType = any, ParentType extends Resol
   socials?: Resolver<Array<Maybe<ResolversTypes['Social']>>, ParentType, ContextType>;
   templateSlug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   templateType?: Resolver<ResolversTypes['TemplateType'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PortfolioLinkResolvers<ContextType = any, ParentType extends ResolversParentTypes['PortfolioLink'] = ResolversParentTypes['PortfolioLink']> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3235,6 +3251,7 @@ export type Resolvers<ContextType = any> = {
   Portfolio?: PortfolioResolvers<ContextType>;
   PortfolioContent?: PortfolioContentResolvers<ContextType>;
   PortfolioDetail?: PortfolioDetailResolvers<ContextType>;
+  PortfolioLink?: PortfolioLinkResolvers<ContextType>;
   PortfolioResponse?: PortfolioResponseResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RevenueChart?: RevenueChartResolvers<ContextType>;

@@ -3,12 +3,12 @@ import { logError, logQuery } from '@helpers/logger'
 import {
   Client,
   LinkProfile,
+  Portfolio,
   QueryGetLinkProfileArgs,
   Social
 } from '@modules-types'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
-import { link } from 'fs'
 
 export default async (
   _parent: unknown,
@@ -23,7 +23,8 @@ export default async (
         socials: true,
         clients: {
           where: { NOT: { profile: null } }
-        }
+        },
+        portfolios: true
       }
     })
 
@@ -47,6 +48,13 @@ export default async (
           website: client.website,
           profile: client?.profile!,
           icon: client?.icon
+        }
+      }),
+      portfolios: user.portfolios.map((portfolio: Portfolio) => {
+        return {
+          title:
+            portfolio.title === 'Default' ? 'My Portfolio' : portfolio.title,
+          url: portfolio.url
         }
       })
     }

@@ -10,6 +10,7 @@ const typeDefs = gql`
     bio: String
     socials: [SocialLink]
     clients: [ClientLink]
+    portfolios: [PortfolioLink]
   }
 
   type ClientLink {
@@ -17,6 +18,11 @@ const typeDefs = gql`
     website: String
     profile: String!
     icon: String
+  }
+
+  type PortfolioLink {
+    title: String!
+    url: String
   }
 
   type SocialLink {
