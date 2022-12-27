@@ -41,6 +41,7 @@ class Paddle {
 
       return event
     } catch (error) {
+      console.log(error, 'error_PADDLE')
       if (
         error.message.includes('Implementation missing:') &&
         data.alert_name === 'subscription_payment_failed'
