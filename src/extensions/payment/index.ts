@@ -41,7 +41,7 @@ class Payment {
 
   async webhook(data: any) {
     const payment = await this.service.webhook(data)
-    console.log(payment)
+    console.log(payment, 'top')
     if (payment) {
       switch (payment.status.toLowerCase()) {
         case 'subscription_payment_succeeded':
@@ -82,18 +82,19 @@ class Payment {
     return false
   }
   async subscriptionFailed(payment: any) {
+    console.log(payment, 'failed')
     const user = await prisma.user.findFirst({
       where: { email: { equals: payment.customerEmail, mode: 'insensitive' } }
     })
     if (!user) return false
-    await this.sendToSegment(user, 'user_subscription_failed', {
-      planChannel: payment.metadata?.plan?.trim(),
-      channel: payment.metadata?.channel,
-      expiry: payment?.nextPaymentDate,
-      price: payment.price,
-      channelSubscriptionId: payment?.subscriptionId,
-      message: `Subscription failed from ${payment.metadata?.channel}`
-    })
+    // await this.sendToSegment(user, 'user_subscription_failed', {
+    //   planChannel: payment.metadata?.plan?.trim(),
+    //   channel: payment.metadata?.channel,
+    //   expiry: payment?.nextPaymentDate,
+    //   price: payment.price,
+    //   channelSubscriptionId: payment?.subscriptionId,
+    //   message: `Subscription failed from ${payment.metadata?.channel}`
+    // })
     await this.createPendingSubscription(payment)
     return true
   }
@@ -111,14 +112,14 @@ class Payment {
     })
 
     if (!planChannel) {
-      await this.sendToSegment(user, 'user_subscription_failed', {
-        planChannel: payment.metadata?.plan?.trim(),
-        channel: payment.metadata?.channel,
-        expiry: payment.nextPaymentDate,
-        price: payment.price,
-        paddleSubscriptionId: payment.subscriptionId,
-        message: 'Plan channel not found'
-      })
+      // await this.sendToSegment(user, 'user_subscription_failed', {
+      //   planChannel: payment.metadata?.plan?.trim(),
+      //   channel: payment.metadata?.channel,
+      //   expiry: payment.nextPaymentDate,
+      //   price: payment.price,
+      //   paddleSubscriptionId: payment.subscriptionId,
+      //   message: 'Plan channel not found'
+      // })
 
       return {
         error: true
@@ -153,6 +154,7 @@ class Payment {
   }
 
   private async subscriptionSuccessful(payment: any) {
+    console.log(payment, 'pass')
     try {
       const user = await prisma.user.findFirst({
         where: { email: { equals: payment.customerEmail, mode: 'insensitive' } }
@@ -184,13 +186,13 @@ class Payment {
       })
 
       // Send to Segment
-      await this.sendToSegment(user, 'user_subscribed', {
-        planName: subscription?.name!,
-        channel: payment.metadata?.channel,
-        expiry: payment.nextPaymentDate,
-        price: payment.price,
-        channelSubscriptionId: payment.subscriptionId
-      })
+      // await this.sendToSegment(user, 'user_subscribed', {
+      //   planName: subscription?.name!,
+      //   channel: payment.metadata?.channel,
+      //   expiry: payment.nextPaymentDate,
+      //   price: payment.price,
+      //   channelSubscriptionId: payment.subscriptionId
+      // })
       return true
     } catch (error) {
       console.log(error, 'error')
