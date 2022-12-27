@@ -6,6 +6,8 @@ import Paystack from './Paystack'
 import sendToSegment from '@extensions/segment-service/segment'
 import { addDays } from 'date-fns'
 import { environment } from '@/helpers/environment'
+import { logError } from '@/helpers/logger'
+import { useErrorParser } from '@/helpers'
 
 interface SubscriptionPlan {
   amount: string
@@ -41,7 +43,6 @@ class Payment {
 
   async webhook(data: any) {
     const payment = await this.service.webhook(data)
-    console.log(payment, 'top')
     if (payment) {
       switch (payment.status.toLowerCase()) {
         case 'subscription_payment_succeeded':
@@ -82,19 +83,20 @@ class Payment {
     return false
   }
   async subscriptionFailed(payment: any) {
-    console.log(payment, 'failed')
     const user = await prisma.user.findFirst({
       where: { email: { equals: payment.customerEmail, mode: 'insensitive' } }
     })
-    if (!user) return false
-    // await this.sendToSegment(user, 'user_subscription_failed', {
-    //   planChannel: payment.metadata?.plan?.trim(),
-    //   channel: payment.metadata?.channel,
-    //   expiry: payment?.nextPaymentDate,
-    //   price: payment.price,
-    //   channelSubscriptionId: payment?.subscriptionId,
-    //   message: `Subscription failed from ${payment.metadata?.channel}`
-    // })
+    if (!user) throw new ApolloError('User not found', '404')
+
+    await this.sendToSegment(user, 'user_subscription_failed', {
+      planChannel: payment.metadata?.plan?.trim(),
+      channel: payment.metadata?.channel,
+      expiry: payment?.nextPaymentDate,
+      price: payment.price,
+      channelSubscriptionId: payment?.subscriptionId,
+      message: `Subscription failed from ${payment.metadata?.channel}`
+    })
+
     await this.createPendingSubscription(payment)
     return true
   }
@@ -112,18 +114,16 @@ class Payment {
     })
 
     if (!planChannel) {
-      // await this.sendToSegment(user, 'user_subscription_failed', {
-      //   planChannel: payment.metadata?.plan?.trim(),
-      //   channel: payment.metadata?.channel,
-      //   expiry: payment.nextPaymentDate,
-      //   price: payment.price,
-      //   paddleSubscriptionId: payment.subscriptionId,
-      //   message: 'Plan channel not found'
-      // })
+      await this.sendToSegment(user, 'user_subscription_failed', {
+        planChannel: payment.metadata?.plan?.trim(),
+        channel: payment.metadata?.channel,
+        expiry: payment.nextPaymentDate,
+        price: payment.price,
+        paddleSubscriptionId: payment.subscriptionId,
+        message: 'Plan channel not found'
+      })
 
-      return {
-        error: true
-      }
+      throw new ApolloError('Plan channel not found', '500')
     }
 
     let subscription = await prisma.subscription.findFirst({
@@ -154,16 +154,14 @@ class Payment {
   }
 
   private async subscriptionSuccessful(payment: any) {
-    console.log(payment, 'pass')
     try {
       const user = await prisma.user.findFirst({
         where: { email: { equals: payment.customerEmail, mode: 'insensitive' } }
       })
 
-      if (!user) return false
+      if (!user) throw new ApolloError('User not found', '404')
 
       const subscription = await this.getOrCreateSubscription(user, payment)
-      if (subscription.error) return false
 
       await prisma.subscription.update({
         where: { id: subscription?.id! },
@@ -186,46 +184,53 @@ class Payment {
       })
 
       // Send to Segment
-      // await this.sendToSegment(user, 'user_subscribed', {
-      //   planName: subscription?.name!,
-      //   channel: payment.metadata?.channel,
-      //   expiry: payment.nextPaymentDate,
-      //   price: payment.price,
-      //   channelSubscriptionId: payment.subscriptionId
-      // })
+      await this.sendToSegment(user, 'user_subscribed', {
+        planName: subscription?.name!,
+        channel: payment.metadata?.channel,
+        expiry: payment.nextPaymentDate,
+        price: payment.price,
+        channelSubscriptionId: payment.subscriptionId
+      })
       return true
     } catch (error) {
-      console.log(error, 'error')
-      return false
+      logError('Payment Subscription %o', error)
+
+      const message = useErrorParser(error)
+      throw new ApolloError(message, error.code ?? '500')
     }
   }
 
   private async createPendingSubscription(data: any) {
-    const user = await prisma.user.findFirst({
-      where: { email: { equals: data.customerEmail, mode: 'insensitive' } }
-    })
+    try {
+      const user = await prisma.user.findFirst({
+        where: { email: { equals: data.customerEmail, mode: 'insensitive' } }
+      })
 
-    if (!user) return false
+      if (!user) throw new ApolloError('User not found', '404')
 
-    const subscription = await this.getOrCreateSubscription(user, data)
+      const subscription = await this.getOrCreateSubscription(user, data)
 
-    if (subscription.error) return false
-
-    const record: Record<string, unknown> = {}
-    if (subscription.switchToBasicDate === undefined) {
-      record.switchToBasicDate = addDays(new Date(), environment.grace_period)
-    }
-
-    await prisma.subscription.update({
-      where: { id: subscription?.id! },
-      data: {
-        ...record,
-        expiry: data?.nextPaymentDate
+      const record: Record<string, unknown> = {}
+      if (subscription.switchToBasicDate === undefined) {
+        record.switchToBasicDate = addDays(new Date(), environment.grace_period)
       }
 
-      // Add a Date field to indicate the final date to switch to Basic Plan (plan !== null && switchToBasicDate <= now() = kill(set planID, channelID to null))
-      // Also, create a field in each premium feature to indicate what to delete when finally switching to Basic
-    })
+      await prisma.subscription.update({
+        where: { id: subscription?.id! },
+        data: {
+          ...record,
+          expiry: data?.nextPaymentDate
+        }
+
+        // Add a Date field to indicate the final date to switch to Basic Plan (plan !== null && switchToBasicDate <= now() = kill(set planID, channelID to null))
+        // Also, create a field in each premium feature to indicate what to delete when finally switching to Basic
+      })
+    } catch (error) {
+      logError('Payment Subscription %o', error)
+
+      const message = useErrorParser(error)
+      throw new ApolloError(message, error.code ?? '500')
+    }
   }
 
   private async sendToSegment(user: User, eventName: string, data: any) {
