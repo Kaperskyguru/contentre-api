@@ -41,7 +41,7 @@ class Payment {
 
   async webhook(data: any) {
     const payment = await this.service.webhook(data)
-    // console.log(payment)
+    console.log(payment)
     if (payment) {
       switch (payment.status.toLowerCase()) {
         case 'subscription_payment_succeeded':
