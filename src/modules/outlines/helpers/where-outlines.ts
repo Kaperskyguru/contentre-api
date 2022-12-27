@@ -2,7 +2,7 @@ import { Prisma } from '.prisma/client'
 import { Maybe, OutlineFiltersInput, User } from '@modules-types'
 import { endOfMonth, parseISO, startOfMonth } from 'date-fns'
 
-export const whereNotes = (
+export const whereOutlines = (
   user: User,
   filters?: Maybe<OutlineFiltersInput>
 ): {
@@ -52,4 +52,4 @@ export const whereNotes = (
   }
 }
 
-export default whereNotes
+export default whereOutlines
