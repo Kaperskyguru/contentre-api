@@ -28,8 +28,11 @@ const createOutline = async (input: any) => {
       presence_penalty: 0.0
     })
 
+    console.log(response, 'res')
+
     return response.data
   } catch (e) {
+    console.log(e, 'error')
     logError('createOutline %o', e)
 
     const message = useErrorParser(e)
