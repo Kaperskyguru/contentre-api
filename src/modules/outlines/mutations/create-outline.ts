@@ -32,8 +32,11 @@ export default async (
       const res = await openAi.createOutline({
         title: `Create an outline for ${title}`
       })
+
       const { choices }: any = res
       outline = choices && choices[0]?.text
+
+      console.log(res, choices)
     }
     // If success, create a new outline in our DB
     const [result, countOutlines] = await prisma.$transaction([
