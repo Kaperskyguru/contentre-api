@@ -33,7 +33,7 @@ export default async (
         title: `Create an outline for ${title}`
       })
       const { choices }: any = res
-      outline = choices[0]?.text
+      outline = choices && choices[0]?.text
     }
     // If success, create a new outline in our DB
     const [result, countOutlines] = await prisma.$transaction([
