@@ -18,6 +18,7 @@ const typeDefs = gql`
     teamId: ID
     shareable: Boolean
     link: String
+    status: StatusType
     createdAt: Time!
     updatedAt: Time!
   }

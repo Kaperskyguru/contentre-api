@@ -1185,6 +1185,7 @@ export type Outline = {
   link?: Maybe<Scalars['String']>;
   shareLink?: Maybe<Scalars['String']>;
   shareable?: Maybe<Scalars['Boolean']>;
+  status?: Maybe<StatusType>;
   teamId?: Maybe<Scalars['ID']>;
   title?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Time'];
@@ -2861,6 +2862,7 @@ export type OutlineResolvers<ContextType = any, ParentType extends ResolversPare
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   shareLink?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   shareable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['StatusType']>, ParentType, ContextType>;
   teamId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Time'], ParentType, ContextType>;
