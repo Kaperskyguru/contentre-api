@@ -8,6 +8,7 @@ import Plugins from '@/helpers/plugins'
 import { environment } from '@/helpers/environment'
 import createBulkTopics from '@/modules/topics/helpers/create-bulk-topics'
 import createBulkTags from '@/modules/tags/helpers/create-bulk-tags'
+import { Prisma } from '@prisma/client'
 
 export default async (
   _parent: unknown,
@@ -35,10 +36,10 @@ export default async (
 
     const data: Record<string, unknown> = {}
 
-    if (input.topics !== undefined && input.topics?.length)
-      data.topics = Object.values(input?.topics!)
-    if (input.tags !== undefined && input.tags?.length)
-      data.tags = Object.values(input?.tags!)
+    // if (input.topics !== undefined && input.topics?.length)
+    //   data.topics = Object.values(input?.topics!)
+    // if (input.tags !== undefined && input.tags?.length)
+    //   data.tags = Object.values(input?.tags!)
     if (input.comments !== undefined) data.comments = input.comments
     if (input.title !== undefined) data.title = input.title
     if (input.visibility !== undefined) data.visibility = input.visibility
@@ -96,11 +97,54 @@ export default async (
     if (input.topics?.length) {
       // Create bulk topics
       await createBulkTopics(input.topics, { user, prisma })
+
+      let oldTopics: any = []
+
+      if (
+        updatedContent?.topics &&
+        typeof updatedContent?.topics === 'object' &&
+        Array.isArray(updatedContent?.topics)
+      ) {
+        const topicsObject = updatedContent?.topics as Prisma.JsonArray
+        oldTopics = Array.from(topicsObject)
+      }
+      const newTopics = Object.values(input?.topics)
+
+      const topics = [...new Set([...oldTopics, ...newTopics])]
+
+      updatedContent = await prisma.content.update({
+        where: { id },
+        data: {
+          topics
+        },
+        include: { category: true, client: true }
+      })
     }
 
     if (input.tags?.length) {
       // Create bulk tags
       await createBulkTags(input.tags, { user, prisma })
+
+      let oldTags: any = []
+      if (
+        updatedContent?.tags &&
+        typeof updatedContent?.tags === 'object' &&
+        Array.isArray(updatedContent?.tags)
+      ) {
+        const tagsObject = updatedContent?.tags as Prisma.JsonArray
+        oldTags = Array.from(tagsObject)
+      }
+      const newTags = Object.values(input?.tags ?? [])
+
+      const tags = [...new Set([...oldTags, ...newTags])]
+
+      updatedContent = await prisma.content.update({
+        where: { id: updatedContent.id },
+        data: {
+          tags
+        },
+        include: { category: true, client: true }
+      })
     }
 
     // Share to App

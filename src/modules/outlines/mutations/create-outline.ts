@@ -35,9 +35,9 @@ export default async (
 
       const { choices }: any = res
       outline = choices && choices[0]?.text
-
-      console.log(res, choices)
+      if (!outline) throw new ApolloError('Outline not created', '500')
     }
+
     // If success, create a new outline in our DB
     const [result, countOutlines] = await prisma.$transaction([
       prisma.content.create({

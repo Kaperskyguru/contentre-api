@@ -3,11 +3,11 @@ import { logResolver } from '@helpers/logger'
 import { prisma } from '@/config'
 
 export default async (parent: User): Promise<Maybe<number>> => {
-  logResolver('User.totalContent')
+  logResolver('Brief.totalBrief')
 
-  const contentCount = await prisma.content.count({
-    where: { userId: parent.id, notebookId: null, class: 'ARTICLE' }
+  const outlineCount = await prisma.content.count({
+    where: { userId: parent.id, class: 'BRIEF' }
   })
 
-  return contentCount
+  return outlineCount
 }

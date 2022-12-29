@@ -5,7 +5,7 @@ import getBriefs from './queries/get-briefs'
 import createBrief from './mutations/create-brief'
 import deleteBrief from './mutations/delete-brief'
 import updateBrief from './mutations/update-brief'
-// import totalBriefs from './fields/total-notes'
+import convertNoteBrief from './mutations/convert-note-brief'
 import deleteBulkBrief from './mutations/delete-bulk-brief'
 
 const typeDefs = gql`
@@ -50,12 +50,27 @@ const typeDefs = gql`
     briefs: [Brief!]!
   }
 
+  input ConvertBriefInput {
+    url: String
+    content: String
+    title: String!
+    excerpt: String
+    clientId: ID
+    tags: [String!]
+    topics: [String!]
+    category: String
+    featuredImage: String
+    noteId: ID
+    apps: Apps
+  }
+
   extend type Query {
     getBriefs(size: Int, skip: Int, filters: BriefFiltersInput): BriefResponse!
     getBrief(id: ID!): Brief!
   }
 
   extend type Mutation {
+    convertNoteBrief(id: ID!, input: ConvertBriefInput!): Brief
     createBrief(input: CreateBriefInput!): Brief
     deleteBulkBrief(input: DeleteBulkBriefInput!): Boolean!
     deleteBrief(id: ID!): Boolean!
@@ -72,10 +87,8 @@ const resolvers: Resolvers = {
     createBrief,
     deleteBrief,
     updateBrief,
-    deleteBulkBrief
+    deleteBulkBrief,
+    convertNoteBrief
   }
-  //   Brief: {
-  //     totalBriefs: totalBriefs
-  //   }
 }
 export default { typeDefs, resolvers }

@@ -5,8 +5,8 @@ import getOutlines from './queries/get-outlines'
 import createOutline from './mutations/create-outline'
 import deleteOutline from './mutations/delete-outline'
 import updateOutline from './mutations/update-outline'
-// import totalOutlines from './fields/total-notes'
 import deleteBulkOutline from './mutations/delete-bulk-outline'
+import convertNoteOutline from './mutations/convert-note-outline'
 
 const typeDefs = gql`
   type Outline {
@@ -46,6 +46,20 @@ const typeDefs = gql`
     sortBy: String
   }
 
+  input ConvertOutlineInput {
+    url: String
+    content: String
+    title: String!
+    excerpt: String
+    clientId: ID
+    tags: [String!]
+    topics: [String!]
+    category: String
+    featuredImage: String
+    noteId: ID
+    apps: Apps
+  }
+
   type OutlineResponse {
     meta: Meta!
     outlines: [Outline!]!
@@ -61,6 +75,7 @@ const typeDefs = gql`
   }
 
   extend type Mutation {
+    convertNoteOutline(id: ID!, input: ConvertOutlineInput!): Outline
     createOutline(input: CreateOutlineInput!): Outline
     deleteBulkOutline(input: DeleteBulkOutlineInput!): Boolean!
     deleteOutline(id: ID!): Boolean!
@@ -77,10 +92,8 @@ const resolvers: Resolvers = {
     createOutline,
     deleteOutline,
     updateOutline,
-    deleteBulkOutline
+    deleteBulkOutline,
+    convertNoteOutline
   }
-  //   Outline: {
-  //     totalOutlines: totalOutlines
-  //   }
 }
 export default { typeDefs, resolvers }

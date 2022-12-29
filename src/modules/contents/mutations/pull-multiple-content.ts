@@ -42,20 +42,20 @@ export default async (
 
     multipleContent = await createMultipleContents(pulledContent, context)
 
-    await sendToSegment({
-      operation: 'track',
-      eventName: 'bulk_create_new_tag',
-      userId: user.id,
-      data: {
-        userEmail: user.email,
-        tags: multipleContent?.tags
-      }
-    })
+    // await sendToSegment({
+    //   operation: 'track',
+    //   eventName: 'bulk_create_new_tag',
+    //   userId: user.id,
+    //   data: {
+    //     userEmail: user.email,
+    //     tags: multipleContent?.tags
+    //   }
+    // })
 
     // Send data to segment
     await sendToSegment({
       operation: 'track',
-      eventName: 'upload_multiple_contents',
+      eventName: 'pull_multiple_contents',
       userId: user.id,
       data: {
         userEmail: user.email,

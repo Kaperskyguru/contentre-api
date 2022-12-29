@@ -8,7 +8,8 @@ const configuration = new Configuration({
   apiKey: environment.openai.apiKey
 })
 
-const openai = environment.context === 'LOCAL' && new OpenAIApi(configuration)
+const openai =
+  environment.context === 'PRODUCTION' && new OpenAIApi(configuration)
 
 const createOutline = async (input: any) => {
   if (!openai) {
@@ -28,11 +29,8 @@ const createOutline = async (input: any) => {
       presence_penalty: 0.0
     })
 
-    console.log(response, 'res')
-
     return response.data
   } catch (e) {
-    console.log(e, 'error')
     logError('createOutline %o', e)
 
     const message = useErrorParser(e)

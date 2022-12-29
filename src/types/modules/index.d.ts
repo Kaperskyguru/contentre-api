@@ -282,6 +282,20 @@ export type ContentType =
   | 'TEXT'
   | 'VIDEO';
 
+export type ConvertBriefInput = {
+  apps?: InputMaybe<Apps>;
+  category?: InputMaybe<Scalars['String']>;
+  clientId?: InputMaybe<Scalars['ID']>;
+  content?: InputMaybe<Scalars['String']>;
+  excerpt?: InputMaybe<Scalars['String']>;
+  featuredImage?: InputMaybe<Scalars['String']>;
+  noteId?: InputMaybe<Scalars['ID']>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  title: Scalars['String'];
+  topics?: InputMaybe<Array<Scalars['String']>>;
+  url?: InputMaybe<Scalars['String']>;
+};
+
 export type ConvertContentInput = {
   amount?: InputMaybe<Scalars['Float']>;
   apps?: InputMaybe<Apps>;
@@ -301,6 +315,20 @@ export type ConvertContentInput = {
   topics?: InputMaybe<Array<Scalars['String']>>;
   url?: InputMaybe<Scalars['String']>;
   visibility?: InputMaybe<Visibility>;
+};
+
+export type ConvertOutlineInput = {
+  apps?: InputMaybe<Apps>;
+  category?: InputMaybe<Scalars['String']>;
+  clientId?: InputMaybe<Scalars['ID']>;
+  content?: InputMaybe<Scalars['String']>;
+  excerpt?: InputMaybe<Scalars['String']>;
+  featuredImage?: InputMaybe<Scalars['String']>;
+  noteId?: InputMaybe<Scalars['ID']>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  title: Scalars['String'];
+  topics?: InputMaybe<Array<Scalars['String']>>;
+  url?: InputMaybe<Scalars['String']>;
 };
 
 export type Country = {
@@ -629,7 +657,9 @@ export type Metadata = {
 export type Mutation = {
   __typename?: 'Mutation';
   changePassword: User;
+  convertNoteBrief?: Maybe<Brief>;
   convertNoteContent?: Maybe<Content>;
+  convertNoteOutline?: Maybe<Outline>;
   createBrief?: Maybe<Brief>;
   createCategory: Category;
   createClient: Client;
@@ -717,9 +747,21 @@ export type MutationChangePasswordArgs = {
 };
 
 
+export type MutationConvertNoteBriefArgs = {
+  id: Scalars['ID'];
+  input: ConvertBriefInput;
+};
+
+
 export type MutationConvertNoteContentArgs = {
   id: Scalars['ID'];
   input: ConvertContentInput;
+};
+
+
+export type MutationConvertNoteOutlineArgs = {
+  id: Scalars['ID'];
+  input: ConvertOutlineInput;
 };
 
 
@@ -2185,7 +2227,9 @@ export type ResolversTypes = {
   ContentFiltersInput: ContentFiltersInput;
   ContentResponse: ResolverTypeWrapper<ContentResponse>;
   ContentType: ContentType;
+  ConvertBriefInput: ConvertBriefInput;
   ConvertContentInput: ConvertContentInput;
+  ConvertOutlineInput: ConvertOutlineInput;
   Country: ResolverTypeWrapper<Country>;
   CountryInput: CountryInput;
   CreateAppInput: CreateAppInput;
@@ -2350,7 +2394,9 @@ export type ResolversParentTypes = {
   Content: Content;
   ContentFiltersInput: ContentFiltersInput;
   ContentResponse: ContentResponse;
+  ConvertBriefInput: ConvertBriefInput;
   ConvertContentInput: ConvertContentInput;
+  ConvertOutlineInput: ConvertOutlineInput;
   Country: Country;
   CountryInput: CountryInput;
   CreateAppInput: CreateAppInput;
@@ -2734,7 +2780,9 @@ export type MetadataResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   changePassword?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'oldPassword'>>;
+  convertNoteBrief?: Resolver<Maybe<ResolversTypes['Brief']>, ParentType, ContextType, RequireFields<MutationConvertNoteBriefArgs, 'id' | 'input'>>;
   convertNoteContent?: Resolver<Maybe<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<MutationConvertNoteContentArgs, 'id' | 'input'>>;
+  convertNoteOutline?: Resolver<Maybe<ResolversTypes['Outline']>, ParentType, ContextType, RequireFields<MutationConvertNoteOutlineArgs, 'id' | 'input'>>;
   createBrief?: Resolver<Maybe<ResolversTypes['Brief']>, ParentType, ContextType, RequireFields<MutationCreateBriefArgs, 'input'>>;
   createCategory?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<MutationCreateCategoryArgs, 'input'>>;
   createClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationCreateClientArgs, 'input'>>;
