@@ -1,3 +1,6 @@
+import { useErrorParser } from '@/helpers'
+import { logError } from '@/helpers/logger'
+import { ApolloError } from 'apollo-server-errors'
 import Service from './service'
 
 class Paddle {
@@ -41,13 +44,18 @@ class Paddle {
 
       return event
     } catch (error) {
+      console.log(error, 'error_PADDLE')
       if (
-        error.message.includes('Implementation missing:') &&
+        // error.message.includes('Implementation missing:') &&
         data.alert_name === 'subscription_payment_failed'
       ) {
         return this.processSubscriptionPaymentFailed(data)
       }
-      return false
+
+      logError('Payment Paddle %o', error)
+
+      const message = useErrorParser(error)
+      throw new ApolloError(message, error.code ?? '500')
     }
   }
 
