@@ -43,6 +43,7 @@ const typeDefs = gql`
     fromDate: String
     toDate: String
     sortBy: String
+    desc: Boolean
   }
 
   type BriefResponse {

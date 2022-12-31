@@ -111,6 +111,7 @@ export type Brief = {
 };
 
 export type BriefFiltersInput = {
+  desc?: InputMaybe<Scalars['Boolean']>;
   fromDate?: InputMaybe<Scalars['String']>;
   sortBy?: InputMaybe<Scalars['String']>;
   terms?: InputMaybe<Scalars['String']>;
@@ -258,6 +259,7 @@ export type ContentFiltersInput = {
   categoryIds?: InputMaybe<Array<Scalars['ID']>>;
   clients?: InputMaybe<Array<Scalars['String']>>;
   daily?: InputMaybe<Scalars['Boolean']>;
+  desc?: InputMaybe<Scalars['Boolean']>;
   duration?: InputMaybe<Scalars['Int']>;
   fromAmount?: InputMaybe<Scalars['Float']>;
   fromDate?: InputMaybe<Scalars['String']>;
@@ -325,6 +327,7 @@ export type ConvertOutlineInput = {
   excerpt?: InputMaybe<Scalars['String']>;
   featuredImage?: InputMaybe<Scalars['String']>;
   noteId?: InputMaybe<Scalars['ID']>;
+  status?: InputMaybe<StatusType>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   title: Scalars['String'];
   topics?: InputMaybe<Array<Scalars['String']>>;
@@ -656,6 +659,7 @@ export type Metadata = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  canAddOutline: Scalars['Boolean'];
   changePassword: User;
   convertNoteBrief?: Maybe<Brief>;
   convertNoteContent?: Maybe<Content>;
@@ -1235,10 +1239,22 @@ export type Outline = {
 };
 
 export type OutlineFiltersInput = {
+  categories?: InputMaybe<Array<Scalars['String']>>;
+  categoryIds?: InputMaybe<Array<Scalars['ID']>>;
+  clients?: InputMaybe<Array<Scalars['String']>>;
+  daily?: InputMaybe<Scalars['Boolean']>;
+  desc?: InputMaybe<Scalars['Boolean']>;
+  duration?: InputMaybe<Scalars['Int']>;
+  fromAmount?: InputMaybe<Scalars['Float']>;
   fromDate?: InputMaybe<Scalars['String']>;
   sortBy?: InputMaybe<Scalars['String']>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
   terms?: InputMaybe<Scalars['String']>;
+  toAmount?: InputMaybe<Scalars['Float']>;
   toDate?: InputMaybe<Scalars['String']>;
+  topicIds?: InputMaybe<Array<Scalars['ID']>>;
+  topics?: InputMaybe<Array<Scalars['String']>>;
+  visibility?: InputMaybe<Visibility>;
 };
 
 export type OutlineResponse = {
@@ -2779,6 +2795,7 @@ export type MetadataResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  canAddOutline?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   changePassword?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'oldPassword'>>;
   convertNoteBrief?: Resolver<Maybe<ResolversTypes['Brief']>, ParentType, ContextType, RequireFields<MutationConvertNoteBriefArgs, 'id' | 'input'>>;
   convertNoteContent?: Resolver<Maybe<ResolversTypes['Content']>, ParentType, ContextType, RequireFields<MutationConvertNoteContentArgs, 'id' | 'input'>>;

@@ -31,8 +31,8 @@ export default async (
     if (!user.isPremium && (totalOutline ?? 0) >= 1)
       throw new ApolloError('You have exceeded your outline limit.', '401')
 
-    const note = await prisma.content.findFirst({
-      where: { id, class: 'NOTE' }
+    const note = await prisma.content.findUnique({
+      where: { id }
     })
 
     if (!note) {

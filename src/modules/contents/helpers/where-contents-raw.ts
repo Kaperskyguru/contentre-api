@@ -62,7 +62,7 @@ export const whereContentRaw = (
   const query = `
     AND c."userId" = $1
     AND c."notebookId" IS NULL
-    
+    AND c."class" = 'ARTICLE'
     AND (
       ${args[1] === null ? 'True' : 'False'} OR
       c."title" ILIKE '%' || $2 || '%' OR

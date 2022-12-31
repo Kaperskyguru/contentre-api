@@ -12,7 +12,8 @@ export const whereContents = (
     AND: [
       {
         userId: user.id,
-        notebookId: null
+        notebookId: null,
+        class:"ARTICLE"
       },
 
       filters?.terms

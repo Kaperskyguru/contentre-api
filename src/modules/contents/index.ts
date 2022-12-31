@@ -241,6 +241,7 @@ const typeDefs = gql`
     fromDate: String
     toDate: String
     topics: [String!]
+    desc: Boolean
   }
 
   type Meta {

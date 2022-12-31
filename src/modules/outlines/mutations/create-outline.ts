@@ -5,6 +5,7 @@ import { MutationCreateOutlineArgs, Outline } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
 import sendToSegment from '@extensions/segment-service/segment'
 import openAi from '@extensions/openai'
+import totalOutlines from '../fields/total-outlines'
 
 export default async (
   _parent: unknown,
@@ -24,6 +25,10 @@ export default async (
 
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
+    const totalOutline = await totalOutlines(user)
+    if (!user.isPremium && (totalOutline ?? 0) >= 1)
+      throw new ApolloError('You have exceeded your outline limit.', '401')
+
     // Check if Content
     let outline
     if (!content) {
@@ -38,15 +43,19 @@ export default async (
       if (!outline) throw new ApolloError('Outline not created', '500')
     }
 
+    console.log(outline)
+
+    const formattedOutline = generateOutline(content ?? outline)
+
     // If success, create a new outline in our DB
     const [result, countOutlines] = await prisma.$transaction([
       prisma.content.create({
         data: {
           title,
-          content: content ?? outline,
+          content: formattedOutline,
           status: 'DRAFT',
           class: 'OUTLINE',
-          excerpt: '',
+          excerpt: content ?? outline,
           team: { connect: { id: user.activeTeamId! } },
           user: { connect: { id: user.id } }
         }
@@ -93,4 +102,13 @@ export default async (
 
     throw new ApolloError(message, e.code ?? '500', { sentryId })
   }
+}
+
+function generateOutline(content: string) {
+  return `
+        <h2 class="outline-header">Outline</h2>
+        <ul id="outline">${content
+          .replaceAll('\n\n', '<li>')
+          .replaceAll('\n', '<p>')
+          .replaceAll('\n<p>[a-zA-Z].', '<ul><li>')}</ul>`
 }

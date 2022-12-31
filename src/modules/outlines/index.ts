@@ -7,6 +7,7 @@ import deleteOutline from './mutations/delete-outline'
 import updateOutline from './mutations/update-outline'
 import deleteBulkOutline from './mutations/delete-bulk-outline'
 import convertNoteOutline from './mutations/convert-note-outline'
+import canAddOutline from './mutations/can-add-outline'
 
 const typeDefs = gql`
   type Outline {
@@ -41,9 +42,21 @@ const typeDefs = gql`
 
   input OutlineFiltersInput {
     terms: String
+    sortBy: String
+    categoryIds: [ID!]
+    topicIds: [ID!]
+    duration: Int
+    daily: Boolean
+    visibility: Visibility
+    tags: [String!]
+    fromAmount: Float
+    toAmount: Float
+    categories: [String!]
+    clients: [String!]
     fromDate: String
     toDate: String
-    sortBy: String
+    topics: [String!]
+    desc: Boolean
   }
 
   input ConvertOutlineInput {
@@ -52,6 +65,7 @@ const typeDefs = gql`
     title: String!
     excerpt: String
     clientId: ID
+    status: StatusType
     tags: [String!]
     topics: [String!]
     category: String
@@ -80,6 +94,7 @@ const typeDefs = gql`
     deleteBulkOutline(input: DeleteBulkOutlineInput!): Boolean!
     deleteOutline(id: ID!): Boolean!
     updateOutline(id: ID!, input: UpdateOutlineInput!): Outline!
+    canAddOutline: Boolean!
   }
 `
 
@@ -93,7 +108,8 @@ const resolvers: Resolvers = {
     deleteOutline,
     updateOutline,
     deleteBulkOutline,
-    convertNoteOutline
+    convertNoteOutline,
+    canAddOutline
   }
 }
 export default { typeDefs, resolvers }

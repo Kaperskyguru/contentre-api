@@ -42,6 +42,7 @@ export default async (
 
   if (input.content !== undefined) data.content = input.content
   if (input.title !== undefined) data.title = input.title
+  if (input.status !== undefined) data.status = input.status
   if (input.url !== undefined) data.url = input.url
 
   return data

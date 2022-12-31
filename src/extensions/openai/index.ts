@@ -15,7 +15,42 @@ const createOutline = async (input: any) => {
   if (!openai) {
     logHelper('createOutline %o', input)
 
-    return false
+    // Generate fake outline
+
+    const outline = `
+    I. Introduction
+A. Definition of Backend Engineering
+B. Overview of Backend Engineering
+
+II. Basic Concepts of Backend Engineering
+A. Database Management
+B. Server Management
+C. Application Programming
+
+III. Advanced Concepts of Backend Engineering
+A. Cloud Computing
+B. Security
+C. Performance Optimization
+
+IV. Tools and Technologies for Backend Engineering
+A. Programming Languages
+B. Frameworks
+C. Databases
+
+V. Best Practices for Backend Engineering
+A. Documentation
+B. Version Control
+C. Automation
+
+VI. Conclusion`
+
+    return {
+      choices: [
+        {
+          text: outline
+        }
+      ]
+    }
   }
 
   try {

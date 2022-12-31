@@ -28,11 +28,13 @@ export default async (
           orderBy: [
             filters?.sortBy
               ? filters.sortBy === 'title'
-                ? { title: 'desc' }
+                ? { title: filters.desc ? 'desc' : 'asc' }
                 : filters.sortBy === 'createdAt'
-                ? { createdAt: 'desc' }
-                : { title: 'desc' }
-              : { title: 'desc' }
+                ? { createdAt: filters.desc ? 'desc' : 'asc' }
+                : filters.sortBy === 'updatedAt'
+                ? { updatedAt: filters.desc ? 'desc' : 'asc' }
+                : { createdAt: filters.desc ? 'desc' : 'asc' }
+              : { createdAt: filters?.desc ? 'desc' : 'asc' }
           ],
           take: size ?? 30,
           skip: skip ?? 0
@@ -52,11 +54,13 @@ export default async (
       orderBy: [
         filters?.sortBy
           ? filters.sortBy === 'title'
-            ? { title: 'desc' }
+            ? { title: filters.desc ? 'desc' : 'asc' }
             : filters.sortBy === 'createdAt'
-            ? { createdAt: 'desc' }
-            : { title: 'desc' }
-          : { title: 'desc' }
+            ? { createdAt: filters.desc ? 'desc' : 'asc' }
+            : filters.sortBy === 'updatedAt'
+            ? { updatedAt: filters.desc ? 'desc' : 'asc' }
+            : { createdAt: filters.desc ? 'desc' : 'asc' }
+          : { createdAt: filters?.desc ? 'desc' : 'asc' }
       ],
       take: size ?? 30,
       skip: skip ?? 0
@@ -70,11 +74,13 @@ export default async (
       orderBy: [
         filters?.sortBy
           ? filters.sortBy === 'title'
-            ? { title: 'desc' }
+            ? { title: filters.desc ? 'desc' : 'asc' }
             : filters.sortBy === 'createdAt'
-            ? { createdAt: 'desc' }
-            : { title: 'desc' }
-          : { title: 'desc' }
+            ? { createdAt: filters.desc ? 'desc' : 'asc' }
+            : filters.sortBy === 'updatedAt'
+            ? { updatedAt: filters.desc ? 'desc' : 'asc' }
+            : { createdAt: filters.desc ? 'desc' : 'asc' }
+          : { createdAt: filters?.desc ? 'desc' : 'asc' }
       ],
       take: size ?? 30,
       skip: skip ?? 0
