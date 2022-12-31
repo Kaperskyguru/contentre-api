@@ -25,6 +25,8 @@ export default async (
 
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
+    console.log(user)
+
     const totalOutline = await totalOutlines(user)
     if (!user.isPremium && (totalOutline ?? 0) >= 1)
       throw new ApolloError('You have exceeded your outline limit.', '401')
@@ -42,8 +44,6 @@ export default async (
       outline = choices && choices[0]?.text
       if (!outline) throw new ApolloError('Outline not created', '500')
     }
-
-    console.log(outline)
 
     const formattedOutline = generateOutline(content ?? outline)
 
