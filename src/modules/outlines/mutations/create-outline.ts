@@ -27,11 +27,6 @@ export default async (
 
     const totalOutline = await totalOutlines(user)
 
-    console.log(
-      !user.isPremium && (totalOutline ?? 0) >= 1,
-      totalOutline,
-      user.isPremium
-    )
     if (!user.isPremium && (totalOutline ?? 0) >= 1)
       throw new ApolloError('You have exceeded your outline limit.', '401')
 
