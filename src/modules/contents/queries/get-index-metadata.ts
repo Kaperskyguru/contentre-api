@@ -66,7 +66,7 @@ export default async (
             "Content" c
           WHERE
             (
-              c."userId" = $1 AND c."notebookId" IS NULL
+              c."userId" = $1 AND c."notebookId" IS NULL AND c."class" = 'ARTICLE'
             )
          
         `.clearIndentation(),
@@ -103,7 +103,7 @@ export default async (
            ) d(day)
         LEFT JOIN "Content" c ON TO_CHAR(c."publishedDate" , 'YYYY-MM-DD') = TO_CHAR(d.day, 'YYYY-MM-DD')
         WHERE (
-          c."userId" is null or c."userId" = $1 AND c."notebookId" IS NULL
+          c."userId" is null or c."userId" = $1 AND c."notebookId" IS NULL AND c."class" = 'ARTICLE'
         )
         GROUP BY 
         months;
@@ -123,7 +123,7 @@ export default async (
                               , interval  '1 day')
          ) d(day)
       LEFT JOIN public."Content" c ON TO_CHAR(c."publishedDate" , 'YYYY-MM-DD') = TO_CHAR(d.day, 'YYYY-MM-DD')
-      where c."userId" = $1 or c."userId" is null AND c."notebookId" IS NULL
+      where c."userId" = $1 or c."userId" is null AND c."notebookId" IS NULL AND c."class" = 'ARTICLE'
       GROUP BY 1;
 
           `.clearIndentation(),

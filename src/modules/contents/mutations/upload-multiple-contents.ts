@@ -55,7 +55,7 @@ export default async (
         excerpt: importedContent.excerpt,
         featuredImage: importedContent.image,
         publishedDate: importedContent.publishedDate,
-        tags: importedContent.tags!,
+        // tags: importedContent.tags!,
         url: importedContent.url
       }
     })
@@ -63,15 +63,15 @@ export default async (
 
     multipleContent = await createMultipleContents(importedContent, context)
 
-    await sendToSegment({
-      operation: 'track',
-      eventName: 'bulk_create_new_tag',
-      userId: user.id,
-      data: {
-        userEmail: user.email,
-        tags: multipleContent?.tags
-      }
-    })
+    // await sendToSegment({
+    //   operation: 'track',
+    //   eventName: 'bulk_create_new_tag',
+    //   userId: user.id,
+    //   data: {
+    //     userEmail: user.email,
+    //     tags: multipleContent?.tags
+    //   }
+    // })
 
     // Send data to segment
     await sendToSegment({

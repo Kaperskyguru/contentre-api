@@ -25,7 +25,8 @@ export default async (
     const contentWithNetTotal = await prisma.content.count({
       where: {
         userId: user.id,
-        notebookId: null
+        notebookId: null,
+        class: 'ARTICLE'
       },
       select: { id: true }
     })

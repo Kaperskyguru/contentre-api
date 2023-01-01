@@ -26,6 +26,14 @@ export default async (
   try {
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
+    const content = await prisma.content.findUnique({
+      where: { id }
+    })
+
+    if (!content) {
+      throw new ApolloError('content not found', '404')
+    }
+
     const totalContent = await totalContents(user)
     if (!user.isPremium && (totalContent ?? 0) >= 12)
       throw new ApolloError('You have exceeded your content limit.', '401')
@@ -74,14 +82,6 @@ export default async (
     if (input.status !== undefined) data.status = input.status
     if (input.amount !== undefined) data.amount = input.amount
 
-    const content = await prisma.content.findUnique({
-      where: { id }
-    })
-
-    if (!content) {
-      throw new ApolloError('content not found', '404')
-    }
-
     // Finally update the category.
     let updatedContent = await prisma.content.update({
       where: { id },
@@ -99,50 +99,53 @@ export default async (
       // Create bulk topics
       await createBulkTopics(input.topics, { user, prisma })
 
+      let oldTopics: any = []
+
       if (
         updatedContent?.topics &&
         typeof updatedContent?.topics === 'object' &&
         Array.isArray(updatedContent?.topics)
       ) {
         const topicsObject = updatedContent?.topics as Prisma.JsonArray
-        const newTopics = Object.values(input?.topics)
-
-        const oldTopics = Array.from(topicsObject)
-        const topics = [...oldTopics, ...newTopics]
-
-        updatedContent = await prisma.content.update({
-          where: { id },
-          data: {
-            topics
-          },
-          include: { category: true, client: true }
-        })
+        oldTopics = Array.from(topicsObject)
       }
+      const newTopics = Object.values(input?.topics)
+
+      const topics = [...new Set([...oldTopics, ...newTopics])]
+
+      updatedContent = await prisma.content.update({
+        where: { id },
+        data: {
+          topics
+        },
+        include: { category: true, client: true }
+      })
     }
 
-    if (input.topics?.length) {
+    if (input.tags?.length) {
       // Create bulk tags
       await createBulkTags(input.tags, { user, prisma })
 
+      let oldTags: any = []
       if (
         updatedContent?.tags &&
         typeof updatedContent?.tags === 'object' &&
         Array.isArray(updatedContent?.tags)
       ) {
         const tagsObject = updatedContent?.tags as Prisma.JsonArray
-        const newTags = Object.values(input?.tags ?? [])
-
-        const oldTags = Array.from(tagsObject)
-        const tags = [...oldTags, ...newTags]
-
-        updatedContent = await prisma.content.update({
-          where: { id },
-          data: {
-            tags
-          },
-          include: { category: true, client: true }
-        })
+        oldTags = Array.from(tagsObject)
       }
+      const newTags = Object.values(input?.tags ?? [])
+
+      const tags = [...new Set([...oldTags, ...newTags])]
+
+      updatedContent = await prisma.content.update({
+        where: { id },
+        data: {
+          tags
+        },
+        include: { category: true, client: true }
+      })
     }
 
     // Send data to segment

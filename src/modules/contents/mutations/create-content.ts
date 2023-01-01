@@ -9,6 +9,7 @@ import { getOrCreateCategoryId } from '@/modules/categories/helpers'
 import createBulkTopics from '@/modules/topics/helpers/create-bulk-topics'
 import createBulkTags from '@/modules/tags/helpers/create-bulk-tags'
 import totalContents from '@/modules/users/fields/total-contents'
+import { Prisma } from '@prisma/client'
 
 export default async (
   _parent: unknown,
@@ -39,7 +40,6 @@ export default async (
       title,
       tags,
       topics,
-      noteId,
       category,
       featuredImage,
       status,
@@ -72,7 +72,7 @@ export default async (
       defaultExcerpt = content?.substring(0, 140) ?? ''
     } else defaultExcerpt = excerpt
 
-    const newContent = await prisma.content.create({
+    let newContent = await prisma.content.create({
       data: {
         url,
         title,
@@ -93,17 +93,51 @@ export default async (
     if (input.topics?.length) {
       // Create bulk topics
       await createBulkTopics(input.topics, { user, prisma })
+
+      let oldTopics: any = []
+
+      if (
+        newContent?.topics &&
+        typeof newContent?.topics === 'object' &&
+        Array.isArray(newContent?.topics)
+      ) {
+        const topicsObject = newContent?.topics as Prisma.JsonArray
+        oldTopics = Array.from(topicsObject)
+      }
+      const newTopics = Object.values(input?.topics)
+
+      const topics = [...new Set([...oldTopics, ...newTopics])]
+
+      newContent = await prisma.content.update({
+        where: { id: newContent.id },
+        data: {
+          topics
+        }
+      })
     }
 
     if (input.tags?.length) {
       // Create bulk tags
       await createBulkTags(input.tags, { user, prisma })
-    }
 
-    // Delete Note
-    if (noteId) {
-      await prisma.note.delete({
-        where: { id: noteId }
+      let oldTags: any = []
+      if (
+        newContent?.tags &&
+        typeof newContent?.tags === 'object' &&
+        Array.isArray(newContent?.tags)
+      ) {
+        const tagsObject = newContent?.tags as Prisma.JsonArray
+        oldTags = Array.from(tagsObject)
+      }
+      const newTags = Object.values(input?.tags ?? [])
+
+      const tags = [...new Set([...oldTags, ...newTags])]
+
+      newContent = await prisma.content.update({
+        where: { id: newContent.id },
+        data: {
+          tags
+        }
       })
     }
 

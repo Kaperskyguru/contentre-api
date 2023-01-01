@@ -6,7 +6,7 @@ export default async (parent: User): Promise<Maybe<number>> => {
   logResolver('User.totalContent')
 
   const contentCount = await prisma.content.count({
-    where: { userId: parent.id, notebookId: null }
+    where: { userId: parent.id, notebookId: null, class: 'ARTICLE' }
   })
 
   return contentCount

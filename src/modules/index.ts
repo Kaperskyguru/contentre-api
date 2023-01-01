@@ -18,6 +18,10 @@ import apps from './apps'
 import invites from './invites'
 import topic from './topics'
 import notebooks from './notebooks'
+import outlines from './outlines'
+import briefs from './briefs'
+import snippets from './snippets'
+import LinkInBio from './linkinbio'
 
 const typeDefs = gql`
   scalar Time
@@ -63,7 +67,11 @@ const schema = makeExecutableSchema({
     media.typeDefs,
     topic.typeDefs,
     segment.typeDefs,
-    apps.typeDefs
+    apps.typeDefs,
+    outlines.typeDefs,
+    briefs.typeDefs,
+    snippets.typeDefs,
+    LinkInBio.typeDefs
   ],
   resolvers: [
     resolvers,
@@ -81,7 +89,11 @@ const schema = makeExecutableSchema({
     media.resolvers,
     topic.resolvers,
     segment.resolvers,
-    apps.resolvers
+    apps.resolvers,
+    outlines.resolvers,
+    briefs.resolvers,
+    snippets.resolvers,
+    LinkInBio.resolvers
   ]
 })
 

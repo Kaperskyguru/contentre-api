@@ -6,6 +6,8 @@ import { ApolloError } from 'apollo-server-core'
 import ImportContent from '../helpers/import-content'
 import sendToSegment from '@/extensions/segment-service/segment'
 import totalContents from '@/modules/users/fields/total-contents'
+import createBulkTags from '@/modules/tags/helpers/create-bulk-tags'
+import { Prisma } from '@prisma/client'
 
 export default async (
   _parent: unknown,
@@ -61,7 +63,7 @@ export default async (
       })
     }
 
-    const newContent = await prisma.content.create({
+    let newContent = await prisma.content.create({
       data: {
         url,
         title: importedContent.title,
@@ -69,7 +71,7 @@ export default async (
         featuredImage: importedContent.image,
         publishedDate: importedContent.publishedDate,
         isPremium: user.isPremium,
-        tags: importedContent.tags!,
+        // tags: importedContent.tags!,
         user: { connect: { id: user.id } },
         client: { connect: { id: client.id } },
         team: { connect: { id: user.activeTeamId! } }
@@ -77,38 +79,62 @@ export default async (
     })
 
     if (importedContent.tags) {
-      const data: any = []
+      // const data: any = []
 
-      const promiseTags = importedContent.tags.map(async (name) => {
-        const tag = await prisma.tag.findFirst({
-          where: { name, userId: user.id, teamId: user.activeTeamId }
-        })
+      // const promiseTags = importedContent.tags.map(async (name) => {
+      //   const tag = await prisma.tag.findFirst({
+      //     where: { name, userId: user.id, teamId: user.activeTeamId }
+      //   })
 
-        if (!tag) {
-          data.push({
-            name,
-            userId: user.id,
-            teamId: user.activeTeamId!
-          })
-        }
-        return data
-      })
+      //   if (!tag) {
+      //     data.push({
+      //       name,
+      //       userId: user.id,
+      //       teamId: user.activeTeamId!
+      //     })
+      //   }
+      //   return data
+      // })
 
-      await Promise.all(promiseTags)
+      // await Promise.all(promiseTags)
 
-      await prisma.tag.createMany({
-        data,
-        skipDuplicates: true
-      })
+      // await prisma.tag.createMany({
+      //   data,
+      //   skipDuplicates: true
+      // })
 
-      await sendToSegment({
-        operation: 'track',
-        eventName: 'bulk_create_new_tag',
-        userId: user.id,
+      // await sendToSegment({
+      //   operation: 'track',
+      //   eventName: 'bulk_create_new_tag',
+      //   userId: user.id,
+      //   data: {
+      //     userEmail: user.email,
+      //     tags: importedContent.tags
+      //   }
+      // })
+
+      // Create bulk tags
+      await createBulkTags(importedContent.tags, { user, prisma })
+
+      let oldTags: any = []
+      if (
+        newContent?.tags &&
+        typeof newContent?.tags === 'object' &&
+        Array.isArray(newContent?.tags)
+      ) {
+        const tagsObject = newContent?.tags as Prisma.JsonArray
+        oldTags = Array.from(tagsObject)
+      }
+      const newTags = Object.values(importedContent?.tags ?? [])
+
+      const tags = [...new Set([...oldTags, ...newTags])]
+
+      newContent = await prisma.content.update({
+        where: { id: newContent.id },
         data: {
-          userEmail: user.email,
-          tags: importedContent.tags
+          tags
         }
+        // include: { category: true, client: true }
       })
     }
 
