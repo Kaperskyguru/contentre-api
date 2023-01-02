@@ -90,7 +90,8 @@ export default async (
           disconnect: true
         },
         ...data,
-        isPremium: user.isPremium
+        isPremium: user.isPremium,
+        class: 'ARTICLE'
       },
       include: { category: true, client: true }
     })
