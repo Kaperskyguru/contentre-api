@@ -624,7 +624,6 @@ export type MediaResponse = {
 export type Medium = {
   action: Scalars['String'];
   canonicalUrl?: InputMaybe<Scalars['String']>;
-  contentFormat?: InputMaybe<Format>;
   contentId?: InputMaybe<Scalars['String']>;
   notifyFollowers?: InputMaybe<Scalars['Boolean']>;
   publishedStatus?: InputMaybe<AppStatus>;

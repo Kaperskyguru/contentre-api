@@ -47,7 +47,6 @@ const typeDefs = gql`
     action: String!
     publishedStatus: AppStatus
     notifyFollowers: Boolean
-    contentFormat: Format
     canonicalUrl: String
     contentId: String
   }
