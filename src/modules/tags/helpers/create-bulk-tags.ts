@@ -14,7 +14,7 @@ export const createBulkTags = async (
     const availableTags = await prisma.tag.findMany({
       where: {
         name: {
-          in: tags?.map((item) => item)
+          in: tags //?.map((item) => item)
         },
         teamId: user.activeTeamId
       },

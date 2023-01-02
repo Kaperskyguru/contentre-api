@@ -21,9 +21,19 @@ export default async (
   const contentData: any = []
   let multipleContent: Multiple | any
 
+  const urls = contents.map(({ url }) => url)
+
+  const oldContents = await prisma.content.findMany({
+    where: { url: { in: urls }, userId: user.id }
+  })
+
   const createdContents = contents
     .map((i) => i)
     .map(async (content) => {
+      const oldContent = oldContents.find((item) => item.url === content.url)
+
+      if (oldContent) return
+
       // Checking if client already exists
       let client
       try {
@@ -64,7 +74,6 @@ export default async (
           excerpt: content.excerpt,
           featuredImage: content.featuredImage,
           publishedDate: content.publishedDate,
-          // tags: content.tags!,
           isPremium: user?.isPremium,
           user: { connect: { id: user?.id } },
           client: { connect: { id: client?.id } },
@@ -73,30 +82,6 @@ export default async (
       })
 
       if (content.tags) {
-        // const data: any = []
-
-        // const promiseTags = content.tags.map(async (name: string) => {
-        //   const tag = await prisma.tag.findFirst({
-        //     where: { name, userId: user?.id, teamId: user?.activeTeamId }
-        //   })
-
-        //   if (!tag) {
-        //     data.push({
-        //       name,
-        //       userId: user?.id,
-        //       teamId: user?.activeTeamId!
-        //     })
-        //   }
-        //   return data
-        // })
-
-        // await Promise.all(promiseTags)
-
-        // await prisma.tag.createMany({
-        //   data,
-        //   skipDuplicates: true
-        // })
-
         // Create bulk tags
         await createBulkTags(content.tags, { user, prisma })
 

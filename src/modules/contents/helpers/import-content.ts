@@ -21,7 +21,7 @@ export const ImportContent = async (
     where: { url: trimmedURL, userId: user.id }
   })
 
-  if (content) throw new ApolloError('duplicate content', '401')
+  if (content) throw new ApolloError('Duplicate content', '401')
 
   // If success, create a new content in our DB.
   return await importSingleContent(trimmedURL)
