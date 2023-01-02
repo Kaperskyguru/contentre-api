@@ -25,17 +25,10 @@ export const Plugins = async (
     ${content!}
     `
 
-    if (mediumData.contentFormat === 'markdown')
-      formatContent = `
-    ${title!}
-
-    ${content!}
-    `
-
     const Post = {
       title: title!,
       content: formatContent,
-      contentFormat: mediumData.contentFormat ?? 'html',
+      contentFormat: 'html',
       canonicalUrl: mediumData.canonicalUrl ?? undefined,
       notifyFollowers: mediumData.notifyFollowers ?? false,
       tags: tags!,

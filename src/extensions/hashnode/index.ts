@@ -90,8 +90,8 @@ class Hashnode {
 
   async get(slug: string, hostname: string = '') {
     const queries = JSON.stringify({
-      query: `query getUserArticle($slug: String!, $hostnamne: String){
-              post(slug: $slug, hostname: $hostnamne)){
+      query: `query getUserArticle($slug: String!, $hostname: String){
+              post(slug: $slug, hostname: $hostname)){
                 title
                 slug
                 brief
@@ -157,8 +157,6 @@ class Hashnode {
                   domain
                 }
               }
-            } 
-              }
             }`,
       variables: {
         username
@@ -167,16 +165,13 @@ class Hashnode {
 
     try {
       const { data } = await this.axios.post(`/`, queries)
-
       if (!data?.data?.user) return
-
       const {
         data: {
           user,
           user: { publication }
         }
       } = data
-
       return {
         id: user._id,
         name: user.name,
