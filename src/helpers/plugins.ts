@@ -1,5 +1,6 @@
 import { User } from '@/types/modules'
 import Medium from '@extensions/medium'
+import Hashnode from '@extensions/hashnode'
 import { PrismaClient } from '@prisma/client'
 
 export const Plugins = async (
@@ -8,7 +9,7 @@ export const Plugins = async (
 ): Promise<void> => {
   const { apps } = input
 
-  if (apps?.medium) {
+  if (apps?.medium && apps.medium.action === 'Publish') {
     const title = input.title
     const content = input.content ?? input.excerpt
     const tags = input.tags
@@ -42,6 +43,32 @@ export const Plugins = async (
     }
 
     await new Medium(medium!).create(Post)
+  }
+
+  if (apps?.hashnode && apps.hashnode.action === 'Publish') {
+    const title = input.title
+    const content = input.content ?? input.excerpt
+    const tags = input.tags
+
+    const HashNode = await prisma.connectedApp.findFirst({
+      where: { teamId: user.activeTeamId!, name: 'Hashnode', slug: 'hashnode' }
+    })
+
+    const hashNodeData = apps.hashnode
+
+    let formatContent = `
+    ${content!}
+    `
+
+    const Post = {
+      title: title!,
+      content: formatContent,
+      canonicalUrl: hashNodeData.canonicalUrl ?? undefined,
+      tags: tags!,
+      hideFromHashnodeFeed: hashNodeData.hideFromHashnodeFeed
+    }
+
+    await new Hashnode(HashNode!).create(Post)
   }
 }
 

@@ -26,7 +26,7 @@ export default async (
     }
 
     // Extract fields from the mutation input.
-    const { name, token, key, isActivated } = input
+    const { name, username, token, key, isActivated } = input
 
     // Check for required arguments not provided.
     if (!id) {
@@ -35,6 +35,7 @@ export default async (
 
     const data: Record<string, unknown> = {}
     if (name !== undefined) data.name = name
+    if (username !== undefined) data.username = username
     if (token !== undefined) data.token = token
     if (key !== undefined) data.secret = key
     if (isActivated !== undefined) data.isActivated = isActivated

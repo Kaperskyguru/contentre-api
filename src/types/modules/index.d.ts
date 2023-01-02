@@ -80,6 +80,7 @@ export type AppStatus =
   | 'unlisted';
 
 export type Apps = {
+  hashnode?: InputMaybe<HashNode>;
   medium?: InputMaybe<Medium>;
 };
 
@@ -530,6 +531,16 @@ export type Format =
   | 'HTML'
   | 'MARKDOWN';
 
+export type HashNode = {
+  action: Scalars['String'];
+  canonicalUrl?: InputMaybe<Scalars['String']>;
+  hideFromHashnodeFeed?: InputMaybe<Scalars['Boolean']>;
+  hostname?: InputMaybe<Scalars['String']>;
+  page?: InputMaybe<Scalars['Int']>;
+  publicationId?: InputMaybe<Scalars['String']>;
+  slug?: InputMaybe<Scalars['String']>;
+};
+
 export type IndexMetadataResponse = {
   __typename?: 'IndexMetadataResponse';
   box?: Maybe<BoxStats>;
@@ -611,13 +622,12 @@ export type MediaResponse = {
 };
 
 export type Medium = {
+  action: Scalars['String'];
   canonicalUrl?: InputMaybe<Scalars['String']>;
-  content?: InputMaybe<Scalars['String']>;
   contentFormat?: InputMaybe<Format>;
+  contentId?: InputMaybe<Scalars['String']>;
   notifyFollowers?: InputMaybe<Scalars['Boolean']>;
   publishedStatus?: InputMaybe<AppStatus>;
-  tags?: InputMaybe<Array<Scalars['String']>>;
-  title?: InputMaybe<Scalars['String']>;
 };
 
 export type Member = {
@@ -1935,6 +1945,7 @@ export type UpdateAppInput = {
   key?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   token?: InputMaybe<Scalars['String']>;
+  username?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateBriefInput = {
@@ -2280,6 +2291,7 @@ export type ResolversTypes = {
   Feature: ResolverTypeWrapper<Feature>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Format: Format;
+  HashNode: HashNode;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   IndexMetadataResponse: ResolverTypeWrapper<IndexMetadataResponse>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -2446,6 +2458,7 @@ export type ResolversParentTypes = {
   DeleteBulkTopicInput: DeleteBulkTopicInput;
   Feature: Feature;
   Float: Scalars['Float'];
+  HashNode: HashNode;
   ID: Scalars['ID'];
   IndexMetadataResponse: IndexMetadataResponse;
   Int: Scalars['Int'];

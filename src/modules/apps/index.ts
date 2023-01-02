@@ -38,18 +38,28 @@ const typeDefs = gql`
   input UpdateAppInput {
     token: String
     key: String
+    username: String
     name: String
     isActivated: Boolean
   }
 
   input Medium {
+    action: String!
     publishedStatus: AppStatus
     notifyFollowers: Boolean
     contentFormat: Format
     canonicalUrl: String
-    title: String
-    content: String
-    tags: [String!]
+    contentId: String
+  }
+
+  input HashNode {
+    action: String!
+    canonicalUrl: String
+    page: Int
+    hideFromHashnodeFeed: Boolean
+    publicationId: String
+    hostname: String
+    slug: String
   }
 
   input AppFiltersInput {
@@ -68,6 +78,7 @@ const typeDefs = gql`
 
   input Apps {
     medium: Medium
+    hashnode: HashNode
   }
 
   enum Format {
