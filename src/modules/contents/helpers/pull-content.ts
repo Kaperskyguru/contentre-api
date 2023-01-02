@@ -32,7 +32,7 @@ export const ImportContent = async (
             contentArr.push(await hashnode.get(data.slug))
             break
           }
-          const articles = await hashnode.all(data?.username!, data?.page!)
+          const articles = await hashnode.all(data?.page!)
           contentArr.push(articles)
         }
 

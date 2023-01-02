@@ -155,6 +155,7 @@ model ConnectedApp {
   slug        String   @db.VarChar(60)
   token       String?  @db.VarChar(2048)
   secret      String?  @db.VarChar(2048)
+  username    String?  @db.VarChar(60)
   isActivated Boolean  @default(false)
   teamId      String   @db.Char(36)
   team        Team     @relation("TeamConnectedApp", fields: [teamId], references: [id])

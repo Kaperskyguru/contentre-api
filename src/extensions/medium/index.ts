@@ -8,7 +8,7 @@ import { ConnectedApp } from '@prisma/client'
 interface Post {
   title: string
   content: string
-  contentFormat: Format
+  contentFormat: string
   canonicalUrl?: string
   notifyFollowers?: boolean
   tags?: Array<string>
@@ -38,8 +38,6 @@ class Medium {
   }
 
   async create(data: Post | null): Promise<Post | undefined> {
-    if (environment.context !== 'PRODUCTION') return
-
     // Get User
     const userInfo = await this.user()
     if (!userInfo) {
@@ -48,9 +46,10 @@ class Medium {
 
     try {
       const res = await this.axios.post(`/users/${userInfo.id}/posts`, data)
+
       return res.data.data
     } catch (e) {
-      console.log(e)
+      throw new ApolloError(e)
     }
   }
 
