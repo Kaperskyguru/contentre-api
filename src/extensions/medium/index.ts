@@ -13,6 +13,8 @@ interface Post {
   notifyFollowers?: boolean
   tags?: Array<string>
   publishStatus: AppStatus
+  featuredImage?: string
+  excerpt?: string
 }
 
 interface MediumUser {
@@ -78,21 +80,43 @@ class Medium {
     return res.data.data
   }
 
-  async getPosts(): Promise<MediumUser[]> {
+  async getPosts(): Promise<Post[]> {
     if (!this.axios) {
       throw new ApolloError('')
     }
 
     try {
       const userInfo = await this.user()
+
       if (!userInfo) {
         throw new ApolloError('User not found', '404')
       }
 
-      const res = await this.axios.get(`/users/${userInfo.id}/posts`)
-      return res.data.data
+      const res = await axios.get(
+        `https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@${userInfo.username}`
+      )
+
+      if (!res.data?.items) {
+        throw new ApolloError('Content not found', '404')
+      }
+
+      return res.data.items.map((item: any) => {
+        return {
+          title: item.title,
+          url: item.link,
+          excerpt: item.content?.substring(0, 140) ?? '',
+          tags: item.categories,
+          publishedDate: !item.pubDate
+            ? new Date().toISOString()
+            : new Date(item.pubDate).toISOString(),
+          featuredImage: item.thumbnail,
+          client: {
+            name: 'Medium',
+            website: 'https://medium.com'
+          }
+        }
+      })
     } catch (error) {
-      console.log(error)
       throw new ApolloError(error)
     }
   }

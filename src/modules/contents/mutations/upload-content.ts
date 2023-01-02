@@ -79,40 +79,6 @@ export default async (
     })
 
     if (importedContent.tags) {
-      // const data: any = []
-
-      // const promiseTags = importedContent.tags.map(async (name) => {
-      //   const tag = await prisma.tag.findFirst({
-      //     where: { name, userId: user.id, teamId: user.activeTeamId }
-      //   })
-
-      //   if (!tag) {
-      //     data.push({
-      //       name,
-      //       userId: user.id,
-      //       teamId: user.activeTeamId!
-      //     })
-      //   }
-      //   return data
-      // })
-
-      // await Promise.all(promiseTags)
-
-      // await prisma.tag.createMany({
-      //   data,
-      //   skipDuplicates: true
-      // })
-
-      // await sendToSegment({
-      //   operation: 'track',
-      //   eventName: 'bulk_create_new_tag',
-      //   userId: user.id,
-      //   data: {
-      //     userEmail: user.email,
-      //     tags: importedContent.tags
-      //   }
-      // })
-
       // Create bulk tags
       await createBulkTags(importedContent.tags, { user, prisma })
 
