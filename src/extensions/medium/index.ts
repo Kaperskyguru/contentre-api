@@ -37,7 +37,36 @@ class Medium {
     })
   }
 
-  async create(data: Post | null): Promise<Post | undefined> {
+  async publish(input: any) {
+    const { apps } = input
+
+    const title = input.title
+    const content = input.content ?? input.excerpt
+    const tags = input.tags
+
+    const mediumData = apps.medium
+
+    let formatContent = `
+    <h1> ${title!} </h1>
+    ${content!}
+    `
+
+    const Post = {
+      title: title!,
+      content: formatContent,
+      contentFormat: 'html',
+      canonicalUrl: !mediumData.canonicalUrl
+        ? input.canonicalUrl
+        : mediumData.canonicalUrl,
+      notifyFollowers: mediumData.notifyFollowers ?? false,
+      tags: tags!,
+      publishStatus: mediumData.publishedStatus ?? 'public'
+    }
+
+    return await this.create(Post)
+  }
+
+  async create(data: Post | null) {
     // Get User
     const userInfo = await this.user()
     if (!userInfo) {
@@ -47,28 +76,21 @@ class Medium {
     try {
       const res = await this.axios.post(`/users/${userInfo.id}/posts`, data)
 
-      return res.data.data
+      const { data: post } = res.data
+
+      return {
+        title: post.title,
+        url: post.canonicalUrl ?? post.url,
+        tags: post.tags,
+        status: post.publishStatus,
+        client: {
+          name: 'Medium',
+          website: 'https://medium.com'
+        }
+      }
     } catch (e) {
       throw new ApolloError(e)
     }
-  }
-
-  async publish(publicationId: string, data: Post | null): Promise<boolean> {
-    if (!this.axios) {
-      logHelper('Medium %o', {
-        data
-      })
-      throw new ApolloError('')
-    }
-
-    // Get User
-    const userInfo = await this.user()
-    if (!userInfo) {
-      throw new ApolloError('User not found', '404')
-    }
-
-    const res = await this.axios.post(`/publications/${publicationId}/posts`)
-    return res.data.data
   }
 
   async user(): Promise<MediumUser> {
