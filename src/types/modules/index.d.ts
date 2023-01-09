@@ -80,7 +80,9 @@ export type AppStatus =
   | 'unlisted';
 
 export type Apps = {
+  devto?: InputMaybe<DevTo>;
   hashnode?: InputMaybe<HashNode>;
+  isMain?: InputMaybe<Scalars['String']>;
   medium?: InputMaybe<Medium>;
 };
 
@@ -518,6 +520,17 @@ export type DeleteBulkTagInput = {
 
 export type DeleteBulkTopicInput = {
   ids: Array<Scalars['ID']>;
+};
+
+export type DevTo = {
+  action: Scalars['String'];
+  canonicalUrl?: InputMaybe<Scalars['String']>;
+  contentId?: InputMaybe<Scalars['String']>;
+  contentStatus?: InputMaybe<Scalars['String']>;
+  page?: InputMaybe<Scalars['Int']>;
+  per_page?: InputMaybe<Scalars['Int']>;
+  publishedStatus?: InputMaybe<Scalars['String']>;
+  series?: InputMaybe<Scalars['String']>;
 };
 
 export type Feature = {
@@ -2287,6 +2300,7 @@ export type ResolversTypes = {
   DeleteBulkSnippetInput: DeleteBulkSnippetInput;
   DeleteBulkTagInput: DeleteBulkTagInput;
   DeleteBulkTopicInput: DeleteBulkTopicInput;
+  DevTo: DevTo;
   Feature: ResolverTypeWrapper<Feature>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Format: Format;
@@ -2455,6 +2469,7 @@ export type ResolversParentTypes = {
   DeleteBulkSnippetInput: DeleteBulkSnippetInput;
   DeleteBulkTagInput: DeleteBulkTagInput;
   DeleteBulkTopicInput: DeleteBulkTopicInput;
+  DevTo: DevTo;
   Feature: Feature;
   Float: Scalars['Float'];
   HashNode: HashNode;

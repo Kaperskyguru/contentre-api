@@ -1,67 +1,85 @@
-import { User } from '@/types/modules'
+import { User, ConvertContentInput } from '@/types/modules'
 import Medium from '@extensions/medium'
 import Hashnode from '@extensions/hashnode'
 import { PrismaClient } from '@prisma/client'
+import Devto from '@extensions/devto'
 
 export const Plugins = async (
-  input: any,
+  input: ConvertContentInput | any,
   { user, prisma }: { user: User; prisma: PrismaClient }
 ): Promise<void> => {
   const { apps } = input
 
-  if (apps?.medium && apps.medium.action === 'Publish') {
-    const title = input.title
-    const content = input.content ?? input.excerpt
-    const tags = input.tags
+  let post = null
 
-    const medium = await prisma.connectedApp.findFirst({
-      where: { teamId: user.activeTeamId!, name: 'Medium', slug: 'medium' }
-    })
+  if (apps.isMain === 'devto') {
+    post = await devto(input, prisma, user)
 
-    const mediumData = apps.medium
+    if (!post) return
 
-    let formatContent = `
-    <h1> ${title!} </h1>
-    ${content!}
-    `
-
-    const Post = {
-      title: title!,
-      content: formatContent,
-      contentFormat: 'html',
-      canonicalUrl: mediumData.canonicalUrl ?? undefined,
-      notifyFollowers: mediumData.notifyFollowers ?? false,
-      tags: tags!,
-      publishStatus: mediumData.publishedStatus ?? 'public'
-    }
-
-    await new Medium(medium!).create(Post)
+    delete apps.devto
   }
 
-  if (apps?.hashnode && apps.hashnode.action === 'Publish') {
-    const title = input.title
-    const content = input.content ?? input.excerpt
-    const tags = input.tags
+  if (apps.isMain === 'hashnode') {
+    post = await hashnode(input, prisma, user)
 
+    if (!post) return
+
+    delete apps.hashnode
+  }
+
+  if (apps.isMain === 'medium') {
+    post = await medium(input, prisma, user)
+    if (!post) return
+
+    delete apps.medium
+  }
+
+  // Fire the remaining plugins
+  input.canonicalUrl = post?.url ?? undefined
+
+  await activatePlugins(input, prisma, user)
+}
+
+const activatePlugins = async (
+  input: any,
+  prisma: PrismaClient,
+  user: User
+) => {
+  await devto(input, prisma, user)
+  await hashnode(input, prisma, user)
+  await medium(input, prisma, user)
+}
+
+const devto = async (input: any, prisma: PrismaClient, user: User) => {
+  const { apps } = input
+  if (apps?.devto && apps.devto.action === 'Publish') {
+    const DevTo = await prisma.connectedApp.findFirst({
+      where: { teamId: user.activeTeamId!, name: 'Devto', slug: 'devto' }
+    })
+    return await new Devto(DevTo!).publish(input)
+  }
+}
+
+const hashnode = async (input: any, prisma: PrismaClient, user: User) => {
+  const { apps } = input
+  if (apps?.hashnode && apps.hashnode.action === 'Publish') {
     const HashNode = await prisma.connectedApp.findFirst({
       where: { teamId: user.activeTeamId!, name: 'Hashnode', slug: 'hashnode' }
     })
 
-    const hashNodeData = apps.hashnode
+    return await new Hashnode(HashNode!).publish(input)
+  }
+}
 
-    let formatContent = `
-    ${content!}
-    `
+const medium = async (input: any, prisma: PrismaClient, user: User) => {
+  const { apps } = input
+  if (apps?.medium && apps.medium.action === 'Publish') {
+    const medium = await prisma.connectedApp.findFirst({
+      where: { teamId: user.activeTeamId!, name: 'Medium', slug: 'medium' }
+    })
 
-    const Post = {
-      title: title!,
-      content: formatContent,
-      canonicalUrl: hashNodeData.canonicalUrl ?? undefined,
-      tags: tags!,
-      hideFromHashnodeFeed: hashNodeData.hideFromHashnodeFeed
-    }
-
-    await new Hashnode(HashNode!).create(Post)
+    return await new Medium(medium!).publish(input)
   }
 }
 

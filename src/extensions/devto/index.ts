@@ -1,14 +1,13 @@
-import { logHelper } from '@/helpers/logger'
 import { ApolloError } from 'apollo-server-errors'
 import { environment } from '@/helpers/environment'
 import axios from 'axios'
-import { Format, AppStatus, App, Integration } from '@/types/modules'
+import { PrismaClient, User } from '@prisma/client'
+import { AppStatus, App, Integration } from '@/types/modules'
 // import { ConnectedApp } from '@prisma/client'
 
 interface Post {
   title: string
   content: string
-  contentFormat: Format
   canonicalUrl?: string
   notifyFollowers?: boolean
   tags?: Array<string>
@@ -150,6 +149,28 @@ class Devto {
     }
   }
 
+  async publish(input: any) {
+    const { apps } = input
+
+    const DevToData = apps.devto
+
+    const Post = {
+      publishStatus: DevToData.publishedStatus ?? 'public',
+      title: input?.title!,
+      featuredImage: input.featuredImage ?? undefined,
+      // organization_id: '',
+      excerpt: input.excerpt ?? input.content?.substring(0, 140) ?? '',
+      series: DevToData.series ?? undefined,
+      content: input.content ?? input.excerpt ?? '',
+      canonicalUrl: !DevToData.canonicalUrl
+        ? input.canonicalUrl
+        : DevToData.canonicalUrl,
+      tags: input?.tags!
+    }
+
+    return await this.create(Post)
+  }
+
   async create(post: Post) {
     try {
       const article = JSON.stringify({
@@ -166,6 +187,7 @@ class Devto {
         }
       })
       const { data } = await this.axios.post(`/articles`, article)
+
       return {
         title: data.title,
         url: data.url,
@@ -173,9 +195,8 @@ class Devto {
         tags: data.tag_list,
         featuredImage: data.cover_image,
         client: {
-          name: this.app.name,
-          website: this.app.website,
-          icon: this.app.icon
+          name: 'DEV Community',
+          website: 'https://dev.to'
         }
       }
     } catch (e) {

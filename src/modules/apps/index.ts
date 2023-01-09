@@ -61,6 +61,17 @@ const typeDefs = gql`
     slug: String
   }
 
+  input DevTo {
+    action: String!
+    canonicalUrl: String
+    page: Int
+    publishedStatus: String
+    contentId: String
+    series: String
+    per_page: Int
+    contentStatus: String
+  }
+
   input AppFiltersInput {
     terms: String
   }
@@ -78,6 +89,8 @@ const typeDefs = gql`
   input Apps {
     medium: Medium
     hashnode: HashNode
+    devto: DevTo
+    isMain: String
   }
 
   enum Format {

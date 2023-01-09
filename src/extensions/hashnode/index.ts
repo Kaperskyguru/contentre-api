@@ -2,6 +2,7 @@ import { ApolloError } from 'apollo-server-errors'
 import { environment } from '@/helpers/environment'
 import axios from 'axios'
 import { ConnectedApp } from '@prisma/client'
+import { NodeHtmlMarkdown } from 'node-html-markdown'
 
 interface Post {
   title: string
@@ -208,6 +209,32 @@ class Hashnode {
     )
   }
 
+  async publish(input: any) {
+    const { apps } = input
+
+    const title = input.title
+    const content = input.content ?? input.excerpt
+    const tags = input.tags
+
+    const hashNodeData = apps.hashnode
+
+    let formatContent = `
+    ${content!}
+    `
+
+    const Post = {
+      title: title!,
+      content: formatContent,
+      canonicalUrl: !hashNodeData.canonicalUrl
+        ? input.canonicalUrl
+        : hashNodeData.canonicalUrl,
+      tags: tags!,
+      hideFromHashnodeFeed: hashNodeData.hideFromHashnodeFeed
+    }
+
+    return await this.create(Post)
+  }
+
   async createPublicationStory(
     publication: any,
     post: Post,
@@ -222,6 +249,8 @@ class Hashnode {
     if (post.featuredImage) {
       input['coverImageURL'] = post.featuredImage
     }
+
+    let markdown = NodeHtmlMarkdown.translate(post.content)
 
     const queries = {
       query: `mutation CreatePublicationStory($publicationId: String!, $input: CreateStoryInput!, $hideFromHashnodeFeed: Boolean) {
@@ -243,7 +272,7 @@ class Hashnode {
         hideFromHashnodeFeed: hideFromFeed,
         input: {
           title: post.title,
-          contentMarkdown: post.content, //'# You can put Markdown here.\n***\n',
+          contentMarkdown: markdown,
           tags: [], // Create Tags in DB
           subtitle: post.excerpt,
           ...input
@@ -276,7 +305,7 @@ class Hashnode {
         featuredImage: post.coverImage,
         client: {
           name: 'Hashnode',
-          website: 'https://hashnode.com/'
+          website: 'https://hashnode.com'
         }
       }
     } catch (e) {
