@@ -93,24 +93,6 @@ class Medium {
     }
   }
 
-  // async publish(publicationId: string, data: Post | null): Promise<boolean> {
-  //   if (!this.axios) {
-  //     logHelper('Medium %o', {
-  //       data
-  //     })
-  //     throw new ApolloError('')
-  //   }
-
-  //   // Get User
-  //   const userInfo = await this.user()
-  //   if (!userInfo) {
-  //     throw new ApolloError('User not found', '404')
-  //   }
-
-  //   const res = await this.axios.post(`/publications/${publicationId}/posts`)
-  //   return res.data.data
-  // }
-
   async user(): Promise<MediumUser> {
     if (!this.axios) {
       throw new ApolloError('')
