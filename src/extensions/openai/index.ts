@@ -69,6 +69,18 @@ VI. Conclusion`
     logError('createOutline %o', e)
 
     const message = useErrorParser(e)
+
+    if (
+      message.includes(
+        'That model is currently overloaded with other requests.'
+      ) ||
+      message.includes('Too many requests')
+    )
+      throw new ApolloError(
+        'Our AI is busy at the moment. Please try again',
+        '401'
+      )
+
     throw new ApolloError(message, e.code ?? '500')
   }
 }
@@ -97,26 +109,93 @@ const createSummary = async (input: any) => {
   }
 }
 
-const createCodeSnippet = async (input: any) => {
+const create = async (input: any) => {
   if (!openai) {
-    logHelper('createCodeSnippet %o', input)
+    logHelper('createWithAI %o', input)
 
     return false
   }
   try {
-    return await openai.createCompletion({
+    const response = await openai.createCompletion({
       model: 'text-davinci-003',
-      prompt: 'Say this is a test',
+      prompt: input.title,
       temperature: 0.3,
       max_tokens: 150,
       top_p: 1.0,
       frequency_penalty: 0.0,
       presence_penalty: 0.0
     })
+
+    if (response && response?.data) return response.data
   } catch (e) {
-    logError('createCodeSnippet %o', e)
+    logError('createWithAI %o', e)
 
     const message = useErrorParser(e)
+
+    if (
+      message.includes(
+        'That model is currently overloaded with other requests.'
+      ) ||
+      message.includes('Too many requests')
+    )
+      throw new ApolloError(
+        'Our AI is busy at the moment. Please try again',
+        '401'
+      )
+
+    throw new ApolloError(message, e.code ?? '500')
+  }
+}
+
+const createCodeSnippet = async (input: any) => {
+  if (!openai) {
+    logHelper('createCodeSnippet %o', input)
+
+    const code = `
+    function fibonacci(n) {
+      if (n < 2) {
+        return n;
+      }
+      return fibonacci(n - 1) + fibonacci(n - 2);
+    }
+    
+    console.log(fibonacci(10));
+    `
+
+    return {
+      choices: [
+        {
+          text: code
+        }
+      ]
+    }
+  }
+  try {
+    const res = await openai.createCompletion({
+      model: 'code-davinci-002',
+      prompt: `/* ${input.title} */`,
+      temperature: 0,
+      max_tokens: 256,
+      top_p: 1,
+      frequency_penalty: 0.0,
+      presence_penalty: 0.0
+    })
+    if (res && res?.data) return res.data
+  } catch (e) {
+    logError('createCodeSnippet %o', e)
+    const message = useErrorParser(e)
+
+    if (
+      message.includes(
+        'That model is currently overloaded with other requests.'
+      ) ||
+      message.includes('Too many requests')
+    )
+      throw new ApolloError(
+        'Our AI is busy at the moment. Please try again',
+        '401'
+      )
+
     throw new ApolloError(message, e.code ?? '500')
   }
 }
@@ -124,5 +203,6 @@ const createCodeSnippet = async (input: any) => {
 export default {
   createCodeSnippet,
   createOutline,
-  createSummary
+  createSummary,
+  create
 }

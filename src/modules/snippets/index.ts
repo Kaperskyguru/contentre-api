@@ -24,7 +24,7 @@ const typeDefs = gql`
 
   input CreateSnippetInput {
     title: String!
-    content: String!
+    content: String
   }
 
   input UpdateSnippetInput {
