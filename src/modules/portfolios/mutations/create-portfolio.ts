@@ -42,6 +42,7 @@ export default async (
     let clientId = input.clientId ?? undefined
     let categoryId = input.categoryId ?? undefined
     let tags = input.tags ?? undefined
+    let showInDirectory = input.showInDirectory ?? undefined
     let googleAnalyticId = input.googleAnalyticId ?? undefined
     let password = input.password ?? undefined
     let shouldCustomize = input.shouldCustomize ?? false
@@ -64,6 +65,7 @@ export default async (
           topics,
           categoryId,
           tags,
+          showInDirectory: showInDirectory!,
           googleAnalyticId,
           password,
           customDomain,
@@ -110,6 +112,7 @@ export default async (
         categoryId,
         tags,
         topics,
+        showInDirectory: showInDirectory!,
         googleAnalyticId,
         customDomain,
         password,

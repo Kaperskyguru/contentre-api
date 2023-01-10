@@ -425,6 +425,7 @@ export type CreatePortfolioInput = {
   googleAnalyticId?: InputMaybe<Scalars['String']>;
   password?: InputMaybe<Scalars['String']>;
   shouldCustomize?: InputMaybe<Scalars['Boolean']>;
+  showInDirectory?: InputMaybe<Scalars['Boolean']>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   templateId?: InputMaybe<Scalars['ID']>;
   title: Scalars['String'];
@@ -1339,6 +1340,7 @@ export type Portfolio = {
   isCustomized?: Maybe<Scalars['Boolean']>;
   isPremium?: Maybe<Scalars['Boolean']>;
   password?: Maybe<Scalars['String']>;
+  showInDirectory?: Maybe<Scalars['Boolean']>;
   template?: Maybe<UserTemplate>;
   templateId: Scalars['ID'];
   title: Scalars['String'];
@@ -2035,6 +2037,7 @@ export type UpdatePortfolioInput = {
   googleAnalyticId?: InputMaybe<Scalars['String']>;
   password?: InputMaybe<Scalars['String']>;
   shouldCustomize?: InputMaybe<Scalars['Boolean']>;
+  showInDirectory?: InputMaybe<Scalars['Boolean']>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   templateId?: InputMaybe<Scalars['ID']>;
   title?: InputMaybe<Scalars['String']>;
@@ -3011,6 +3014,7 @@ export type PortfolioResolvers<ContextType = any, ParentType extends ResolversPa
   isCustomized?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   isPremium?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   password?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  showInDirectory?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   template?: Resolver<Maybe<ResolversTypes['UserTemplate']>, ParentType, ContextType>;
   templateId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
