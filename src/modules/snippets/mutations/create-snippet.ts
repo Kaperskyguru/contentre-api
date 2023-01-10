@@ -3,7 +3,9 @@ import { logError, logMutation } from '@/helpers/logger'
 import { Context } from '@/types'
 import { MutationCreateSnippetArgs, Snippet } from '@/types/modules'
 import { ApolloError } from 'apollo-server-core'
+import openAi from '@extensions/openai'
 import sendToSegment from '@extensions/segment-service/segment'
+import totalSnippets from '../fields/total-snippets'
 
 export default async (
   _parent: unknown,
@@ -23,12 +25,33 @@ export default async (
 
     if (!user) throw new ApolloError('You must be logged in.', '401')
 
+    const totalSnippet = await totalSnippets(user)
+
+    if (!user.isPremium && (totalSnippet ?? 0) >= 1)
+      throw new ApolloError('You have exceeded your snippet limit.', '401')
+
+    // Check if Content
+    let snippet
+    if (!content) {
+      // Use AI
+
+      const res = await openAi.createCodeSnippet({
+        title
+      })
+
+      const { choices }: any = res
+      snippet = choices && choices[0]?.text
+      if (!snippet) throw new ApolloError('Snippet not created', '500')
+    }
+
+    const formatted = generateSnippet(content ?? snippet)
+
     // If success, create a new snippet in our DB
     const [result, countSnippets] = await prisma.$transaction([
       prisma.content.create({
         data: {
           title,
-          content,
+          content: formatted,
           status: 'DRAFT',
           class: 'SNIPPET',
           excerpt: '',
@@ -78,4 +101,9 @@ export default async (
 
     throw new ApolloError(message, e.code ?? '500', { sentryId })
   }
+}
+
+function generateSnippet(content: string) {
+  return `
+        <pre>${content}</pre>`
 }
