@@ -13,6 +13,7 @@ interface PortfolioInput {
   isPremium?: boolean
   categoryId?: string
   tags?: Array<string>
+  showInDirectory: boolean
   topics?: Array<string>
   shouldCustomize: boolean
   googleAnalyticId?: string
@@ -29,6 +30,7 @@ export const createPortfolio = async (
     clientId,
     categoryId,
     tags,
+    showInDirectory,
     topics,
     isPremium,
     shouldCustomize,
@@ -68,6 +70,7 @@ export const createPortfolio = async (
   if (categoryId !== undefined) data.category = { connect: { id: categoryId } }
   if (clientId !== undefined) data.client = { connect: { id: clientId } }
   if (tags !== undefined) data.tags = tags
+  if (showInDirectory !== undefined) data.showInDirectory = showInDirectory
   if (topics !== undefined) data.topics = topics
   if (googleAnalyticId !== undefined) data.googleAnalyticId = googleAnalyticId
   if (password !== undefined) data.password = password

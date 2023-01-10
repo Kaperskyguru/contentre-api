@@ -21,6 +21,7 @@ const typeDefs = gql`
     url: String!
     isPremium: Boolean
     description: String
+    showInDirectory: Boolean
     templateId: ID!
     isCustomized: Boolean
     userTemplate: UserTemplate
@@ -98,6 +99,7 @@ const typeDefs = gql`
     categoryId: ID
     customDomain: String
     googleAnalyticId: String
+    showInDirectory: Boolean
     password: String
     tags: [String!]
     topics: [String!]
@@ -125,6 +127,7 @@ const typeDefs = gql`
     templateId: ID
     googleAnalyticId: String
     customDomain: String
+    showInDirectory: Boolean
     password: String
     clientId: ID
     categoryId: ID
