@@ -19,6 +19,12 @@ export type Scalars = {
   Time: any;
 };
 
+export type AiResponse = {
+  __typename?: 'AIResponse';
+  content?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+};
+
 export type AllPortfolioFiltersInput = {
   skills?: InputMaybe<Array<Scalars['String']>>;
   specialism?: InputMaybe<Array<Scalars['String']>>;
@@ -425,6 +431,7 @@ export type CreatePortfolioInput = {
   googleAnalyticId?: InputMaybe<Scalars['String']>;
   password?: InputMaybe<Scalars['String']>;
   shouldCustomize?: InputMaybe<Scalars['Boolean']>;
+  showInDirectory?: InputMaybe<Scalars['Boolean']>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   templateId?: InputMaybe<Scalars['ID']>;
   title: Scalars['String'];
@@ -437,7 +444,7 @@ export type CreateProfileInput = {
 };
 
 export type CreateSnippetInput = {
-  content: Scalars['String'];
+  content?: InputMaybe<Scalars['String']>;
   title: Scalars['String'];
 };
 
@@ -543,6 +550,10 @@ export type Feature = {
 export type Format =
   | 'HTML'
   | 'MARKDOWN';
+
+export type GenerateWithAiInput = {
+  title: Scalars['String'];
+};
 
 export type HashNode = {
   action: Scalars['String'];
@@ -1339,6 +1350,7 @@ export type Portfolio = {
   isCustomized?: Maybe<Scalars['Boolean']>;
   isPremium?: Maybe<Scalars['Boolean']>;
   password?: Maybe<Scalars['String']>;
+  showInDirectory?: Maybe<Scalars['Boolean']>;
   template?: Maybe<UserTemplate>;
   templateId: Scalars['ID'];
   title: Scalars['String'];
@@ -1420,6 +1432,7 @@ export type PullContentInput = {
 
 export type Query = {
   __typename?: 'Query';
+  generateWithAI: AiResponse;
   getAllPortfolios?: Maybe<AllPortfoliosResponse>;
   getApps: AppResponse;
   getBoxStats?: Maybe<BoxStats>;
@@ -1468,6 +1481,11 @@ export type Query = {
   getTopics: TopicResponse;
   getUser: User;
   getVersion: Scalars['String'];
+};
+
+
+export type QueryGenerateWithAiArgs = {
+  input: GenerateWithAiInput;
 };
 
 
@@ -2035,6 +2053,7 @@ export type UpdatePortfolioInput = {
   googleAnalyticId?: InputMaybe<Scalars['String']>;
   password?: InputMaybe<Scalars['String']>;
   shouldCustomize?: InputMaybe<Scalars['Boolean']>;
+  showInDirectory?: InputMaybe<Scalars['Boolean']>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   templateId?: InputMaybe<Scalars['ID']>;
   title?: InputMaybe<Scalars['String']>;
@@ -2238,6 +2257,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  AIResponse: ResolverTypeWrapper<AiResponse>;
   AllPortfolioFiltersInput: AllPortfolioFiltersInput;
   AllPortfoliosResponse: ResolverTypeWrapper<AllPortfoliosResponse>;
   App: ResolverTypeWrapper<App>;
@@ -2304,6 +2324,7 @@ export type ResolversTypes = {
   Feature: ResolverTypeWrapper<Feature>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Format: Format;
+  GenerateWithAIInput: GenerateWithAiInput;
   HashNode: HashNode;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   IndexMetadataResponse: ResolverTypeWrapper<IndexMetadataResponse>;
@@ -2409,6 +2430,7 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  AIResponse: AiResponse;
   AllPortfolioFiltersInput: AllPortfolioFiltersInput;
   AllPortfoliosResponse: AllPortfoliosResponse;
   App: App;
@@ -2472,6 +2494,7 @@ export type ResolversParentTypes = {
   DevTo: DevTo;
   Feature: Feature;
   Float: Scalars['Float'];
+  GenerateWithAIInput: GenerateWithAiInput;
   HashNode: HashNode;
   ID: Scalars['ID'];
   IndexMetadataResponse: IndexMetadataResponse;
@@ -2565,6 +2588,12 @@ export type ResolversParentTypes = {
   UserTeamsRelation: UserTeamsRelation;
   UserTemplate: UserTemplate;
   subUser: SubUser;
+};
+
+export type AiResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['AIResponse'] = ResolversParentTypes['AIResponse']> = {
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type AllPortfoliosResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['AllPortfoliosResponse'] = ResolversParentTypes['AllPortfoliosResponse']> = {
@@ -3011,6 +3040,7 @@ export type PortfolioResolvers<ContextType = any, ParentType extends ResolversPa
   isCustomized?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   isPremium?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   password?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  showInDirectory?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   template?: Resolver<Maybe<ResolversTypes['UserTemplate']>, ParentType, ContextType>;
   templateId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3060,6 +3090,7 @@ export type PortfolioResponseResolvers<ContextType = any, ParentType extends Res
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  generateWithAI?: Resolver<ResolversTypes['AIResponse'], ParentType, ContextType, RequireFields<QueryGenerateWithAiArgs, 'input'>>;
   getAllPortfolios?: Resolver<Maybe<ResolversTypes['AllPortfoliosResponse']>, ParentType, ContextType, RequireFields<QueryGetAllPortfoliosArgs, never>>;
   getApps?: Resolver<ResolversTypes['AppResponse'], ParentType, ContextType, RequireFields<QueryGetAppsArgs, never>>;
   getBoxStats?: Resolver<Maybe<ResolversTypes['BoxStats']>, ParentType, ContextType, RequireFields<QueryGetBoxStatsArgs, never>>;
@@ -3304,6 +3335,7 @@ export type SubUserResolvers<ContextType = any, ParentType extends ResolversPare
 };
 
 export type Resolvers<ContextType = any> = {
+  AIResponse?: AiResponseResolvers<ContextType>;
   AllPortfoliosResponse?: AllPortfoliosResponseResolvers<ContextType>;
   App?: AppResolvers<ContextType>;
   AppResponse?: AppResponseResolvers<ContextType>;

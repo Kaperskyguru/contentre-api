@@ -73,6 +73,8 @@ export default async (
     if (description !== undefined) data.description = description
     if (templateId !== undefined) data.templateId = templateId
     if (input.tags !== undefined) data.tags = input.tags
+    if (input.showInDirectory !== undefined)
+      data.showInDirectory = input.showInDirectory
     if (input.topics !== undefined) data.topics = input.topics
     if (input.clientId !== undefined)
       data.client = { connect: { id: input.clientId } }

@@ -2,7 +2,6 @@ import { useErrorParser } from '@helpers'
 import { logError, logQuery } from '@helpers/logger'
 import {
   AllPortfoliosResponse,
-  Portfolio,
   QueryGetAllPortfoliosArgs
 } from '@modules-types'
 import { Context } from '@types'
@@ -16,8 +15,6 @@ export default async (
 ): Promise<AllPortfoliosResponse> => {
   logQuery('getAllPortfolios %o', user)
   try {
-    // if (!user) throw new ApolloError('You must be logged in.', '401')
-
     const where = whereAllPortfolios(filters)
 
     const portfolioWithTotal = await prisma.portfolio.count({
@@ -29,9 +26,8 @@ export default async (
       select: { id: true }
     })
 
-    //TODO: Try to order by Premium
     const portfolios = await prisma.portfolio.findMany({
-      orderBy: [{ title: 'desc' }],
+      orderBy: [{ user: { isPremium: 'desc' } }],
       where,
       include: { user: true },
       take: size ?? undefined,

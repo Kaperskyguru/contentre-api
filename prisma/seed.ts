@@ -29,6 +29,7 @@ const seedTemplates = async () => {
   const updateUser = await prisma.user.update({
     where: { id: user.id },
     data: {
+      isPremium: true,
       activeSubscription: { connect: { id: sub?.id! } },
       subscription: { connect: { id: sub?.id! } },
       activeTeam: {

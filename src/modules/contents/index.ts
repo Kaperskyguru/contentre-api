@@ -12,6 +12,7 @@ import getIndexMetadata from './queries/get-index-metadata'
 import getOverallStats from './queries/get-overall-stats'
 import getCategoryStats from './queries/get-category-stats'
 import getBoxStats from './queries/get-box-stats'
+import generateWithAI from './queries/generate-with-ai'
 import deleteBulkContent from './mutations/delete-bulk-content'
 import getContentStats from './queries/get-content-stats'
 import convertNoteContent from './mutations/convert-note-content'
@@ -117,6 +118,11 @@ const typeDefs = gql`
     totalContents: Int!
   }
 
+  type AIResponse {
+    content: String
+    title: String
+  }
+
   type OverallStatsResponse {
     stats: [Stat!]
     performance: Performance
@@ -192,6 +198,10 @@ const typeDefs = gql`
 
   input DeleteBulkContentInput {
     ids: [ID!]!
+  }
+
+  input GenerateWithAIInput {
+    title: String!
   }
 
   input UpdateContentInput {
@@ -289,6 +299,7 @@ const typeDefs = gql`
     getContentStats(filters: ContentFiltersInput): IndexMetadataResponse
     getCategoryStats(filters: ContentFiltersInput): OverallStatResponse
     getBoxStats(filters: ContentFiltersInput): BoxStats
+    generateWithAI(input: GenerateWithAIInput!): AIResponse!
   }
 
   extend type Mutation {
@@ -311,7 +322,8 @@ const resolvers: Resolvers = {
     getIndexMetadata,
     getOverallStats,
     getCategoryStats,
-    getBoxStats
+    getBoxStats,
+    generateWithAI
   },
 
   Mutation: {

@@ -8,6 +8,9 @@ export const whereAllPortfolios = (
 } => {
   return {
     AND: [
+      {
+        showInDirectory: true
+      },
       filters?.terms
         ? {
             OR: [

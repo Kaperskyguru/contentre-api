@@ -85,7 +85,8 @@ export default async (
         url: portfolioURL,
         title: 'Default',
         description: 'This is your default portfolio',
-        shouldCustomize: false
+        shouldCustomize: false,
+        showInDirectory: true
       },
       { user, prisma }
     )
