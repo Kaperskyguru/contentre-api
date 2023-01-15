@@ -73,7 +73,8 @@ export default async (
       eventName: 'user_deleted',
       userId: user.id,
       data: {
-        deleted: true
+        deleted: true,
+        feedback
       }
     })
 
