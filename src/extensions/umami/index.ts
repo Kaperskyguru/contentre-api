@@ -74,7 +74,7 @@ export const createWebsite = async ({
     return data
   } catch (error) {
     console.log(error)
-    throw error
+    console.log(error)
   }
 }
 
@@ -96,7 +96,7 @@ export const getWebsite = async ({ id }: { id: string }) => {
     const { data } = response
     return data
   } catch (error) {
-    throw error
+    console.log(error)
   }
 }
 
@@ -123,7 +123,7 @@ export const getUserWebsites = async (options?: {
     const { data } = response
     return data
   } catch (error) {
-    throw error
+    console.log(error)
   }
 }
 
@@ -147,7 +147,7 @@ export const getUser = async (options: { id: string }) => {
     const { data } = response
     return data
   } catch (error) {
-    throw error
+    console.log(error)
   }
 }
 
@@ -183,7 +183,7 @@ export const getPageviews = async (
     return data
   } catch (error) {
     console.log(error)
-    throw error
+    console.log(error)
   }
 }
 
@@ -229,7 +229,7 @@ export const getStats = async (
     const { data } = response
     return data
   } catch (error) {
-    throw error
+    console.log(error)
   }
 }
 
@@ -267,7 +267,7 @@ export const createAccount = async ({
     const { data } = response
     return data
   } catch (error) {
-    throw error
+    console.log(error)
   }
 }
 
@@ -295,7 +295,7 @@ export const login = async (req: express.Request) => {
     const { data } = response
     return data
   } catch (error) {
-    throw error
+    console.log(error)
   }
 }
 
