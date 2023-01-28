@@ -3,6 +3,7 @@ import { Portfolio } from '@/types/modules'
 import { previsionCustomDomain } from '@extensions/cloudflare'
 
 import { PrismaClient, User as DBUser } from '@prisma/client'
+import { createWebsite } from '@extensions/umami'
 
 interface PortfolioInput {
   url: string
@@ -65,8 +66,18 @@ export const createPortfolio = async (
     }
   })
 
+  // Provision Analytics
+
+  const analytics = await createWebsite({
+    domain: url,
+    owner: user?.umamiUserId!,
+    name: `${title}-${user.username}`
+  })
+
   const data: Record<string, unknown> = {}
 
+  if (analytics && analytics?.websiteUuid)
+    data.analyticsId = analytics.websiteUuid
   if (categoryId !== undefined) data.category = { connect: { id: categoryId } }
   if (clientId !== undefined) data.client = { connect: { id: clientId } }
   if (tags !== undefined) data.tags = tags

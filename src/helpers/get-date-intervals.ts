@@ -40,7 +40,7 @@ export const getDateIntervals = (
   if (filters?.fromDate && !filters.toDate) {
     // When user select only fromDate
     fromDate = parseISO(filters.fromDate)
-    toDate = endOfMonth(addMonths(fromDate, duration))
+    toDate = addMonths(fromDate, duration)
 
     // When user select only fromDate less than 6 months interval
     if (getMonth(toDate) !== getMonth(new Date())) {
@@ -48,25 +48,25 @@ export const getDateIntervals = (
     }
   } else if (filters?.toDate && !filters.fromDate) {
     // When user select only toDate without starting date.
-    toDate = endOfMonth(parseISO(filters.toDate))
+    toDate = parseISO(filters.toDate)
     fromDate = startOfMonth(subMonths(toDate, duration))
   } else if (filters?.fromDate && filters?.toDate) {
     // When user select fromDate and toDate.
-    toDate = endOfMonth(parseISO(filters.toDate))
+    toDate = parseISO(filters.toDate)
     fromDate = parseISO(filters.fromDate)
 
     // When user select fromDate and toDate greater than 6 months interval
-    if (differenceInMonths(toDate, fromDate) > duration + 1) {
-      throw new Error(`you need at most ${duration + 1} months of difference`)
-    }
+    // if (differenceInMonths(toDate, fromDate) > duration + 1) {
+    //   throw new Error(`you need at most ${duration + 1} months of difference`)
+    // }
   } else {
     // When user does not select any date range.
     if (filters && filters.daily) {
       toDate = parseISO(new Date().toISOString())
     } else {
       toDate = filters?.toDate
-        ? endOfMonth(parseISO(filters.toDate))
-        : endOfMonth(parseISO(new Date().toISOString()))
+        ? parseISO(filters.toDate)
+        : parseISO(new Date().toISOString())
     }
 
     fromDate = filters?.fromDate

@@ -12,6 +12,10 @@ export interface Environment {
     introspection: boolean
     playground: boolean
   }
+  umami: {
+    token: string
+    baseURL: string
+  }
   mailchimp: {
     key: string
     server: string
@@ -137,6 +141,10 @@ export const environment: Environment = {
   },
   database: {
     url: process.env.DATABASE_URL as string
+  },
+  umami: {
+    token: process.env.UMAMI_TOKEN as string,
+    baseURL: process.env.UMAMI_BASE_URL as string
   },
   auth: {
     saltRounds: Number(process.env.AUTH_SALT_ROUNDS) || 10,

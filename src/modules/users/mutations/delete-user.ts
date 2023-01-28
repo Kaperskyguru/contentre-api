@@ -45,6 +45,8 @@ export default async (
       //   await deleteFile(user.avatarURL)
     }
 
+    // Delete Umami Analytics
+
     // Invalidate the token ensuring the cookie has expired.
     setCookies?.push({
       name: 'token',

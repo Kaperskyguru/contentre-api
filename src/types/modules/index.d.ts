@@ -37,6 +37,12 @@ export type AllPortfoliosResponse = {
   portfolios: Array<Portfolio>;
 };
 
+export type AnalyticStat = {
+  __typename?: 'AnalyticStat';
+  t?: Maybe<Scalars['Time']>;
+  y?: Maybe<Scalars['Int']>;
+};
+
 export type App = {
   __typename?: 'App';
   app?: Maybe<Integration>;
@@ -1362,6 +1368,12 @@ export type Portfolio = {
   userTemplate?: Maybe<UserTemplate>;
 };
 
+export type PortfolioAnalyticTotal = {
+  __typename?: 'PortfolioAnalyticTotal';
+  pageviews?: Maybe<Array<Maybe<AnalyticStat>>>;
+  sessions?: Maybe<Array<Maybe<AnalyticStat>>>;
+};
+
 export type PortfolioContent = {
   __typename?: 'PortfolioContent';
   categories?: Maybe<Array<Category>>;
@@ -1390,6 +1402,7 @@ export type PortfolioContentFilters = {
 export type PortfolioDetail = {
   __typename?: 'PortfolioDetail';
   about?: Maybe<Scalars['String']>;
+  analyticsId?: Maybe<Scalars['String']>;
   contact?: Maybe<Contact>;
   coverImage?: Maybe<Scalars['String']>;
   css?: Maybe<Scalars['String']>;
@@ -1411,7 +1424,12 @@ export type PortfolioDetailsFilters = {
 };
 
 export type PortfolioFiltersInput = {
+  fromDate?: InputMaybe<Scalars['Time']>;
+  period?: InputMaybe<Scalars['String']>;
+  portfolioId?: InputMaybe<Scalars['ID']>;
   terms?: InputMaybe<Scalars['String']>;
+  toDate?: InputMaybe<Scalars['Time']>;
+  unit?: InputMaybe<Scalars['String']>;
 };
 
 export type PortfolioLink = {
@@ -1424,6 +1442,20 @@ export type PortfolioResponse = {
   __typename?: 'PortfolioResponse';
   meta: Meta;
   portfolios: Array<Portfolio>;
+};
+
+export type PortfolioStatTotal = {
+  __typename?: 'PortfolioStatTotal';
+  totalBounces?: Maybe<TotalStat>;
+  totalPageViews?: Maybe<TotalStat>;
+  totalUniques?: Maybe<TotalStat>;
+  totalUsers?: Maybe<TotalStat>;
+};
+
+export type PortfolioStats = {
+  __typename?: 'PortfolioStats';
+  analytics?: Maybe<PortfolioAnalyticTotal>;
+  stats?: Maybe<PortfolioStatTotal>;
 };
 
 export type PullContentInput = {
@@ -1464,6 +1496,7 @@ export type Query = {
   getPortfolio: Portfolio;
   getPortfolioContent?: Maybe<PortfolioContent>;
   getPortfolioDetail: PortfolioDetail;
+  getPortfolioStats?: Maybe<PortfolioStats>;
   getPortfolios: PortfolioResponse;
   getSnippet: Snippet;
   getSnippets: SnippetResponse;
@@ -1660,6 +1693,11 @@ export type QueryGetPortfolioContentArgs = {
 
 export type QueryGetPortfolioDetailArgs = {
   filters: PortfolioDetailsFilters;
+};
+
+
+export type QueryGetPortfolioStatsArgs = {
+  filters?: InputMaybe<PortfolioFiltersInput>;
 };
 
 
@@ -1970,6 +2008,12 @@ export type TopicResponse = {
   topics: Array<Topic>;
 };
 
+export type TotalStat = {
+  __typename?: 'TotalStat';
+  change?: Maybe<Scalars['Int']>;
+  value?: Maybe<Scalars['Int']>;
+};
+
 export type UpdateAppInput = {
   isActivated?: InputMaybe<Scalars['Boolean']>;
   key?: InputMaybe<Scalars['String']>;
@@ -2260,6 +2304,7 @@ export type ResolversTypes = {
   AIResponse: ResolverTypeWrapper<AiResponse>;
   AllPortfolioFiltersInput: AllPortfolioFiltersInput;
   AllPortfoliosResponse: ResolverTypeWrapper<AllPortfoliosResponse>;
+  AnalyticStat: ResolverTypeWrapper<AnalyticStat>;
   App: ResolverTypeWrapper<App>;
   AppData: AppData;
   AppFiltersInput: AppFiltersInput;
@@ -2361,6 +2406,7 @@ export type ResolversTypes = {
   Performance: ResolverTypeWrapper<Performance>;
   Plan: ResolverTypeWrapper<Plan>;
   Portfolio: ResolverTypeWrapper<Portfolio>;
+  PortfolioAnalyticTotal: ResolverTypeWrapper<PortfolioAnalyticTotal>;
   PortfolioContent: ResolverTypeWrapper<PortfolioContent>;
   PortfolioContentFilters: PortfolioContentFilters;
   PortfolioDetail: ResolverTypeWrapper<PortfolioDetail>;
@@ -2368,6 +2414,8 @@ export type ResolversTypes = {
   PortfolioFiltersInput: PortfolioFiltersInput;
   PortfolioLink: ResolverTypeWrapper<PortfolioLink>;
   PortfolioResponse: ResolverTypeWrapper<PortfolioResponse>;
+  PortfolioStatTotal: ResolverTypeWrapper<PortfolioStatTotal>;
+  PortfolioStats: ResolverTypeWrapper<PortfolioStats>;
   PullContentInput: PullContentInput;
   Query: ResolverTypeWrapper<{}>;
   RegisterUserInput: RegisterUserInput;
@@ -2401,6 +2449,7 @@ export type ResolversTypes = {
   Topic: ResolverTypeWrapper<Topic>;
   TopicFiltersInput: TopicFiltersInput;
   TopicResponse: ResolverTypeWrapper<TopicResponse>;
+  TotalStat: ResolverTypeWrapper<TotalStat>;
   UpdateAppInput: UpdateAppInput;
   UpdateBriefInput: UpdateBriefInput;
   UpdateCategoryInput: UpdateCategoryInput;
@@ -2433,6 +2482,7 @@ export type ResolversParentTypes = {
   AIResponse: AiResponse;
   AllPortfolioFiltersInput: AllPortfolioFiltersInput;
   AllPortfoliosResponse: AllPortfoliosResponse;
+  AnalyticStat: AnalyticStat;
   App: App;
   AppData: AppData;
   AppFiltersInput: AppFiltersInput;
@@ -2528,6 +2578,7 @@ export type ResolversParentTypes = {
   Performance: Performance;
   Plan: Plan;
   Portfolio: Portfolio;
+  PortfolioAnalyticTotal: PortfolioAnalyticTotal;
   PortfolioContent: PortfolioContent;
   PortfolioContentFilters: PortfolioContentFilters;
   PortfolioDetail: PortfolioDetail;
@@ -2535,6 +2586,8 @@ export type ResolversParentTypes = {
   PortfolioFiltersInput: PortfolioFiltersInput;
   PortfolioLink: PortfolioLink;
   PortfolioResponse: PortfolioResponse;
+  PortfolioStatTotal: PortfolioStatTotal;
+  PortfolioStats: PortfolioStats;
   PullContentInput: PullContentInput;
   Query: {};
   RegisterUserInput: RegisterUserInput;
@@ -2564,6 +2617,7 @@ export type ResolversParentTypes = {
   Topic: Topic;
   TopicFiltersInput: TopicFiltersInput;
   TopicResponse: TopicResponse;
+  TotalStat: TotalStat;
   UpdateAppInput: UpdateAppInput;
   UpdateBriefInput: UpdateBriefInput;
   UpdateCategoryInput: UpdateCategoryInput;
@@ -2599,6 +2653,12 @@ export type AiResponseResolvers<ContextType = any, ParentType extends ResolversP
 export type AllPortfoliosResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['AllPortfoliosResponse'] = ResolversParentTypes['AllPortfoliosResponse']> = {
   meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
   portfolios?: Resolver<Array<ResolversTypes['Portfolio']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AnalyticStatResolvers<ContextType = any, ParentType extends ResolversParentTypes['AnalyticStat'] = ResolversParentTypes['AnalyticStat']> = {
+  t?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>;
+  y?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3053,6 +3113,12 @@ export type PortfolioResolvers<ContextType = any, ParentType extends ResolversPa
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type PortfolioAnalyticTotalResolvers<ContextType = any, ParentType extends ResolversParentTypes['PortfolioAnalyticTotal'] = ResolversParentTypes['PortfolioAnalyticTotal']> = {
+  pageviews?: Resolver<Maybe<Array<Maybe<ResolversTypes['AnalyticStat']>>>, ParentType, ContextType>;
+  sessions?: Resolver<Maybe<Array<Maybe<ResolversTypes['AnalyticStat']>>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type PortfolioContentResolvers<ContextType = any, ParentType extends ResolversParentTypes['PortfolioContent'] = ResolversParentTypes['PortfolioContent']> = {
   categories?: Resolver<Maybe<Array<ResolversTypes['Category']>>, ParentType, ContextType>;
   clients?: Resolver<Maybe<Array<ResolversTypes['Client']>>, ParentType, ContextType>;
@@ -3064,6 +3130,7 @@ export type PortfolioContentResolvers<ContextType = any, ParentType extends Reso
 
 export type PortfolioDetailResolvers<ContextType = any, ParentType extends ResolversParentTypes['PortfolioDetail'] = ResolversParentTypes['PortfolioDetail']> = {
   about?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  analyticsId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   contact?: Resolver<Maybe<ResolversTypes['Contact']>, ParentType, ContextType>;
   coverImage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   css?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3086,6 +3153,20 @@ export type PortfolioLinkResolvers<ContextType = any, ParentType extends Resolve
 export type PortfolioResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['PortfolioResponse'] = ResolversParentTypes['PortfolioResponse']> = {
   meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
   portfolios?: Resolver<Array<ResolversTypes['Portfolio']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PortfolioStatTotalResolvers<ContextType = any, ParentType extends ResolversParentTypes['PortfolioStatTotal'] = ResolversParentTypes['PortfolioStatTotal']> = {
+  totalBounces?: Resolver<Maybe<ResolversTypes['TotalStat']>, ParentType, ContextType>;
+  totalPageViews?: Resolver<Maybe<ResolversTypes['TotalStat']>, ParentType, ContextType>;
+  totalUniques?: Resolver<Maybe<ResolversTypes['TotalStat']>, ParentType, ContextType>;
+  totalUsers?: Resolver<Maybe<ResolversTypes['TotalStat']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PortfolioStatsResolvers<ContextType = any, ParentType extends ResolversParentTypes['PortfolioStats'] = ResolversParentTypes['PortfolioStats']> = {
+  analytics?: Resolver<Maybe<ResolversTypes['PortfolioAnalyticTotal']>, ParentType, ContextType>;
+  stats?: Resolver<Maybe<ResolversTypes['PortfolioStatTotal']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3122,6 +3203,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getPortfolio?: Resolver<ResolversTypes['Portfolio'], ParentType, ContextType, RequireFields<QueryGetPortfolioArgs, 'id'>>;
   getPortfolioContent?: Resolver<Maybe<ResolversTypes['PortfolioContent']>, ParentType, ContextType, RequireFields<QueryGetPortfolioContentArgs, 'filters'>>;
   getPortfolioDetail?: Resolver<ResolversTypes['PortfolioDetail'], ParentType, ContextType, RequireFields<QueryGetPortfolioDetailArgs, 'filters'>>;
+  getPortfolioStats?: Resolver<Maybe<ResolversTypes['PortfolioStats']>, ParentType, ContextType, RequireFields<QueryGetPortfolioStatsArgs, never>>;
   getPortfolios?: Resolver<ResolversTypes['PortfolioResponse'], ParentType, ContextType, RequireFields<QueryGetPortfoliosArgs, never>>;
   getSnippet?: Resolver<ResolversTypes['Snippet'], ParentType, ContextType, RequireFields<QueryGetSnippetArgs, 'id'>>;
   getSnippets?: Resolver<ResolversTypes['SnippetResponse'], ParentType, ContextType, RequireFields<QueryGetSnippetsArgs, never>>;
@@ -3279,6 +3361,12 @@ export type TopicResponseResolvers<ContextType = any, ParentType extends Resolve
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type TotalStatResolvers<ContextType = any, ParentType extends ResolversParentTypes['TotalStat'] = ResolversParentTypes['TotalStat']> = {
+  change?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  value?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   activeRole?: Resolver<Maybe<ResolversTypes['MemberRole']>, ParentType, ContextType>;
   activeSubscription?: Resolver<Maybe<ResolversTypes['Subscription']>, ParentType, ContextType>;
@@ -3337,6 +3425,7 @@ export type SubUserResolvers<ContextType = any, ParentType extends ResolversPare
 export type Resolvers<ContextType = any> = {
   AIResponse?: AiResponseResolvers<ContextType>;
   AllPortfoliosResponse?: AllPortfoliosResponseResolvers<ContextType>;
+  AnalyticStat?: AnalyticStatResolvers<ContextType>;
   App?: AppResolvers<ContextType>;
   AppResponse?: AppResponseResolvers<ContextType>;
   BoxStats?: BoxStatsResolvers<ContextType>;
@@ -3375,10 +3464,13 @@ export type Resolvers<ContextType = any> = {
   Performance?: PerformanceResolvers<ContextType>;
   Plan?: PlanResolvers<ContextType>;
   Portfolio?: PortfolioResolvers<ContextType>;
+  PortfolioAnalyticTotal?: PortfolioAnalyticTotalResolvers<ContextType>;
   PortfolioContent?: PortfolioContentResolvers<ContextType>;
   PortfolioDetail?: PortfolioDetailResolvers<ContextType>;
   PortfolioLink?: PortfolioLinkResolvers<ContextType>;
   PortfolioResponse?: PortfolioResponseResolvers<ContextType>;
+  PortfolioStatTotal?: PortfolioStatTotalResolvers<ContextType>;
+  PortfolioStats?: PortfolioStatsResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RevenueChart?: RevenueChartResolvers<ContextType>;
   Snippet?: SnippetResolvers<ContextType>;
@@ -3396,6 +3488,7 @@ export type Resolvers<ContextType = any> = {
   Time?: GraphQLScalarType;
   Topic?: TopicResolvers<ContextType>;
   TopicResponse?: TopicResponseResolvers<ContextType>;
+  TotalStat?: TotalStatResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserTemplate?: UserTemplateResolvers<ContextType>;
   subUser?: SubUserResolvers<ContextType>;
