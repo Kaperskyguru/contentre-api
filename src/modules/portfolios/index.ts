@@ -10,6 +10,7 @@ import updatePortfolio from './mutations/update-portfolio'
 import getTemplates from './queries/get-templates'
 import updateUserTemplate from './mutations/update-user-template'
 import getAllPortfolios from './queries/get-all-portfolios'
+import getPortfolioStats from './queries/get-portfolio-stats'
 
 const typeDefs = gql`
   type Portfolio {
@@ -51,6 +52,33 @@ const typeDefs = gql`
     updatedAt: Time!
   }
 
+  type TotalStat {
+    value: Int
+    change: Int
+  }
+
+  type PortfolioStatTotal {
+    totalPageViews: TotalStat
+    totalUniques: TotalStat
+    totalBounces: TotalStat
+    totalUsers: TotalStat
+  }
+
+  type AnalyticStat {
+    t: Time
+    y: Int
+  }
+
+  type PortfolioAnalyticTotal {
+    pageviews: [AnalyticStat]
+    sessions: [AnalyticStat]
+  }
+
+  type PortfolioStats {
+    stats: PortfolioStatTotal
+    analytics: PortfolioAnalyticTotal
+  }
+
   type PortfolioContent {
     contents: ContentResponse
     clients: [Client!]
@@ -75,6 +103,7 @@ const typeDefs = gql`
     html: String
     css: String
     about: String
+    analyticsId: String
     templateSlug: String!
     templateType: TemplateType!
     job: String
@@ -143,6 +172,11 @@ const typeDefs = gql`
 
   input PortfolioFiltersInput {
     terms: String
+    portfolioId: ID
+    unit: String
+    fromDate: Time
+    toDate: Time
+    period: String
   }
 
   input AllPortfolioFiltersInput {
@@ -197,7 +231,7 @@ const typeDefs = gql`
       skip: Int
       filters: TemplateFiltersInput
     ): [Template!]!
-
+    getPortfolioStats(filters: PortfolioFiltersInput): PortfolioStats
     getPortfolio(id: ID!): Portfolio!
     getPortfolioContent(
       size: Int
@@ -218,6 +252,7 @@ const resolvers: Resolvers = {
   Query: {
     getPortfolios,
     getPortfolio,
+    getPortfolioStats,
     getPortfolioContent,
     getPortfolioDetail,
     getTemplates,

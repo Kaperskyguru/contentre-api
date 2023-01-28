@@ -23,8 +23,6 @@ export default async (
 
       const portfolio = await getPortfolioFromCustomDomain(formattedURL)
 
-      console.log(formattedURL)
-
       if (!portfolio) throw new ApolloError('Portfolio not found', '404')
 
       const user = await getUserFromID(portfolio.userId)
@@ -88,6 +86,7 @@ async function resolver(user: any, portfolio: any) {
   const template = portfolio?.userTemplate?.template!
   return {
     html: portfolio?.userTemplate?.content,
+    analyticsId: portfolio.analyticsId,
     css: portfolio?.userTemplate?.css,
     templateType: template?.type,
     templateSlug: template?.slug,

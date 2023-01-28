@@ -7,6 +7,18 @@ import sendAddContent from '@extensions/cron-tasks/send-add-content'
 import sendAnalytics from '@extensions/cron-tasks/send-analytics'
 import { prisma } from './config'
 import sendToSegment from '@/extensions/segment-service/segment'
+import {
+  createAccount,
+  createWebsite,
+  getPageviews,
+  getStats,
+  getUser,
+  getUserWebsites,
+  getWebsite,
+  login
+} from '@extensions/umami'
+import { Context } from './types'
+import createUmamiAccounts from '@extensions/cron-tasks/create-umami-accounts'
 
 export const app = express()
 
@@ -15,6 +27,9 @@ const origins: Readonly<{
 }> = Object.freeze({
   LOCAL: [
     'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3002',
+    'https://hoppscotch.io',
     'https://bd3a-197-210-70-147.ngrok.io',
     /\.contentre.io\.local$/
   ],
@@ -25,6 +40,7 @@ const origins: Readonly<{
   ],
   STAGING: [
     'http://localhost:3000',
+    'https://hoppscotch.io',
     /https:\/\/staging.contentre\.io$/,
     /https:\/\/v2.contentre\.io$/
   ], // remove *
@@ -50,6 +66,17 @@ app.get('/cronjob/profile-update', async (req, res) => {
 app.get('/cronjob/analytics', async (req, res) => {
   await sendAnalytics()
   res.status(200).end(`messages sent`)
+})
+
+app.get('/umami/portfolio-analytics', async (req, res) => {
+  await createUmamiAccounts()
+  res.status(200).end(`portfolio analytics updated`)
+})
+
+//user => 'dc2540f3-38e3-4742-8a08-55a22bc7bb53'
+app.post('/umami/login', async (req, res) => {
+  const data = await login(req)
+  res.status(200).json(data)
 })
 
 // TODO: Send users actionable tasks to do to complete onboarding
