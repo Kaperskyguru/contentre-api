@@ -285,7 +285,7 @@ export const login = async (req: express.Request) => {
   try {
     const response = await axios({
       url: endpoint,
-      method: 'GET',
+      method: 'POST',
       data: JSON.stringify(body),
       headers: {
         ...headers
