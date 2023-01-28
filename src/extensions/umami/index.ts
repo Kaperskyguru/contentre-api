@@ -74,7 +74,6 @@ export const createWebsite = async ({
     return data
   } catch (error) {
     console.log(error)
-    console.log(error)
   }
 }
 
