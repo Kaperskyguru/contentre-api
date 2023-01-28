@@ -163,21 +163,6 @@ export const getPageviews = async (
   }
 
   try {
-    // if (options?.period === 'all') {
-    //   const response = await axios.get(endpoint, {
-    //     params: {
-    //       unit: options?.unit ?? 'day',
-    //       tz: options?.tz ?? 'Africa/Lagos'
-    //     },
-    //     headers: {
-    //       ...headers
-    //     }
-    //   })
-
-    //   const { data } = response
-    //   return data
-    // }
-
     const response = await axios.get(endpoint, {
       params: {
         ...getDateTime(options),
@@ -257,7 +242,7 @@ export const createAccount = async ({
   password: string
   account_uuid?: string
 }) => {
-  const endpoint = `http://localhost:3000/api/accounts`
+  const endpoint = `${environment.umami.baseURL}/accounts`
   const headers = {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${environment.umami.token}`
@@ -287,7 +272,7 @@ export const createAccount = async ({
 }
 
 export const login = async (req: express.Request) => {
-  const endpoint = `http://localhost:3000/api/auth/login`
+  const endpoint = `${environment.umami.baseURL}/auth/login`
   const headers = {
     'Content-Type': 'application/json'
   }
