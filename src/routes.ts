@@ -40,6 +40,7 @@ const origins: Readonly<{
   ],
   STAGING: [
     'http://localhost:3000',
+    'https://hoppscotch.io',
     /https:\/\/staging.contentre\.io$/,
     /https:\/\/v2.contentre\.io$/
   ], // remove *
@@ -73,7 +74,7 @@ app.get('/umami/portfolio-analytics', async (req, res) => {
 })
 
 //user => 'dc2540f3-38e3-4742-8a08-55a22bc7bb53'
-app.get('/umami/login', async (req, res) => {
+app.post('/umami/login', async (req, res) => {
   const data = await login(req)
   res.status(200).json(data)
 })
