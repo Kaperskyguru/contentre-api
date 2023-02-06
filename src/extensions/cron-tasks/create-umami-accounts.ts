@@ -7,36 +7,38 @@ import { ApolloError } from 'apollo-server-errors'
 export default async (): Promise<void> => {
   try {
     // get all users
-    const users = await prisma.user.findMany({
-      where: {
-        analyticsId: null
-      }
-    })
+    const users = await prisma.user.findMany({})
 
     const promises = users.map(async (user) => {
-      const data = await createAccount({
-        username: user.username!,
-        password: 'Password11!'
-      })
+      let data: any = {}
+      if (user.analyticsId && user.umamiUserId) {
+        data.accountUuid = user.analyticsId
+        data.id = user.umamiUserId
+      } else {
+        data = await createAccount({
+          username: user.username!,
+          password: 'Password11!'
+        })
 
-      const updatedUser = await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          analyticsId: data.accountUuid,
-          umamiUserId: data.id
-        }
-      })
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            analyticsId: data.accountUuid,
+            umamiUserId: data.id
+          }
+        })
+      }
 
       // Find Portfolio with User ID
       const userPortfolios = await prisma.portfolio.findMany({
-        where: { userId: user.id }
+        where: { userId: user.id, analyticsId: null }
       })
 
       userPortfolios.map(async (portfolio) => {
-        const data = await createWebsite({
+        const website = await createWebsite({
           domain: portfolio.domain ?? portfolio.url,
           name: `${portfolio.title}-${user.username}`,
-          owner: updatedUser?.umamiUserId!
+          owner: data?.id!
         })
 
         await prisma.portfolio.update({
@@ -45,7 +47,7 @@ export default async (): Promise<void> => {
           },
 
           data: {
-            analyticsId: data.websiteUuid
+            analyticsId: website.websiteUuid
           }
         })
       })
