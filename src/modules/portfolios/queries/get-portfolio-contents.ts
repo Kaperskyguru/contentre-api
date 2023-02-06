@@ -138,7 +138,7 @@ export default async (
       }
     }
 
-    return resolver(user, filters)
+    return resolver(user, filters, size!, skip!)
   } catch (e) {
     logError('getPortfolioContent %o', e)
 
@@ -188,7 +188,12 @@ async function getPortfolioFromUserIdAndURL(id: string, url: string) {
   })
 }
 
-async function resolver(user: any, filters: any) {
+async function resolver(
+  user: any,
+  filters: any,
+  size: number = 0,
+  skip: number = 0
+) {
   // Select Contents
   const where = whereContents(user, filters)
 
@@ -200,8 +205,8 @@ async function resolver(user: any, filters: any) {
   const contents = await prismaClient.content.findMany({
     where: { ...where },
     include: { client: true, category: true },
-    skip: filters.skip ?? 0,
-    take: filters.size ?? undefined
+    skip: skip ?? 0,
+    take: size ?? undefined
   })
 
   // Get Public clients
