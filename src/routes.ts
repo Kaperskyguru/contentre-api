@@ -72,9 +72,7 @@ app.post('/umami/login', async (req, res) => {
 // TODO: Send users actionable tasks to do to complete onboarding
 
 app.get('/cronjob/test', async (req, res) => {
-  const users = await prisma.user.findMany({
-    where: { analyticsId: null }
-  })
+  const users = await prisma.user.findMany({})
 
   try {
     // await Promise.all(
