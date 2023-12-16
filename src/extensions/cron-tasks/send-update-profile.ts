@@ -3,6 +3,7 @@ import { logError } from '@/helpers/logger'
 import { prisma } from '@/config'
 import sendMailjetEmail from '@extensions/mail-service/send-mailjet-email'
 import { ApolloError } from 'apollo-server-errors'
+import Bottleneck from 'bottleneck'
 
 export default async (): Promise<void> => {
   // get all users without completed profile
@@ -23,23 +24,21 @@ export default async (): Promise<void> => {
       }
     }))
 
-    const chunkValue = Math.floor(messageData.length / 4.4)
-    const newArrays = chunkArray(messageData, chunkValue)
+    // Split users into group of 50 each
+    const newArrays = chunkArray(messageData, 50)
 
-    //TODO: Use queues
+    // New instance of Bottleneck
+    const limiter = new Bottleneck({
+      maxConcurrent: 1,
+      minTime: 1000
+    })
 
-    await Promise.all(
-      newArrays.map(async (message: any) => {
-        const res = await sendMailjetEmail(
-          {
-            templateId: '4371167',
-            data: message,
-            subject: 'Stay fresh by updating your profile'
-          },
-          true
-        )
-        await delay(10000)
-      })
+    // Use Bottleneck to process mails. Please don't await the Promise.all
+    Promise.all(
+      newArrays.map(
+        async (message: any) =>
+          await limiter.schedule(() => processMail(message))
+      )
     )
   } catch (error) {
     logError('sendUpdateProfile %o', error)
@@ -47,4 +46,15 @@ export default async (): Promise<void> => {
     const message = useErrorParser(error)
     throw new ApolloError(message, error.code ?? '500', { error })
   }
+}
+
+async function processMail(message: any) {
+  return await sendMailjetEmail(
+    {
+      templateId: '4371167',
+      data: message,
+      subject: 'Stay fresh by updating your profile'
+    },
+    true
+  )
 }

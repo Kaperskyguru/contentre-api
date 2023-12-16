@@ -7,17 +7,7 @@ import sendAddContent from '@extensions/cron-tasks/send-add-content'
 import sendAnalytics from '@extensions/cron-tasks/send-analytics'
 import { prisma } from './config'
 import sendToSegment from '@/extensions/segment-service/segment'
-import {
-  createAccount,
-  createWebsite,
-  getPageviews,
-  getStats,
-  getUser,
-  getUserWebsites,
-  getWebsite,
-  login
-} from '@extensions/umami'
-import { Context } from './types'
+import { login } from '@extensions/umami'
 import createUmamiAccounts from '@extensions/cron-tasks/create-umami-accounts'
 
 export const app = express()
