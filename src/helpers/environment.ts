@@ -15,6 +15,7 @@ export interface Environment {
   umami: {
     token: string
     baseURL: string
+    password: string
   }
   mailchimp: {
     key: string
@@ -144,7 +145,8 @@ export const environment: Environment = {
   },
   umami: {
     token: process.env.UMAMI_TOKEN as string,
-    baseURL: process.env.UMAMI_BASE_URL as string
+    baseURL: process.env.UMAMI_BASE_URL as string,
+    password: process.env.UMAMI_USER_PASSWORD as string
   },
   auth: {
     saltRounds: Number(process.env.AUTH_SALT_ROUNDS) || 10,

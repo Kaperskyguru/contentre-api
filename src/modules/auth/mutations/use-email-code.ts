@@ -11,6 +11,7 @@ import mailchimp from '@extensions/mailchimp'
 import { ApolloError } from 'apollo-server-core'
 import sendToSegment from '@/extensions/segment-service/segment'
 import { createPortfolio } from '@/modules/portfolios/helpers/create-portfolio'
+import { createAccount } from '@extensions/umami'
 
 export default async (
   _parent: unknown,
@@ -57,12 +58,22 @@ export default async (
     const lowerCasedUsername = user?.username?.toLocaleLowerCase()
     const portfolioURL = `${environment.domain}/${lowerCasedUsername}`
 
+    // Create Analytics account
+    let analytics
+    try {
+      analytics = await createAccount({
+        username: user?.username!,
+        password: environment.umami.password
+      })
+    } catch (error) {}
+
     // Store the user update operation for running in a transaction.
     const updateUser = prisma.user.update({
       where: { id: userId },
       data: {
         emailConfirmed: true,
-        portfolioURL
+        portfolioURL,
+        umamiUserId: analytics?.id!
       },
       include: { activeSubscription: true }
     })

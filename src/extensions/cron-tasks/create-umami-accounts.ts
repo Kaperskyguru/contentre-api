@@ -11,27 +11,22 @@ export default async (): Promise<void> => {
 
     const promises = users.map(async (user) => {
       let data: any = {}
-      if (user.analyticsId && user.umamiUserId) {
-        data.accountUuid = user.analyticsId
-        data.id = user.umamiUserId
-      } else {
-        data = await createAccount({
-          username: user.username!,
-          password: 'Password11!'
-        })
 
-        await prisma.user.update({
-          where: { id: user.id },
-          data: {
-            analyticsId: data.accountUuid,
-            umamiUserId: data.id
-          }
-        })
-      }
+      data = await createAccount({
+        username: user.username!,
+        password: 'Password11!'
+      })
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          umamiUserId: data?.id
+        }
+      })
 
       // Find Portfolio with User ID
       const userPortfolios = await prisma.portfolio.findMany({
-        where: { userId: user.id, analyticsId: null }
+        where: { userId: user.id }
       })
 
       userPortfolios.map(async (portfolio) => {
@@ -47,7 +42,7 @@ export default async (): Promise<void> => {
           },
 
           data: {
-            analyticsId: website.websiteUuid
+            analyticsId: website.id
           }
         })
       })

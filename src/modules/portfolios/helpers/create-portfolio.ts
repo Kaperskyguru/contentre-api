@@ -76,8 +76,7 @@ export const createPortfolio = async (
 
   const data: Record<string, unknown> = {}
 
-  if (analytics && analytics?.websiteUuid)
-    data.analyticsId = analytics.websiteUuid
+  if (analytics && analytics?.id) data.analyticsId = analytics.id
   if (categoryId !== undefined) data.category = { connect: { id: categoryId } }
   if (clientId !== undefined) data.client = { connect: { id: clientId } }
   if (tags !== undefined) data.tags = tags

@@ -32,8 +32,7 @@ model User {
   updatedAt             DateTime             @default(now()) @updatedAt @db.Timestamp(6)
   lastActivityAt        DateTime             @default(now()) @db.Timestamp(6)
   twofactor             TwoFactorType        @default(NONE)
-  analyticsId           String?              @db.VarChar(100)
-  umamiUserId           Int?
+  umamiUserId           String?              @db.VarChar(100)
   signedUpThrough       SignedUpThrough      @default(CONTENTRE)
   referrerId            String?              @db.Char(36)
   subscriptionId        String?              @unique @db.Char(36)
