@@ -71,40 +71,44 @@ app.post('/umami/login', async (req, res) => {
 
 // TODO: Send users actionable tasks to do to complete onboarding
 
-app.post('/cronjob/test', async (req, res) => {
-  const users = await prisma.user.findMany({})
+app.get('/cronjob/test', async (req, res) => {
+  const users = await prisma.user.findMany({
+    where: { analyticsId: null }
+  })
 
   try {
-    await Promise.all(
-      users.map(async (user) => {
-        console.log(user.hasFinishedOnboarding)
-        const segmentData = {
-          email: user.email,
-          username: user.username,
-          portfolio: user.portfolioURL
-        }
+    // await Promise.all(
+    //   users.map(async (user) => {
+    //     console.log(user.hasFinishedOnboarding)
+    //     const segmentData = {
+    //       email: user.email,
+    //       username: user.username,
+    //       portfolio: user.portfolioURL
+    //     }
 
-        await sendToSegment({
-          operation: 'identify',
-          userId: user.id,
-          data: segmentData
-        })
+    //     await sendToSegment({
+    //       operation: 'identify',
+    //       userId: user.id,
+    //       data: segmentData
+    //     })
 
-        await sendToSegment({
-          operation: 'track',
-          eventName: 'has_completed_onboarding',
-          userId: user.id,
-          data: {
-            ...segmentData,
-            hasCompletedOnboarding: user.hasFinishedOnboarding,
-            name: user.name,
-            email: user.email
-          }
-        })
-      })
-    )
+    //     await sendToSegment({
+    //       operation: 'track',
+    //       eventName: 'has_completed_onboarding',
+    //       userId: user.id,
+    //       data: {
+    //         ...segmentData,
+    //         hasCompletedOnboarding: user.hasFinishedOnboarding,
+    //         name: user.name,
+    //         email: user.email
+    //       }
+    //     })
+    //   })
+    // )
 
-    res.status(200).end(` messages sent`)
+    console.log(users.length)
+
+    res.status(200).json(users)
   } catch (error) {
     res.status(500).end(`error`)
   }

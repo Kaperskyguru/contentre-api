@@ -103,7 +103,7 @@ export const getUserWebsites = async (options?: {
   user_id?: string
   include_all?: boolean
 }) => {
-  const endpoint = `${environment.umami.baseURL}/websites`
+  const endpoint = `${environment.umami.baseURL}/users/${options?.user_id}/websites`
 
   const headers = {
     'Content-Type': 'application/json',
@@ -234,14 +234,12 @@ export const getStats = async (
 
 export const createAccount = async ({
   username,
-  password,
-  account_uuid = undefined
+  password
 }: {
   username: string
   password: string
-  account_uuid?: string
 }) => {
-  const endpoint = `${environment.umami.baseURL}/accounts`
+  const endpoint = `${environment.umami.baseURL}/users`
   const headers = {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${environment.umami.token}`
@@ -250,7 +248,7 @@ export const createAccount = async ({
   const body = {
     username,
     password,
-    account_uuid
+    role: 'user'
   }
 
   try {
@@ -266,7 +264,7 @@ export const createAccount = async ({
     const { data } = response
     return data
   } catch (error) {
-    console.log(error)
+    console.log(error, 'aas')
   }
 }
 

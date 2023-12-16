@@ -8,7 +8,6 @@ import { User as DBUser } from '@prisma/client'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
 import sendToSegment from '@/extensions/segment-service/segment'
-import { createAccount } from '@extensions/umami'
 
 export default async (
   _parent: unknown,
@@ -23,12 +22,6 @@ export default async (
   let user: DBUser | null = null
 
   try {
-    // Create Analytics account
-    const analytics = await createAccount({
-      username: input.username!,
-      password: input.password!
-    })
-
     // Checking if user already exists, but did not verify email
     user = await prisma.user.findFirst({
       where: { email: { equals: input.email, mode: 'insensitive' } },
@@ -65,8 +58,6 @@ export default async (
         email: input.email,
         username: lowerCasedUsername,
         billingId: 'BillingId',
-        analyticsId: analytics?.accountUuid,
-        umamiUserId: analytics?.id,
         name: input.name,
         signedUpThrough: input.signedUpThrough!,
         password: await hashPassword(input.password),
