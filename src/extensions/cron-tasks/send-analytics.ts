@@ -5,6 +5,7 @@ import sendMailjetEmail from '@extensions/mail-service/send-mailjet-email'
 import { ApolloError } from 'apollo-server-errors'
 import { User } from '@/types/modules'
 import { endOfMonth, startOfMonth } from 'date-fns'
+import Bottleneck from 'bottleneck'
 
 export default async (): Promise<void> => {
   try {
@@ -179,22 +180,21 @@ export default async (): Promise<void> => {
       }
     })
 
-    //TODO: Use queues
-    const chunkValue = Math.floor(messageData.length / 4.4)
-    const newArrays = chunkArray(messageData, chunkValue)
+    // Split users into group of 50 each
+    const newArrays = chunkArray(messageData, 50)
 
-    await Promise.all(
-      newArrays.map(async (message: any) => {
-        const res = await sendMailjetEmail(
-          {
-            templateId: '4374011',
-            data: message,
-            subject: 'Your Contentre Analytics'
-          },
-          true
-        )
-        await delay(10000)
-      })
+    // New instance of Bottleneck
+    const limiter = new Bottleneck({
+      maxConcurrent: 1,
+      minTime: 1000
+    })
+
+    // Use Bottleneck to process mails. Please don't await the Promise.all
+    Promise.all(
+      newArrays.map(
+        async (message: any) =>
+          await limiter.schedule(() => processMail(message))
+      )
     )
   } catch (error) {
     logError('sendAddContent %o', error)
@@ -202,6 +202,17 @@ export default async (): Promise<void> => {
     const message = useErrorParser(error)
     throw new ApolloError(message, error.code ?? '500', { error })
   }
+}
+
+async function processMail(message: any) {
+  return await sendMailjetEmail(
+    {
+      templateId: '4374011',
+      data: message,
+      subject: 'Your Contentre Analytics'
+    },
+    true
+  )
 }
 
 async function calculateContentPercentGreater(

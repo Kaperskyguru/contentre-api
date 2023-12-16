@@ -115,8 +115,8 @@ const seedFeatures = async () => {
 
 const seed = async () => {
   // await seedSubscriptions()
-  await seedTemplates()
-  await seedFeatures()
+  // await seedTemplates()
+  // await seedFeatures()
 }
 
 seed()
