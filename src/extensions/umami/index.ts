@@ -190,6 +190,8 @@ export const getStats = async (
   { websiteUuid }: { websiteUuid: string },
   options?: any
 ) => {
+  console.log(getDateTime(options))
+
   const endpoint = `${environment.umami.baseURL}/websites/${websiteUuid}/stats`
 
   const headers = {
@@ -198,17 +200,6 @@ export const getStats = async (
   }
 
   try {
-    if (options.period === 'all') {
-      const response = await axios.get(endpoint, {
-        headers: {
-          ...headers
-        }
-      })
-
-      const { data } = response
-      return data
-    }
-
     const response = await axios.get(endpoint, {
       params: {
         ...getDateTime(options),
@@ -228,7 +219,7 @@ export const getStats = async (
     const { data } = response
     return data
   } catch (error) {
-    console.log(error)
+    // console.log(error)
   }
 }
 
@@ -297,22 +288,24 @@ export const login = async (req: express.Request) => {
 }
 
 const getDateTime = (options: any) => {
-  if (options?.fromDate || options?.toDate) {
-    if (options.period === 'all') {
-      return {
-        start_at: getTime(options.fromDate),
-        end_at: getTime(options.toDate)
-      }
-    }
-    const { toDate, fromDate } = getDateIntervals({
-      ...options
-    })
-
+  if (!(options?.fromDate || options?.toDate))
     return {
-      start_at: getTime(fromDate),
-      end_at: getTime(toDate)
+      startAt: getTime(new Date()),
+      endAt: getTime(new Date())
     }
-  } else {
-    return {}
+
+  if (options.period === 'all')
+    return {
+      startAt: getTime(options.fromDate),
+      endAt: getTime(options.toDate)
+    }
+
+  const { toDate, fromDate } = getDateIntervals({
+    ...options
+  })
+
+  return {
+    startAt: getTime(fromDate),
+    endAt: getTime(toDate)
   }
 }

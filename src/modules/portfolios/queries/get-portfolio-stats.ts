@@ -1,10 +1,30 @@
 import { useErrorParser } from '@/helpers'
 import { getPageviews, getStats, getWebsite } from '@extensions/umami'
 import { logError, logQuery } from '@helpers/logger'
-import { PortfolioStats, QueryGetPortfolioStatsArgs } from '@modules-types'
+import {
+  InputMaybe,
+  PortfolioFiltersInput,
+  PortfolioStats,
+  QueryGetPortfolioStatsArgs
+} from '@modules-types'
 import { Portfolio } from '@prisma/client'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
+
+let totalPageViews = {
+  value: 0,
+  change: 0
+}
+
+let totalUniques = {
+  value: 0,
+  change: 0
+}
+
+let totalBounces = {
+  value: 0,
+  change: 0
+}
 
 export default async (
   _parent: unknown,
@@ -41,94 +61,40 @@ export default async (
 }
 
 async function resolver(portfolios: Array<Portfolio>, filters: any) {
-  let totalPageViews = {
-    value: 0,
-    change: 0
-  }
-
-  let totalUniques = {
-    value: 0,
-    change: 0
-  }
-
-  let totalBounces = {
-    value: 0,
-    change: 0
-  }
-
   let totalViews: any = []
 
   let totalSessions: any = []
 
   const promises = portfolios.map(async (item) => {
-    const website = await getWebsite({ id: item.analyticsId! })
+    const website = await getWebsite({
+      id: item.analyticsId!
+    })
 
     const data = await getStats(
       {
         websiteUuid: item.analyticsId!
       },
       {
-        ...filters,
-        fromDate:
-          filters.period == 'all'
-            ? new Date(website.createdAt)
-            : filters.fromDate,
-        toDate: filters.period == 'all' ? Date.now() : filters.toDate,
-        unit: filters.period == 'all' ? 'hour' : filters.unit
+        ...getFilters(filters, website)
       }
     )
-
-    totalPageViews.value = totalPageViews.value += data.pageviews.value
-    totalPageViews.change = totalPageViews.change += data.pageviews.change
-
-    totalUniques.value = totalUniques.value += data.uniques.value
-    totalUniques.change = totalUniques.change += data.uniques.change
-
-    totalBounces.value = totalBounces.value += data.bounces.value
-    totalBounces.change = totalBounces.change += data.bounces.change
-
     // Load Page views
-
     const pageviews = await getPageviews(
       { websiteUuid: item.analyticsId! },
       {
-        ...filters,
-        fromDate:
-          filters.period == 'all'
-            ? new Date(website.createdAt)
-            : filters.fromDate,
-        toDate: filters.period == 'all' ? Date.now() : filters.toDate,
-        unit: filters.period == 'all' ? 'hour' : filters.unit
+        ...getFilters(filters, website)
       }
     )
+
+    calculateData(data)
     totalViews.push(...pageviews.pageviews)
     totalSessions.push(...pageviews.sessions)
   })
-  await Promise.all(promises)
+  const {} = await Promise.all(promises)
 
-  const output = totalViews.reduce(function (accumulator: any, cur: any) {
-    const date = cur.t,
-      found = accumulator.find(function (elem: any) {
-        return elem.t == date
-      })
-    if (found) found.y += cur.y
-    else accumulator.push(cur)
-    return accumulator
-  }, [])
+  const output = calculatePageviews(totalViews)
 
-  const outputSessions = totalSessions.reduce(function (
-    accumulator: any,
-    cur: any
-  ) {
-    const date = cur.t,
-      found = accumulator.find(function (elem: any) {
-        return elem.t == date
-      })
-    if (found) found.y += cur.y
-    else accumulator.push(cur)
-    return accumulator
-  },
-  [])
+  const outputSessions = calculateSessions(totalSessions)
 
   return {
     stats: {
@@ -146,4 +112,49 @@ async function resolver(portfolios: Array<Portfolio>, filters: any) {
       sessions: outputSessions
     }
   }
+}
+
+function calculateData(data: any) {
+  totalPageViews.value += data?.pageviews?.value ?? 0
+  totalPageViews.change += data?.pageviews?.change ?? 0
+
+  totalUniques.value += data?.uniques?.value ?? 0
+  totalUniques.change += data?.uniques?.change ?? 0
+
+  totalBounces.value += data?.bounces?.value
+  totalBounces.change += data?.bounces?.change
+}
+
+function getFilters(filters: PortfolioFiltersInput, website: any) {
+  return {
+    ...filters,
+    fromDate:
+      filters.period == 'all' ? new Date(website.createdAt) : filters.fromDate,
+    toDate: filters.period == 'all' ? Date.now() : filters.toDate,
+    unit: filters.period == 'all' ? 'hour' : filters.unit
+  }
+}
+
+function calculatePageviews(totalViews: any) {
+  return totalViews.reduce(function (accumulator: any, cur: any) {
+    const date = cur.t,
+      found = accumulator.find(function (elem: any) {
+        return elem.t == date
+      })
+    if (found) found.y += cur.y
+    else accumulator.push(cur)
+    return accumulator
+  }, [])
+}
+
+function calculateSessions(totalSessions: any) {
+  return totalSessions.reduce(function (accumulator: any, cur: any) {
+    const date = cur.t,
+      found = accumulator.find(function (elem: any) {
+        return elem.t == date
+      })
+    if (found) found.y += cur.y
+    else accumulator.push(cur)
+    return accumulator
+  }, [])
 }

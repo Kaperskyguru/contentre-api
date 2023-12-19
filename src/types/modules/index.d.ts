@@ -39,7 +39,7 @@ export type AllPortfoliosResponse = {
 
 export type AnalyticStat = {
   __typename?: 'AnalyticStat';
-  t?: Maybe<Scalars['Time']>;
+  x?: Maybe<Scalars['String']>;
   y?: Maybe<Scalars['Int']>;
 };
 
@@ -2657,7 +2657,7 @@ export type AllPortfoliosResponseResolvers<ContextType = any, ParentType extends
 };
 
 export type AnalyticStatResolvers<ContextType = any, ParentType extends ResolversParentTypes['AnalyticStat'] = ResolversParentTypes['AnalyticStat']> = {
-  t?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>;
+  x?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   y?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
