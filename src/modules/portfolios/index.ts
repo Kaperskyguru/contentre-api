@@ -65,7 +65,7 @@ const typeDefs = gql`
   }
 
   type AnalyticStat {
-    t: Time
+    x: String
     y: Int
   }
 

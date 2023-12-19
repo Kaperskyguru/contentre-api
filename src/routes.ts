@@ -72,7 +72,9 @@ app.post('/umami/login', async (req, res) => {
 // TODO: Send users actionable tasks to do to complete onboarding
 
 app.get('/cronjob/test', async (req, res) => {
-  const users = await prisma.user.findMany({})
+  const users = await prisma.user.findFirst({
+    where: { id: '5dd4830b-c764-472e-957a-4cab4cea63c7' }
+  })
 
   try {
     // await Promise.all(
@@ -103,8 +105,6 @@ app.get('/cronjob/test', async (req, res) => {
     //     })
     //   })
     // )
-
-    console.log(users.length)
 
     res.status(200).json(users)
   } catch (error) {
