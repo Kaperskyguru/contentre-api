@@ -86,14 +86,13 @@ async function resolver(portfolios: Array<Portfolio>, filters: any) {
       }
     )
 
-    calculateData(data)
+    calculateData(data) // I hate this side effect function
     totalViews.push(...pageviews.pageviews)
     totalSessions.push(...pageviews.sessions)
   })
-  const {} = await Promise.all(promises)
+  await Promise.all(promises)
 
   const output = calculatePageviews(totalViews)
-
   const outputSessions = calculateSessions(totalSessions)
 
   return {
@@ -106,7 +105,6 @@ async function resolver(portfolios: Array<Portfolio>, filters: any) {
         change: totalBounces.change + totalUniques.change
       }
     },
-
     analytics: {
       pageviews: output,
       sessions: outputSessions
