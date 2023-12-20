@@ -30,7 +30,7 @@ export default async (): Promise<void> => {
     // New instance of Bottleneck
     const limiter = new Bottleneck({
       maxConcurrent: 1,
-      minTime: 1000
+      minTime: 28800000 // 8 hours
     })
 
     // Use Bottleneck to process mails. Please don't await the Promise.all
