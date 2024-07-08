@@ -16,6 +16,7 @@ const origins: Readonly<{
   [key: string]: (string | RegExp)[] | RegExp | boolean
 }> = Object.freeze({
   LOCAL: [
+    'https://studio.apollographql.com',
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:3002',

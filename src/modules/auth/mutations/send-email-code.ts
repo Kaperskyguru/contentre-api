@@ -2,12 +2,9 @@ import sendEmail from '@extensions/mail-service/send-email'
 import { useErrorParser } from '@helpers'
 import { environment } from '@helpers/environment'
 import { logError, logMutation } from '@helpers/logger'
-import { v5 as generateEmailCode } from 'uuid'
 import { MutationSendEmailCodeArgs } from '@modules-types'
 import { Context } from '@types'
 import { ApolloError } from 'apollo-server-errors'
-
-const UUID_V5_NAMESPACE = '32b0ec68-db48-4388-9f23-cce431680989'
 
 export default async (
   _parent: unknown,
