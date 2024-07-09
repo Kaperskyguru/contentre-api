@@ -6,7 +6,7 @@ import Analytics from 'analytics-node'
 import { ApolloError } from 'apollo-server-errors'
 
 const analytics =
-  environment.context === 'PRODUCTION' && new Analytics(environment.segment)
+  environment.context === 'STAGING' && new Analytics(environment.segment)
 
 export default async ({
   operation,
